@@ -30,7 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.thinkenterprise.graphqlio.server.gs.graphql.GsGraphQLService;
-import com.thinkenterprise.graphqlio.server.gts.keyvaluestore.GtsKeyValueStore;
+import com.thinkenterprise.gts.keyvaluestore.GtsKeyValueStore;
 
 /**
  * Main Server (Service) responsible to start GraphQL service

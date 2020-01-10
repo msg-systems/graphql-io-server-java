@@ -28,9 +28,9 @@ package com.thinkenterprise.graphqlio.server.gs.actuator.metrics;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-import com.thinkenterprise.graphqlio.server.gts.actuator.GtsCounter;
-import com.thinkenterprise.graphqlio.server.gts.actuator.GtsCounterNames;
-import com.thinkenterprise.graphqlio.server.gts.actuator.GtsCounterNotification;
+import com.thinkenterprise.gts.actuator.GtsCounter;
+import com.thinkenterprise.gts.actuator.GtsCounterNames;
+import com.thinkenterprise.gts.actuator.GtsCounterNotification;
 
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;

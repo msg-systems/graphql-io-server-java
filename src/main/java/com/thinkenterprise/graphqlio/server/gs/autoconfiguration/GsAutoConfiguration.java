@@ -38,9 +38,9 @@ import com.thinkenterprise.graphqlio.server.gs.graphql.GsGraphQLService;
 import com.thinkenterprise.graphqlio.server.gs.graphql.schema.GsGraphQLSchemaCreator;
 import com.thinkenterprise.graphqlio.server.gs.graphql.schema.GsGraphQLSimpleSchemaCreator;
 import com.thinkenterprise.graphqlio.server.gs.handler.GsWebSocketHandler;
-import com.thinkenterprise.graphqlio.server.gts.actuator.GtsCounter;
-import com.thinkenterprise.graphqlio.server.gts.actuator.GtsCounterNotification;
-import com.thinkenterprise.graphqlio.server.gts.evaluation.GtsEvaluation;
+import com.thinkenterprise.gts.actuator.GtsCounter;
+import com.thinkenterprise.gts.actuator.GtsCounterNotification;
+import com.thinkenterprise.gts.evaluation.GtsEvaluation;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;

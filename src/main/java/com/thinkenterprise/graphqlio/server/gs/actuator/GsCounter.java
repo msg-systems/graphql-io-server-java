@@ -5,9 +5,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.thinkenterprise.graphqlio.server.gts.actuator.GtsCounter;
-import com.thinkenterprise.graphqlio.server.gts.actuator.GtsCounterNames;
-import com.thinkenterprise.graphqlio.server.gts.actuator.GtsCounterNotification;
+import com.thinkenterprise.gts.actuator.GtsCounter;
+import com.thinkenterprise.gts.actuator.GtsCounterNames;
+import com.thinkenterprise.gts.actuator.GtsCounterNotification;
 
 @Component
 public class GsCounter implements GtsCounter {

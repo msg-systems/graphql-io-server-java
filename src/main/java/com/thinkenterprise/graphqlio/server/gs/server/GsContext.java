@@ -28,9 +28,9 @@ package com.thinkenterprise.graphqlio.server.gs.server;
 
 import org.springframework.web.socket.WebSocketSession;
 
-import com.thinkenterprise.graphqlio.server.gts.context.GtsContext;
-import com.thinkenterprise.graphqlio.server.gts.tracking.GtsScope;
-import com.thinkenterprise.graphqlio.server.wsf.domain.WsfFrame;
+import com.thinkenterprise.gts.context.GtsContext;
+import com.thinkenterprise.gts.tracking.GtsScope;
+import com.thinkenterprise.wsf.domain.WsfFrame;
 
 import graphql.schema.GraphQLSchema;
 

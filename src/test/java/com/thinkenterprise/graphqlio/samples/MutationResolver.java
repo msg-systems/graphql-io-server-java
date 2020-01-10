@@ -29,11 +29,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.coxautodev.graphql.tools.GraphQLMutationResolver;
-import com.thinkenterprise.graphqlio.server.gts.context.GtsContext;
-import com.thinkenterprise.graphqlio.server.gts.tracking.GtsRecord;
-import com.thinkenterprise.graphqlio.server.gts.tracking.GtsRecord.GtsArityType;
-import com.thinkenterprise.graphqlio.server.gts.tracking.GtsRecord.GtsOperationType;
-import com.thinkenterprise.graphqlio.server.gts.tracking.GtsScope;
+import com.thinkenterprise.gts.context.GtsContext;
+import com.thinkenterprise.gts.tracking.GtsRecord;
+import com.thinkenterprise.gts.tracking.GtsScope;
+import com.thinkenterprise.gts.tracking.GtsRecord.GtsArityType;
+import com.thinkenterprise.gts.tracking.GtsRecord.GtsOperationType;
 
 import graphql.schema.DataFetchingEnvironment;
 

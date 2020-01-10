@@ -56,15 +56,15 @@ import com.thinkenterprise.graphqlio.server.gs.actuator.custom.GsGraphqlioCounte
 import com.thinkenterprise.graphqlio.server.gs.execution.GsExecutionStrategy;
 import com.thinkenterprise.graphqlio.server.gs.graphql.schema.GsGraphQLSchemaCreator;
 import com.thinkenterprise.graphqlio.server.gs.server.GsContext;
-import com.thinkenterprise.graphqlio.server.gts.actuator.GtsCounter;
-import com.thinkenterprise.graphqlio.server.gts.evaluation.GtsEvaluation;
-import com.thinkenterprise.graphqlio.server.gts.exceptions.GtsSubscriptionTypeException;
-import com.thinkenterprise.graphqlio.server.gts.tracking.GtsConnection;
-import com.thinkenterprise.graphqlio.server.gts.tracking.GtsScope;
-import com.thinkenterprise.graphqlio.server.wsf.converter.WsfConverter;
-import com.thinkenterprise.graphqlio.server.wsf.domain.WsfFrame;
-import com.thinkenterprise.graphqlio.server.wsf.domain.WsfFrameType;
-import com.thinkenterprise.graphqlio.server.wsf.event.WsfInboundFrameEvent;
+import com.thinkenterprise.gts.actuator.GtsCounter;
+import com.thinkenterprise.gts.evaluation.GtsEvaluation;
+import com.thinkenterprise.gts.exceptions.GtsSubscriptionTypeException;
+import com.thinkenterprise.gts.tracking.GtsConnection;
+import com.thinkenterprise.gts.tracking.GtsScope;
+import com.thinkenterprise.wsf.converter.WsfConverter;
+import com.thinkenterprise.wsf.domain.WsfFrame;
+import com.thinkenterprise.wsf.domain.WsfFrameType;
+import com.thinkenterprise.wsf.event.WsfInboundFrameEvent;
 
 import co.nstant.in.cbor.CborDecoder;
 import co.nstant.in.cbor.CborEncoder;

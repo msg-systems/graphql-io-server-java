@@ -37,9 +37,9 @@ import org.springframework.boot.actuate.endpoint.annotation.Selector;
 import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
 import org.springframework.stereotype.Component;
 
-import com.thinkenterprise.graphqlio.server.gts.actuator.GtsCounter;
-import com.thinkenterprise.graphqlio.server.gts.actuator.GtsCounterNames;
-import com.thinkenterprise.graphqlio.server.gts.actuator.GtsCounterNotification;
+import com.thinkenterprise.gts.actuator.GtsCounter;
+import com.thinkenterprise.gts.actuator.GtsCounterNames;
+import com.thinkenterprise.gts.actuator.GtsCounterNotification;
 
 /**
  * Class defining custom endpoint for optional information about running graphqlio application 

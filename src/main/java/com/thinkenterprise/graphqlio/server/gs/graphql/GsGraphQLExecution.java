@@ -34,7 +34,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thinkenterprise.graphqlio.server.gs.execution.GsExecutionStrategy;
 import com.thinkenterprise.graphqlio.server.gs.server.GsContext;
-import com.thinkenterprise.graphqlio.server.wsf.domain.WsfFrame;
+import com.thinkenterprise.wsf.domain.WsfFrame;
 
 import graphql.ExecutionInput;
 import graphql.ExecutionResult;

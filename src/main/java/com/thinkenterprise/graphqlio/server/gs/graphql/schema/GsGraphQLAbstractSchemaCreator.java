@@ -35,10 +35,10 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import com.thinkenterprise.graphqlio.server.gs.autoconfiguration.GsProperties;
-import com.thinkenterprise.graphqlio.server.gtt.types.GttDateType;
-import com.thinkenterprise.graphqlio.server.gtt.types.GttJsonType;
-import com.thinkenterprise.graphqlio.server.gtt.types.GttUuidType;
-import com.thinkenterprise.graphqlio.server.gtt.types.GttVoidType;
+import com.thinkenterprise.gtt.types.GttDateType;
+import com.thinkenterprise.gtt.types.GttJsonType;
+import com.thinkenterprise.gtt.types.GttUuidType;
+import com.thinkenterprise.gtt.types.GttVoidType;
 
 import graphql.schema.GraphQLScalarType;
 import graphql.schema.GraphQLSchema;

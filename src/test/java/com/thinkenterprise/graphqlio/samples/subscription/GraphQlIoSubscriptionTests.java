@@ -51,7 +51,7 @@ import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import com.thinkenterprise.graphqlio.samples.QueryResolver;
 import com.thinkenterprise.graphqlio.samples.Route;
 import com.thinkenterprise.graphqlio.server.gs.server.GsServer;
-import com.thinkenterprise.graphqlio.server.gts.keyvaluestore.GtsGraphQLRedisService;
+import com.thinkenterprise.gts.keyvaluestore.GtsGraphQLRedisService;
 
 /**
  * Class used to process any incoming message sent by clients via WebSocket
