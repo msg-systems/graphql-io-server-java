@@ -52,7 +52,6 @@ import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import com.thinkenterprise.graphqlio.server.handler.GsWebSocketHandler;
 import com.thinkenterprise.graphqlio.server.helpers.TestQueryResolver;
 import com.thinkenterprise.graphqlio.server.server.GsServer;
-import com.thinkenterprise.gts.keyvaluestore.GtsGraphQLEmbeddedRedisService;
 
 /**
  * Class used to process any incoming message sent by clients via WebSocket
@@ -77,23 +76,16 @@ class SubprotocolsTests {
 	private GsServer graphqlioServer;
 
 	@Autowired
-	private GtsGraphQLEmbeddedRedisService redisService;
-
-	@Autowired
 	private TestQueryResolver routeResolver;
 
 	@BeforeAll
 	private void startServers() throws IOException {
-		// 1st redis:
-		this.redisService.start();
-		// 2nd io:
 		this.graphqlioServer.start();
 	}
 
 	@AfterAll
 	private void stopServers() {
 		this.graphqlioServer.stop();
-		this.redisService.stop();
 	}
 
 	@BeforeEach
