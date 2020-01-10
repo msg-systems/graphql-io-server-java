@@ -23,19 +23,13 @@
 **  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package com.thinkenterprise.graphqlio.samples;
+package com.thinkenterprise.graphqlio.subprotocols;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.web.socket.WebSocketMessage;
+import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 
-import com.coxautodev.graphql.tools.GraphQLMutationResolver;
-import com.thinkenterprise.gts.context.GtsContext;
-import com.thinkenterprise.gts.tracking.GtsRecord;
-import com.thinkenterprise.gts.tracking.GtsScope;
-import com.thinkenterprise.gts.tracking.GtsRecord.GtsArityType;
-import com.thinkenterprise.gts.tracking.GtsRecord.GtsOperationType;
-
-import graphql.schema.DataFetchingEnvironment;
+import com.thinkenterprise.graphqlio.server.gs.handler.GsWebSocketHandler;
 
 /**
  * Class used to process any incoming message sent by clients via WebSocket
@@ -46,28 +40,30 @@ import graphql.schema.DataFetchingEnvironment;
  * @author Torsten Kühnert
  */
 
-@Component
-public class MutationResolver implements GraphQLMutationResolver {
+public class SubprotocolsTestsHandler extends AbstractWebSocketHandler {
 
-	@Autowired
-	private QueryResolver routeResolver;
+	public int text_count = 0;
+	public int cbor_count = 0;
+	public int msgpack_count = 0;
+	public int default_count = 0;
 
-	public Route updateRoute(String flightNumber, Route input, DataFetchingEnvironment env) {
+	public int count = 0;
 
-		Route route = routeResolver.allRoutes.get(flightNumber);
-
-		route.setFlightNumber(input.getFlightNumber());
-		route.setDeparture(input.getDeparture());
-		route.setDestination(input.getDestination());
-		route.setDisabled(input.getDisabled());
-
-		GtsContext context = env.getContext();
-		GtsScope scope = context.getScope();
-		scope.addRecord(GtsRecord.builder().op(GtsOperationType.UPDATE).arity(GtsArityType.ONE)
-				.dstType(Route.class.getName()).dstIds(new String[] { route.getFlightNumber().toString() })
-				.dstAttrs(new String[] { "*" }).build());
-
-		return route;
+	@Override
+	public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
+		if (GsWebSocketHandler.SUB_PROTOCOL_TEXT.equalsIgnoreCase(session.getAcceptedProtocol())) {
+			this.text_count++;
+			this.count++;
+		} else if (GsWebSocketHandler.SUB_PROTOCOL_CBOR.equalsIgnoreCase(session.getAcceptedProtocol())) {
+			this.cbor_count++;
+			this.count++;
+		} else if (GsWebSocketHandler.SUB_PROTOCOL_MSGPACK.equalsIgnoreCase(session.getAcceptedProtocol())) {
+			this.msgpack_count++;
+			this.count++;
+		} else {
+			this.default_count++;
+			this.count++;
+		}
 	}
 
 }

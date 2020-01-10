@@ -23,7 +23,7 @@
 **  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package com.thinkenterprise.graphqlio.samples.subscription;
+package com.thinkenterprise.graphqlio.subscription;
 
 import java.io.IOException;
 import java.net.URI;
@@ -48,8 +48,8 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 
-import com.thinkenterprise.graphqlio.samples.QueryResolver;
-import com.thinkenterprise.graphqlio.samples.Route;
+import com.thinkenterprise.graphqlio.helpers.TestQueryResolver;
+import com.thinkenterprise.graphqlio.helpers.TestRoute;
 import com.thinkenterprise.graphqlio.server.gs.server.GsServer;
 import com.thinkenterprise.gts.keyvaluestore.GtsGraphQLRedisService;
 
@@ -67,7 +67,7 @@ import com.thinkenterprise.gts.keyvaluestore.GtsGraphQLRedisService;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestInstance(Lifecycle.PER_CLASS)
-class GraphQlIoSubscriptionTests {
+class SubscriptionTests {
 
 	@LocalServerPort
 	private int port;
@@ -79,7 +79,7 @@ class GraphQlIoSubscriptionTests {
 	private GtsGraphQLRedisService redisService;
 
 	@Autowired
-	private QueryResolver routeResolver;
+	private TestQueryResolver routeResolver;
 
 	@BeforeAll
 	private void startServers() throws IOException {
@@ -116,7 +116,7 @@ class GraphQlIoSubscriptionTests {
 	@Test
 	void textAnswer() {
 		try {
-			GraphQlIoSubscriptionTestsHandler webSocketHandler = new GraphQlIoSubscriptionTestsHandler();
+			SubscriptionTestsHandler webSocketHandler = new SubscriptionTestsHandler();
 
 			WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
 
@@ -146,12 +146,12 @@ class GraphQlIoSubscriptionTests {
 			Assert.assertTrue(webSocketHandler.subscriptionIds.size() == 1);
 			Assert.assertTrue(webSocketHandler.notifier_count == 0);
 
-			Assert.assertTrue(webSocketHandler.routes.contains(new Route(flight_1a)));
-			Assert.assertTrue(webSocketHandler.routes.contains(new Route(flight_1b)));
-			Assert.assertTrue(routeResolver.allRoutes.values().contains(new Route(flight_1a)));
-			Assert.assertTrue(routeResolver.allRoutes.values().contains(new Route(flight_1b)));
-			Assert.assertTrue(!routeResolver.allRoutes.values().contains(new Route(flight_2a)));
-			Assert.assertTrue(!routeResolver.allRoutes.values().contains(new Route(flight_2b)));
+			Assert.assertTrue(webSocketHandler.routes.contains(new TestRoute(flight_1a)));
+			Assert.assertTrue(webSocketHandler.routes.contains(new TestRoute(flight_1b)));
+			Assert.assertTrue(routeResolver.allRoutes.values().contains(new TestRoute(flight_1a)));
+			Assert.assertTrue(routeResolver.allRoutes.values().contains(new TestRoute(flight_1b)));
+			Assert.assertTrue(!routeResolver.allRoutes.values().contains(new TestRoute(flight_2a)));
+			Assert.assertTrue(!routeResolver.allRoutes.values().contains(new TestRoute(flight_2b)));
 
 			////////////////////////////
 			// 2nd: mutationQuery2a & mutationQuery2b
@@ -176,12 +176,12 @@ class GraphQlIoSubscriptionTests {
 			Assert.assertTrue(webSocketHandler.subscriptionIds.size() == 1);
 			Assert.assertTrue(webSocketHandler.notifier_count == 2);
 
-			Assert.assertTrue(webSocketHandler.routes.contains(new Route(flight_2a)));
-			Assert.assertTrue(webSocketHandler.routes.contains(new Route(flight_2b)));
-			Assert.assertTrue(routeResolver.allRoutes.values().contains(new Route(flight_2a)));
-			Assert.assertTrue(routeResolver.allRoutes.values().contains(new Route(flight_2b)));
-			Assert.assertTrue(!routeResolver.allRoutes.values().contains(new Route(flight_1a)));
-			Assert.assertTrue(!routeResolver.allRoutes.values().contains(new Route(flight_1b)));
+			Assert.assertTrue(webSocketHandler.routes.contains(new TestRoute(flight_2a)));
+			Assert.assertTrue(webSocketHandler.routes.contains(new TestRoute(flight_2b)));
+			Assert.assertTrue(routeResolver.allRoutes.values().contains(new TestRoute(flight_2a)));
+			Assert.assertTrue(routeResolver.allRoutes.values().contains(new TestRoute(flight_2b)));
+			Assert.assertTrue(!routeResolver.allRoutes.values().contains(new TestRoute(flight_1a)));
+			Assert.assertTrue(!routeResolver.allRoutes.values().contains(new TestRoute(flight_1b)));
 
 			////////////////////////////
 			// 3rd: unsubscribeQuery3
@@ -204,9 +204,9 @@ class GraphQlIoSubscriptionTests {
 			Assert.assertTrue(webSocketHandler.subscriptionIds.size() == 1);
 			Assert.assertTrue(webSocketHandler.notifier_count == 2);
 
-			Assert.assertTrue(webSocketHandler.routes.contains(new Route(flight_3)));
-			Assert.assertTrue(routeResolver.allRoutes.values().contains(new Route(flight_3)));
-			Assert.assertTrue(!routeResolver.allRoutes.values().contains(new Route(flight_4)));
+			Assert.assertTrue(webSocketHandler.routes.contains(new TestRoute(flight_3)));
+			Assert.assertTrue(routeResolver.allRoutes.values().contains(new TestRoute(flight_3)));
+			Assert.assertTrue(!routeResolver.allRoutes.values().contains(new TestRoute(flight_4)));
 
 			////////////////////////////
 			// 4th: mutationQuery4
@@ -229,9 +229,9 @@ class GraphQlIoSubscriptionTests {
 			Assert.assertTrue(webSocketHandler.subscriptionIds.size() == 1);
 			Assert.assertTrue(webSocketHandler.notifier_count == 2);
 
-			Assert.assertTrue(webSocketHandler.routes.contains(new Route(flight_4)));
-			Assert.assertTrue(routeResolver.allRoutes.values().contains(new Route(flight_4)));
-			Assert.assertTrue(!routeResolver.allRoutes.values().contains(new Route(flight_3)));
+			Assert.assertTrue(webSocketHandler.routes.contains(new TestRoute(flight_4)));
+			Assert.assertTrue(routeResolver.allRoutes.values().contains(new TestRoute(flight_4)));
+			Assert.assertTrue(!routeResolver.allRoutes.values().contains(new TestRoute(flight_3)));
 
 			webSocketSession.close();
 

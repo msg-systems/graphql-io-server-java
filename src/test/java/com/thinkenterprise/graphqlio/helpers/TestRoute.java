@@ -23,7 +23,7 @@
 **  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package com.thinkenterprise.graphqlio.samples;
+package com.thinkenterprise.graphqlio.helpers;
 
 import java.sql.Date;
 import java.util.UUID;
@@ -40,7 +40,7 @@ import org.json.JSONObject;
  * @author Torsten Kühnert
  */
 
-public class Route {
+public class TestRoute {
 
 	private String flightNumber = null;
 	private String departure = null;
@@ -49,12 +49,12 @@ public class Route {
 	private UUID signature = null;
 	private Date bookingDate = null;
 
-	public Route() {
+	public TestRoute() {
 		super();
 		this.flightNumber = "";
 	}
 
-	public Route(String jsonStr) throws JSONException {
+	public TestRoute(String jsonStr) throws JSONException {
 		super();
 		JSONObject flightObj = new JSONObject(jsonStr);
 		this.flightNumber = flightObj.getString("flightNumber");
@@ -62,7 +62,7 @@ public class Route {
 		this.destination = flightObj.getString("destination");
 	}
 
-	public Route(String flightNumber, String departure, String destination) {
+	public TestRoute(String flightNumber, String departure, String destination) {
 		super();
 		this.flightNumber = flightNumber;
 		this.departure = departure;
@@ -119,12 +119,12 @@ public class Route {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null || !(obj instanceof Route)) {
+		if (obj == null || !(obj instanceof TestRoute)) {
 			return false;
 
 		}
 
-		Route route = (Route) obj;
+		TestRoute route = (TestRoute) obj;
 
 		if ((this.flightNumber != null && route.getFlightNumber() == null)
 				|| (this.departure != null && route.getDeparture() == null)

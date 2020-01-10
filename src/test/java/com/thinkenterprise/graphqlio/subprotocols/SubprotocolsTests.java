@@ -23,7 +23,7 @@
 **  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package com.thinkenterprise.graphqlio.samples.messages;
+package com.thinkenterprise.graphqlio.subprotocols;
 
 import java.io.IOException;
 import java.net.URI;
@@ -49,16 +49,15 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 
-import com.thinkenterprise.graphqlio.samples.Route;
-import com.thinkenterprise.graphqlio.samples.QueryResolver;
+import com.thinkenterprise.graphqlio.helpers.TestQueryResolver;
 import com.thinkenterprise.graphqlio.server.gs.handler.GsWebSocketHandler;
 import com.thinkenterprise.graphqlio.server.gs.server.GsServer;
 import com.thinkenterprise.gts.keyvaluestore.GtsGraphQLRedisService;
 
 /**
  * Class used to process any incoming message sent by clients via WebSocket
- * supports subprotocols (CBOR, MsgPack, Text)
- * triggers process to indicate outdating queries and notifies clients
+ * supports subprotocols (CBOR, MsgPack, Text) triggers process to indicate
+ * outdating queries and notifies clients
  *
  * @author Michael Schäfer
  * @author Torsten Kühnert
@@ -69,7 +68,7 @@ import com.thinkenterprise.gts.keyvaluestore.GtsGraphQLRedisService;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestInstance(Lifecycle.PER_CLASS)
-class GraphQlIoMessagesTests {
+class SubprotocolsTests {
 
 	@LocalServerPort
 	private int port;
@@ -81,7 +80,7 @@ class GraphQlIoMessagesTests {
 	private GtsGraphQLRedisService redisService;
 
 	@Autowired
-	private QueryResolver routeResolver;
+	private TestQueryResolver routeResolver;
 
 	@BeforeAll
 	private void startServers() throws IOException {
@@ -102,12 +101,12 @@ class GraphQlIoMessagesTests {
 		this.routeResolver.init();
 	}
 
-	private final String simpleQuery = "[1,0,\"GRAPHQL-REQUEST\",query { routes { flightNumber departure destination } } ]";
+	private final String simpleQuery = "[1,0,\"GRAPHQL-REQUEST\",query { _Subscription { subscribe } _Subscription { subscribe } } ]";
 
 	@Test
 	void textAnswer() {
 		try {
-			GraphQlIoMessagesTestsHandler webSocketHandler = new GraphQlIoMessagesTestsHandler();
+			SubprotocolsTestsHandler webSocketHandler = new SubprotocolsTestsHandler();
 
 			WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
 			headers.setSecWebSocketProtocol(Arrays.asList(GsWebSocketHandler.SUB_PROTOCOL_TEXT));
@@ -119,24 +118,18 @@ class GraphQlIoMessagesTests {
 			WebSocketClient webSocketClient = new StandardWebSocketClient();
 			WebSocketSession webSocketSession = webSocketClient.doHandshake(webSocketHandler, headers, uri).get();
 			webSocketSession.sendMessage(textMessage);
+			webSocketSession.sendMessage(textMessage);
 
 			long start = System.currentTimeMillis();
 			// maximal 1 sec:
-			while (webSocketHandler.count < 1 && System.currentTimeMillis() - start < 1000) {
+			while (webSocketHandler.count < 2 && System.currentTimeMillis() - start < 1000) {
 				Thread.sleep(100);
 			}
 
-			Assert.assertTrue(webSocketHandler.text_count == 1);
+			Assert.assertTrue(webSocketHandler.text_count == 2);
 			Assert.assertTrue(webSocketHandler.cbor_count == 0);
 			Assert.assertTrue(webSocketHandler.msgpack_count == 0);
 			Assert.assertTrue(webSocketHandler.default_count == 0);
-
-			// [1,1,"GRAPHQL-RESPONSE",{"data":{"routes":[{"flightNumber":"LH2122","departure":"MUC","destination":"BRE"},{"flightNumber":"LH2084","departure":"CGN","destination":"BER"}]}}]
-
-			String flight_a = "{\"flightNumber\":\"LH2084\",\"departure\":\"CGN\",\"destination\":\"BER\"}";
-			String flight_b = "{\"flightNumber\":\"LH2122\",\"departure\":\"MUC\",\"destination\":\"BRE\"}";
-			Assert.assertTrue(webSocketHandler.routes.contains(new Route(flight_a)));
-			Assert.assertTrue(webSocketHandler.routes.contains(new Route(flight_b)));
 
 			webSocketSession.close();
 
@@ -145,39 +138,108 @@ class GraphQlIoMessagesTests {
 		}
 	}
 
-	private final String mutationQuery = "[1,0,\"GRAPHQL-REQUEST\",mutation { updateRoute( flightNumber: \"LH2084\" input: { flightNumber: \"LH2084\" departure: \"HAM\" destination: \"MUC\" disabled: false } ) { flightNumber departure destination } } ]";
-
 	@Test
 	void cborAnswer() {
 		try {
-			GraphQlIoMessagesTestsHandler webSocketHandler = new GraphQlIoMessagesTestsHandler();
+			SubprotocolsTestsHandler webSocketHandler = new SubprotocolsTestsHandler();
 
 			WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
 			headers.setSecWebSocketProtocol(Arrays.asList(GsWebSocketHandler.SUB_PROTOCOL_CBOR));
 
 			URI uri = URI.create("ws://127.0.0.1:" + port + "/api/data/graph");
 
-			AbstractWebSocketMessage textMessage = GsWebSocketHandler.createFromStringCbor(mutationQuery);
+			AbstractWebSocketMessage cborMessage = GsWebSocketHandler.createFromStringCbor(simpleQuery);
 
 			WebSocketClient webSocketClient = new StandardWebSocketClient();
 			WebSocketSession webSocketSession = webSocketClient.doHandshake(webSocketHandler, headers, uri).get();
-			webSocketSession.sendMessage(textMessage);
+			webSocketSession.sendMessage(cborMessage);
+			webSocketSession.sendMessage(cborMessage);
+			webSocketSession.sendMessage(cborMessage);
+			webSocketSession.sendMessage(cborMessage);
 
 			long start = System.currentTimeMillis();
 			// maximal 1 sec:
-			while (webSocketHandler.count < 1 && System.currentTimeMillis() - start < 1000) {
+			while (webSocketHandler.count < 4 && System.currentTimeMillis() - start < 1000) {
 				Thread.sleep(100);
 			}
 
 			Assert.assertTrue(webSocketHandler.text_count == 0);
-			Assert.assertTrue(webSocketHandler.cbor_count == 1);
+			Assert.assertTrue(webSocketHandler.cbor_count == 4);
 			Assert.assertTrue(webSocketHandler.msgpack_count == 0);
 			Assert.assertTrue(webSocketHandler.default_count == 0);
 
-			// [1,1,"GRAPHQL-RESPONSE",{"data":{"updateRoute":{"flightNumber":"LH2084","departure":"HAM","destination":"MUC"}}}]
+			webSocketSession.close();
 
-			String flight_a = "{\"flightNumber\":\"LH2084\",\"departure\":\"HAM\",\"destination\":\"MUC\"}";
-			Assert.assertTrue(webSocketHandler.routes.contains(new Route(flight_a)));
+		} catch (Exception e) {
+			// e.printStackTrace();
+		}
+	}
+
+	@Test
+	void msgpackAnswer() {
+		try {
+			SubprotocolsTestsHandler webSocketHandler = new SubprotocolsTestsHandler();
+
+			WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
+			headers.setSecWebSocketProtocol(Arrays.asList(GsWebSocketHandler.SUB_PROTOCOL_MSGPACK));
+
+			URI uri = URI.create("ws://127.0.0.1:" + port + "/api/data/graph");
+
+			AbstractWebSocketMessage msgpackMessage = GsWebSocketHandler.createFromStringMsgPack(simpleQuery);
+
+			WebSocketClient webSocketClient = new StandardWebSocketClient();
+			WebSocketSession webSocketSession = webSocketClient.doHandshake(webSocketHandler, headers, uri).get();
+			webSocketSession.sendMessage(msgpackMessage);
+			webSocketSession.sendMessage(msgpackMessage);
+			webSocketSession.sendMessage(msgpackMessage);
+
+			long start = System.currentTimeMillis();
+			// maximal 1 sec:
+			while (webSocketHandler.count < 3 && System.currentTimeMillis() - start < 1000) {
+				Thread.sleep(100);
+			}
+
+			Assert.assertTrue(webSocketHandler.text_count == 0);
+			Assert.assertTrue(webSocketHandler.cbor_count == 0);
+			Assert.assertTrue(webSocketHandler.msgpack_count == 3);
+			Assert.assertTrue(webSocketHandler.default_count == 0);
+
+			webSocketSession.close();
+
+		} catch (Exception e) {
+			// e.printStackTrace();
+		}
+	}
+
+	@Test
+	void defaultAnswer() {
+		try {
+			SubprotocolsTestsHandler webSocketHandler = new SubprotocolsTestsHandler();
+
+			WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
+
+			URI uri = URI.create("ws://127.0.0.1:" + port + "/api/data/graph");
+
+			AbstractWebSocketMessage textMessage = new TextMessage(simpleQuery);
+
+			WebSocketClient webSocketClient = new StandardWebSocketClient();
+			WebSocketSession webSocketSession = webSocketClient.doHandshake(webSocketHandler, headers, uri).get();
+			webSocketSession.sendMessage(textMessage);
+			webSocketSession.sendMessage(textMessage);
+			webSocketSession.sendMessage(textMessage);
+			webSocketSession.sendMessage(textMessage);
+			webSocketSession.sendMessage(textMessage);
+
+			long start = System.currentTimeMillis();
+			// maximal 1 sec:
+			while (webSocketHandler.count < 5 && System.currentTimeMillis() - start < 1000) {
+				Thread.sleep(100);
+			}
+
+			Assert.assertTrue(webSocketHandler.text_count == 0);
+			Assert.assertTrue(webSocketHandler.cbor_count == 0);
+			Assert.assertTrue(webSocketHandler.msgpack_count == 0);
+			Assert.assertTrue(webSocketHandler.default_count == 5);
 
 			webSocketSession.close();
 

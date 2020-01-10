@@ -23,7 +23,7 @@
 **  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package com.thinkenterprise.graphqlio.samples;
+package com.thinkenterprise.graphqlio.helpers;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,23 +52,23 @@ import graphql.schema.DataFetchingEnvironment;
  */
 
 @Component
-public class QueryResolver implements GraphQLQueryResolver {
+public class TestQueryResolver implements GraphQLQueryResolver {
 
-	public Map<String, Route> allRoutes = new HashMap<String, Route>();
+	public Map<String, TestRoute> allRoutes = new HashMap<String, TestRoute>();
 
-	public QueryResolver() {
+	public TestQueryResolver() {
 		this.init();
 	}
 
 	public void init() {
-		this.allRoutes = new HashMap<String, Route>();
-		this.allRoutes.put("LH2084", new Route("LH2084", "CGN", "BER"));
-		this.allRoutes.put("LH2122", new Route("LH2122", "MUC", "BRE"));
+		this.allRoutes = new HashMap<String, TestRoute>();
+		this.allRoutes.put("LH2084", new TestRoute("LH2084", "CGN", "BER"));
+		this.allRoutes.put("LH2122", new TestRoute("LH2122", "MUC", "BRE"));
 	}
 
-	public Collection<Route> routes(DataFetchingEnvironment env) {
+	public Collection<TestRoute> routes(DataFetchingEnvironment env) {
 
-		Collection<Route> routes = new ArrayList<Route>(this.allRoutes.values());
+		Collection<TestRoute> routes = new ArrayList<TestRoute>(this.allRoutes.values());
 
 		List<String> dstIds = new ArrayList<>();
 		if (!routes.isEmpty()) {
@@ -78,7 +78,7 @@ public class QueryResolver implements GraphQLQueryResolver {
 		GtsContext context = env.getContext();
 		GtsScope scope = context.getScope();
 		scope.addRecord(
-				GtsRecord.builder().op(GtsOperationType.READ).arity(GtsArityType.ALL).dstType(Route.class.getName())
+				GtsRecord.builder().op(GtsOperationType.READ).arity(GtsArityType.ALL).dstType(TestRoute.class.getName())
 						.dstIds(dstIds.toArray(new String[dstIds.size()])).dstAttrs(new String[] { "*" }).build());
 
 		return routes;

@@ -23,7 +23,7 @@
 **  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package com.thinkenterprise.graphqlio.samples.subscription;
+package com.thinkenterprise.graphqlio.messages;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,19 +37,19 @@ import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 
-import com.thinkenterprise.graphqlio.samples.Route;
+import com.thinkenterprise.graphqlio.helpers.TestRoute;
 import com.thinkenterprise.graphqlio.server.gs.handler.GsWebSocketHandler;
 
 /**
  * Class used to process any incoming message sent by clients via WebSocket
- * supports subprotocols (CBOR, MsgPack, Text) triggers process to indicate
- * outdating queries and notifies clients
+ * supports subprotocols (CBOR, MsgPack, Text)
+ * triggers process to indicate outdating queries and notifies clients
  *
  * @author Michael Schäfer
  * @author Torsten Kühnert
  */
 
-public class GraphQlIoSubscriptionTestsHandler extends AbstractWebSocketHandler {
+public class MessagesTestsHandler extends AbstractWebSocketHandler {
 
 	public int text_count = 0;
 	public int cbor_count = 0;
@@ -58,10 +58,7 @@ public class GraphQlIoSubscriptionTestsHandler extends AbstractWebSocketHandler 
 
 	public int count = 0;
 
-	public int notifier_count = 0;
-
-	public List<Route> routes = new ArrayList<Route>();
-	public List<String> subscriptionIds = new ArrayList<String>();
+	public List<TestRoute> routes = new ArrayList<TestRoute>();
 
 	@Override
 	public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
@@ -70,47 +67,24 @@ public class GraphQlIoSubscriptionTestsHandler extends AbstractWebSocketHandler 
 			this.count++;
 			String msg = ((TextMessage) message).getPayload();
 			this.addFlights(msg);
-			this.handleSubecriptionIds(msg);
-			this.notifier_count += msg.indexOf("GRAPHQL-NOTIFIER") > 0 ? 1 : 0;
 
 		} else if (GsWebSocketHandler.SUB_PROTOCOL_CBOR.equalsIgnoreCase(session.getAcceptedProtocol())) {
 			this.cbor_count++;
 			this.count++;
 			String msg = GsWebSocketHandler.getFromCbor((BinaryMessage) message);
 			this.addFlights(msg);
-			this.handleSubecriptionIds(msg);
-			this.notifier_count += msg.indexOf("GRAPHQL-NOTIFIER") > 0 ? 1 : 0;
 
 		} else if (GsWebSocketHandler.SUB_PROTOCOL_MSGPACK.equalsIgnoreCase(session.getAcceptedProtocol())) {
 			this.msgpack_count++;
 			this.count++;
 			String msg = GsWebSocketHandler.getFromMsgPack((BinaryMessage) message);
 			this.addFlights(msg);
-			this.handleSubecriptionIds(msg);
-			this.notifier_count += msg.indexOf("GRAPHQL-NOTIFIER") > 0 ? 1 : 0;
 
 		} else {
 			this.default_count++;
 			this.count++;
 			String msg = ((TextMessage) message).getPayload();
 			this.addFlights(msg);
-			this.handleSubecriptionIds(msg);
-			this.notifier_count += msg.indexOf("GRAPHQL-NOTIFIER") > 0 ? 1 : 0;
-		}
-	}
-
-	// [1,1,"GRAPHQL-RESPONSE",{"data":{"_Subscription":{"subscribe":"2250bf90-f6a4-4a4d-9587-4e538bb2d4ab"},"routes":[{"flightNumber":"LH2122","departure":"MUC","destination":"BRE"},{"flightNumber":"LH2084","departure":"CGN","destination":"BER"}]}}]
-
-	protected void handleSubecriptionIds(String payload) throws Exception {
-		int pos_gql = payload.indexOf("GRAPHQL-RESPONSE");
-		int pos_sub = payload.indexOf("_Subscription");
-		int pos = payload.indexOf("\"subscribe");
-
-		if (pos_gql > 0 && pos_sub > 0 && pos > 0) {
-			payload = payload.substring(pos - 1, payload.indexOf("}", pos) + 1);
-			JSONObject json = new JSONObject(payload);
-			String subscriptionId = json.getString("subscribe");
-			this.subscriptionIds.add(subscriptionId);
 		}
 	}
 
@@ -130,13 +104,13 @@ public class GraphQlIoSubscriptionTestsHandler extends AbstractWebSocketHandler 
 				for (int i = 0; i < routesArr.length(); i++) {
 					JSONObject flightObj = routesArr.getJSONObject(i);
 
-					this.routes.add(new Route(flightObj.toString()));
+					this.routes.add(new TestRoute(flightObj.toString()));
 				}
 
 			} else if (dataObj.has("updateRoute")) {
 				JSONObject flightObj = dataObj.getJSONObject("updateRoute");
 
-				this.routes.add(new Route(flightObj.toString()));
+				this.routes.add(new TestRoute(flightObj.toString()));
 			}
 		}
 	}
