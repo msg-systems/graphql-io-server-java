@@ -30,11 +30,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import com.thinkenterprise.graphqlio.server.autoconfiguration.GsProperties;
+import com.thinkenterprise.gts.autoconfiguration.GtsProperties;
 import com.thinkenterprise.gtt.types.GttDateType;
 import com.thinkenterprise.gtt.types.GttJsonType;
 import com.thinkenterprise.gtt.types.GttUuidType;
@@ -50,7 +52,10 @@ public abstract class GsGraphQLAbstractSchemaCreator implements GsGraphQLSchemaC
 	@Autowired
 	private GsProperties gsProperties;
 		
-		
+	@Autowired
+	private GtsProperties gtsProperties;
+
+	
 	GraphQLSchema graphQLSchema = null;
 		
 	@Override
@@ -74,8 +79,10 @@ public abstract class GsGraphQLAbstractSchemaCreator implements GsGraphQLSchemaC
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-		return resources;
+		
+		Resource[] gtsResources = gtsProperties.getSchemaResources();
+		
+		return (Resource[]) ArrayUtils.addAll(resources, gtsResources);
 	}
 	
 }
