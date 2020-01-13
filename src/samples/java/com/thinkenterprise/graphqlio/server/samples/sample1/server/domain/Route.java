@@ -26,7 +26,12 @@
  ******************************************************************************/
 package com.thinkenterprise.graphqlio.server.samples.sample1.server.domain;
 
+import org.springframework.data.annotation.Id;
+
 public class Route {
+
+	@Id
+	private Long id;
 
 	private String flightNumber;
 	private String departure;
@@ -40,6 +45,14 @@ public class Route {
 		this.flightNumber = flightNumber;
 		this.destination = destination;
 		this.departure = departure;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getFlightNumber() {

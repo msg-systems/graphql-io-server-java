@@ -64,7 +64,7 @@ public class MutationResolver implements GraphQLMutationResolver {
 		GtsContext context = env.getContext();
 		GtsScope scope = context.getScope();
 		scope.addRecord(GtsRecord.builder().op(GtsOperationType.UPDATE).arity(GtsArityType.ONE)
-				.dstType(Route.class.getName()).dstIds(new String[] { modifiedRoute.getFlightNumber().toString() })
+				.dstType(Route.class.getName()).dstIds(new String[] { modifiedRoute.getId().toString() })
 				.dstAttrs(new String[] { "*" }).build());
 
 		return modifiedRoute;

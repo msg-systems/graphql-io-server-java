@@ -19,6 +19,7 @@ input UpdateRouteInput {
 }
 
 type Route {
+	id: Long!
 	flightNumber: String!
 	departure: String
 	destination: String

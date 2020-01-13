@@ -28,6 +28,7 @@ package com.thinkenterprise.graphqlio.server.samples.sample1.server.domain;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Random;
 
 import org.springframework.stereotype.Component;
 
@@ -38,12 +39,15 @@ public class RouteRepository {
 
 	public RouteRepository() {
 		Route a = new Route("LH2113", "MUC", "BRE");
+		a.setId(new Random().nextLong());
 		repositoryMap.put("LH2113", a);
 
 		Route b = new Route("BA7611", "HAM", "BCN");
+		b.setId(new Random().nextLong());
 		repositoryMap.put("BA7611", b);
 
 		Route c = new Route("UA1000", "FRA", "CGN");
+		c.setId(new Random().nextLong());
 		repositoryMap.put("UA1000", c);
 	}
 
@@ -56,6 +60,9 @@ public class RouteRepository {
 	}
 
 	public Route save(Route route) {
+		if (route.getId() == null) {
+			route.setId(new Random().nextLong());
+		}
 		repositoryMap.put(route.getFlightNumber(), route);
 		return route;
 	}

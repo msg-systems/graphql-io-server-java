@@ -60,7 +60,7 @@ public class QueryResolver implements GraphQLQueryResolver {
 
 		List<String> dstIds = new ArrayList<>();
 		if (!allRoutesList.isEmpty()) {
-			allRoutesList.forEach(route -> dstIds.add(route.getFlightNumber()));
+			allRoutesList.forEach(route -> dstIds.add(route.getId().toString()));
 		} else
 			dstIds.add("*");
 

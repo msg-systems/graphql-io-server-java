@@ -38,7 +38,7 @@ import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 
 public class SampleClientApplication {
 
-	private final String Query = "[1,0,\"GRAPHQL-REQUEST\",query { allRoutes { flightNumber departure destination } } ]";
+	private final String Query = "[1,0,\"GRAPHQL-REQUEST\",query { allRoutes { id flightNumber departure destination } } ]";
 
 	public static void main(String[] args) {
 		new SampleClientApplication().runQuery();
