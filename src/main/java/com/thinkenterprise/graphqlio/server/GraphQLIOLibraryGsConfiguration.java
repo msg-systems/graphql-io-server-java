@@ -34,9 +34,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.FilterType;
 
 @Configuration
-@ComponentScan(basePackageClasses = GraphQLIOLibraryGsConfiguration.class)
+@ComponentScan(basePackageClasses = GraphQLIOLibraryGsConfiguration.class,
+				excludeFilters = @ComponentScan.Filter(type = FilterType.REGEX, pattern = "com.thinkenterprise.graphqlio.server.samples.*"))
 public class GraphQLIOLibraryGsConfiguration {
 
 	
