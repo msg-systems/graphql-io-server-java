@@ -1,4 +1,4 @@
-package com.thinkenterprise.graphqlio.client.samples.java.helloworld;
+package com.thinkenterprise.graphqlio.server.samples.helloworld.client;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.thinkenterprise.graphqlio.server.samples;
+package com.thinkenterprise.graphqlio.server.samples.sample1.server.domain;
 
 import java.util.Collection;
 import java.util.HashMap;

@@ -1,5 +1,4 @@
-package com.thinkenterprise.graphqlio.client.samples.java.helloworld;
-
+package com.thinkenterprise.graphqlio.server.samples.helloworld.client;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -39,7 +38,6 @@ public class SampleHelloWorldJavaClient {
 			webSocketSession.sendMessage(new TextMessage(helloWorldQuery));
 			// a little wait for getting and handling answer(s)
 			Thread.sleep(200);
-
 
 			webSocketSession.close();
 

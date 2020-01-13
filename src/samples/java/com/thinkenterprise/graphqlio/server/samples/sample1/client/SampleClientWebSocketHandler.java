@@ -1,4 +1,4 @@
-package com.thinkenterprise.graphqlio.server.samples;
+package com.thinkenterprise.graphqlio.server.samples.sample1.client;
 
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;

@@ -1,9 +1,12 @@
-package com.thinkenterprise.graphqlio.server.samples;
+package com.thinkenterprise.graphqlio.server.samples.sample1.server.resolver;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.coxautodev.graphql.tools.GraphQLMutationResolver;
+import com.thinkenterprise.graphqlio.server.samples.sample1.server.domain.Route;
+import com.thinkenterprise.graphqlio.server.samples.sample1.server.domain.RouteRepository;
+import com.thinkenterprise.graphqlio.server.samples.sample1.server.domain.UpdateRouteInput;
 import com.thinkenterprise.gts.context.GtsContext;
 import com.thinkenterprise.gts.tracking.GtsRecord;
 import com.thinkenterprise.gts.tracking.GtsRecord.GtsArityType;
