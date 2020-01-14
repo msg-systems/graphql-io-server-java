@@ -295,7 +295,7 @@ client subscribing to counter value, handler for responses and notifications:
 	final URI uri = URI.create("ws://127.0.0.1:8080/api/data/graph");
 
 	final WebSocketSession webSocketSession = webSocketClient
-					.doHandshake(webSocketHandler, webSocketHttpHeaders, uri).get();
+			.doHandshake(webSocketHandler, webSocketHttpHeaders, uri).get();
 
 	final AbstractWebSocketMessage message = new TextMessage(Query);
 			webSocketSession.sendMessage(message);
@@ -308,18 +308,18 @@ client subscribing to counter value, handler for responses and notifications:
 	class CounterClientSubscriptionHandler extends TextWebSocketHandler {
 
 		@Override
-		protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+		protected void handleTextMessage(WebSocketSession session, TextMessage message) {
 			System.out.println("Subscription::message received: " + message.getPayload());
 		}
 
 		@Override
-		public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+		public void afterConnectionEstablished(WebSocketSession session) {
 			System.out.println("Subscription::connection established: " + session.getId());
 		}
 	}
 ```
 
-client increasing counter value every second:
+client increasing counter value every second, handler for responses:
 
 ```
 	final WebSocketClient webSocketClient = new StandardWebSocketClient();
@@ -328,14 +328,13 @@ client increasing counter value every second:
 	final URI uri = URI.create("ws://127.0.0.1:8080/api/data/graph");
 
 	final WebSocketSession webSocketSession = webSocketClient
-					.doHandshake(webSocketHandler, webSocketHttpHeaders, uri).get();
+			.doHandshake(webSocketHandler, webSocketHttpHeaders, uri).get();
 
 	final AbstractWebSocketMessage message = new TextMessage(Query);
 
 	// sending this increase-message 50 times with 1 sec waiting
 	for (int i = 0; i < 50; i++) {
 		webSocketSession.sendMessage(message);
-
 		Thread.sleep(1000);
 	}
 	webSocketSession.close();
@@ -344,12 +343,12 @@ client increasing counter value every second:
 	class CounterClientIncreaseHandler extends TextWebSocketHandler {
 
 		@Override
-		protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+		protected void handleTextMessage(WebSocketSession session, TextMessage message) {
 			System.out.println("Increase::message received: " + message.getPayload());
 		}
 
 		@Override
-		public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+		public void afterConnectionEstablished(WebSocketSession session) {
 			System.out.println("Increase::connection established: " + session.getId());
 		}
 	}
