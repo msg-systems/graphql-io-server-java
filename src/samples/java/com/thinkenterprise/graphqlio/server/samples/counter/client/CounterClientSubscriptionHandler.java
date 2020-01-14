@@ -26,43 +26,20 @@
  ******************************************************************************/
 package com.thinkenterprise.graphqlio.server.samples.counter.client;
 
-import java.net.URI;
-
-import org.springframework.web.socket.AbstractWebSocketMessage;
 import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketHandler;
-import org.springframework.web.socket.WebSocketHttpHeaders;
 import org.springframework.web.socket.WebSocketSession;
-import org.springframework.web.socket.client.WebSocketClient;
-import org.springframework.web.socket.client.standard.StandardWebSocketClient;
+import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-public class CounterClientApplicationIncrease {
+public class CounterClientSubscriptionHandler extends TextWebSocketHandler {
 
-	private final String Query = "[1,0,\"GRAPHQL-REQUEST\",query { counter { increase { value } } } ]";
-
-	public static void main(String[] args) {
-		new CounterClientApplicationIncrease().runQuery();
+	@Override
+	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+		System.out.println("Subscription::message received: " + message.getPayload());
 	}
 
-	public void runQuery() {
-		try {
-			final WebSocketClient webSocketClient = new StandardWebSocketClient();
-			final WebSocketHandler webSocketHandler = new CounterClientWebSocketHandler();
-			final WebSocketHttpHeaders webSocketHttpHeaders = new WebSocketHttpHeaders();
-			final URI uri = URI.create("ws://127.0.0.1:8080/api/data/graph");
-
-			final WebSocketSession webSocketSession = webSocketClient
-					.doHandshake(webSocketHandler, webSocketHttpHeaders, uri).get();
-
-			final AbstractWebSocketMessage message = new TextMessage(Query);
-			webSocketSession.sendMessage(message);
-
-			Thread.sleep(1000);
-			webSocketSession.close();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	@Override
+	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+		System.out.println("Subscription::connection established: " + session.getId());
 	}
 
 }

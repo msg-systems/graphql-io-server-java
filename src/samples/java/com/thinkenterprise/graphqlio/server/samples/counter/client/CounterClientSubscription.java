@@ -26,20 +26,44 @@
  ******************************************************************************/
 package com.thinkenterprise.graphqlio.server.samples.counter.client;
 
+import java.net.URI;
+
+import org.springframework.web.socket.AbstractWebSocketMessage;
 import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketHandler;
+import org.springframework.web.socket.WebSocketHttpHeaders;
 import org.springframework.web.socket.WebSocketSession;
-import org.springframework.web.socket.handler.TextWebSocketHandler;
+import org.springframework.web.socket.client.WebSocketClient;
+import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 
-public class CounterClientWebSocketHandler extends TextWebSocketHandler {
+public class CounterClientSubscription {
 
-	@Override
-	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-		System.out.println("message received: " + message.getPayload());
+	private final String Query = "[1,0,\"GRAPHQL-REQUEST\",query { _Subscription { subscribe } counter { value } } ]";
+
+	public static void main(String[] args) {
+		new CounterClientSubscription().runQuery();
 	}
 
-	@Override
-	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-		System.out.println("connection established: " + session.getId());
+	public void runQuery() {
+		try {
+			final WebSocketClient webSocketClient = new StandardWebSocketClient();
+			final WebSocketHandler webSocketHandler = new CounterClientSubscriptionHandler();
+			final WebSocketHttpHeaders webSocketHttpHeaders = new WebSocketHttpHeaders();
+			final URI uri = URI.create("ws://127.0.0.1:8080/api/data/graph");
+
+			final WebSocketSession webSocketSession = webSocketClient
+					.doHandshake(webSocketHandler, webSocketHttpHeaders, uri).get();
+
+			final AbstractWebSocketMessage message = new TextMessage(Query);
+			webSocketSession.sendMessage(message);
+
+			System.out.println("Subscription::waiting 60 seconds...");
+			Thread.sleep(60000);
+			webSocketSession.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }
