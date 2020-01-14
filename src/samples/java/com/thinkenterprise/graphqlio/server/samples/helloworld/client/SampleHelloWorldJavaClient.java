@@ -27,13 +27,7 @@
 package com.thinkenterprise.graphqlio.server.samples.helloworld.client;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketHttpHeaders;
 import org.springframework.web.socket.WebSocketSession;
@@ -41,38 +35,27 @@ import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-import com.thinkenterprise.graphqlio.server.handler.GsWebSocketHandler;
-
 /**
  * Client application for the hello world sample.
  * 
  * @author Michael Schäfer
- * @author Dr. Edgar Müller
  * @author Torsten Kühnert
  */
 
 public class SampleHelloWorldJavaClient {
 
-	private final Logger logger = LoggerFactory.getLogger(SampleHelloWorldJavaClient.class);
-
 	private static final String helloWorldQuery = "[1,0,\"GRAPHQL-REQUEST\",query { hello } ]";
-
-	private static final List<String> subscriptionIds = new ArrayList<String>();
 
 	public static void main(String[] args) {
 		try {
-			GraphQLIOSampleHandler webSocketHandler = new GraphQLIOSampleHandler(subscriptionIds);
-
+			SampleHelloWorldHandler webSocketHandler = new SampleHelloWorldHandler();
 			WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
-			headers.setSecWebSocketProtocol(Arrays.asList(GsWebSocketHandler.SUB_PROTOCOL_TEXT));
-
 			WebSocketClient webSocketClient = new StandardWebSocketClient();
-			WebSocketSession webSocketSession = webSocketClient
-					.doHandshake(webSocketHandler, headers, URI.create("ws://127.0.0.1:8080/api/data/graph")).get();
+			URI uri = URI.create("ws://127.0.0.1:8080/api/data/graph");
+			WebSocketSession webSocketSession = webSocketClient.doHandshake(webSocketHandler, headers, uri).get();
 
-			// send 1st query to GraphQLIO server:
 			webSocketSession.sendMessage(new TextMessage(helloWorldQuery));
-			// a little wait for getting and handling answer(s)
+
 			Thread.sleep(200);
 
 			webSocketSession.close();
@@ -82,59 +65,17 @@ public class SampleHelloWorldJavaClient {
 		}
 	}
 
-	private static class GraphQLIOSampleHandler extends TextWebSocketHandler {
-
-		private final Logger logger = LoggerFactory.getLogger(GraphQLIOSampleHandler.class);
-
-		private static List<String> subscriptionIds = new ArrayList<String>();
-
-		public GraphQLIOSampleHandler(List<String> subscriptionIds) {
-			this.subscriptionIds = subscriptionIds;
-		}
+	private static class SampleHelloWorldHandler extends TextWebSocketHandler {
 
 		@Override
 		protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-			logger.info("message received : id = " + session.getId());
-			logger.info("                 : message = " + message.getPayload());
-
-			if (this.isResponse(message.getPayload())) {
-				if (this.isSubscription(message.getPayload())) {
-					this.handleSubscriptions(message.getPayload());
-				} else {
-					// handle other messages
-				}
-
-			} else if (this.isNotification(message.getPayload())) {
-				// handle notificvation
-			}
+			System.out.println("message received : id = " + session.getId());
+			System.out.println("                 : message = " + message.getPayload());
 		}
 
 		@Override
 		public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-			logger.info("connection est.  : id = " + session.getId());
-		}
-
-		private boolean isResponse(String payload) {
-			return payload.indexOf("GRAPHQL-RESPONSE") >= 0;
-		}
-
-		private boolean isNotification(String payload) {
-			return payload.indexOf("GRAPHQL-NOTIFIER") >= 0;
-		}
-
-		private boolean isSubscription(String payload) {
-			return payload.indexOf("_Subscription") >= 0 && payload.indexOf("\"subscribe") > 0;
-		}
-
-		private void handleSubscriptions(String payload) {
-			int pos = payload.indexOf("\"subscribe");
-			if (pos > 0) {
-				payload = payload.substring(pos - 1, payload.indexOf("}", pos) + 1);
-				JSONObject json = new JSONObject(payload);
-				String subscriptionId = json.getString("subscribe");
-				logger.info("                 : subscriptionId = " + subscriptionId);
-				this.subscriptionIds.add(subscriptionId);
-			}
+			System.out.println("connection est.  : id = " + session.getId());
 		}
 
 	}
