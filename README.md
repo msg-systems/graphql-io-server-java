@@ -38,7 +38,7 @@ dependencies {
 
 ## Hello World Sample
 
-[Reference to the implementation] (https://github.com/Thinkenterprise/graphql-io-server-java/tree/master/src/samples/java/com/thinkenterprise/graphqlio/server/samples/helloworld)
+[Reference to the implementation](https://github.com/Thinkenterprise/graphql-io-server-java/tree/master/src/samples/java/com/thinkenterprise/graphqlio/server/samples/helloworld)
 
 graphql schema:
 
