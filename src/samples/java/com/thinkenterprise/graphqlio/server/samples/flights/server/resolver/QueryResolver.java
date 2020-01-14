@@ -24,7 +24,7 @@
  * **  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * *
  ******************************************************************************/
-package com.thinkenterprise.graphqlio.server.samples.sample1.server.resolver;
+package com.thinkenterprise.graphqlio.server.samples.flights.server.resolver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +32,8 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
-import com.thinkenterprise.graphqlio.server.samples.sample1.server.domain.Route;
-import com.thinkenterprise.graphqlio.server.samples.sample1.server.domain.RouteRepository;
+import com.thinkenterprise.graphqlio.server.samples.flights.server.domain.Route;
+import com.thinkenterprise.graphqlio.server.samples.flights.server.domain.RouteRepository;
 import com.thinkenterprise.gts.context.GtsContext;
 import com.thinkenterprise.gts.tracking.GtsRecord;
 import com.thinkenterprise.gts.tracking.GtsRecord.GtsArityType;
@@ -41,6 +41,13 @@ import com.thinkenterprise.gts.tracking.GtsRecord.GtsOperationType;
 import com.thinkenterprise.gts.tracking.GtsScope;
 
 import graphql.schema.DataFetchingEnvironment;
+
+/**
+ * Root query resolver for resolving allRoutes.
+ * 
+ * @author Michael Schäfer
+ * @author Torsten Kühnert
+ */
 
 @Component
 public class QueryResolver implements GraphQLQueryResolver {

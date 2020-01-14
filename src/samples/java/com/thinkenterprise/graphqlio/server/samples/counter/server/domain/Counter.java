@@ -26,6 +26,13 @@
  ******************************************************************************/
 package com.thinkenterprise.graphqlio.server.samples.counter.server.domain;
 
+/**
+ * Implementation of the Counter type from graphql schema.
+ * 
+ * @author Michael Schäfer
+ * @author Torsten Kühnert
+ */
+
 public class Counter {
 
 	private int value = 0;

@@ -24,7 +24,7 @@
  * **  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * *
  ******************************************************************************/
-package com.thinkenterprise.graphqlio.server.samples.sample1.server;
+package com.thinkenterprise.graphqlio.server.samples.flights.server;
 
 import java.util.Properties;
 
@@ -41,19 +41,29 @@ import com.thinkenterprise.gts.EnableGraphQLIOGtsLibraryModule;
 import com.thinkenterprise.gtt.EnableGraphQLIOGttLibraryModule;
 import com.thinkenterprise.wsf.EnableGraphQLIOWsfLibraryModule;
 
+/**
+ * Server application for the flights sample.
+ * This spring boot application set the properties and starts it.
+ * The graphql-io-server is started by the ApplicationRunner implementation.
+ * On end of spring boot application the server should be stopped.
+ * 
+ * @author Michael Schäfer
+ * @author Torsten Kühnert
+ */
+
 @SpringBootApplication
 @EnableGraphQLIOWsfLibraryModule
 @EnableGraphQLIOGttLibraryModule
 @EnableGraphQLIOGtsLibraryModule
 @EnableGraphQLIOGsLibraryModule
-public class SampleServerApplication implements ApplicationRunner {
+public class FlightsServerApplication implements ApplicationRunner {
 
 	public static void main(String[] args) {
-		SpringApplication application = new SpringApplication(SampleServerApplication.class);
+		SpringApplication application = new SpringApplication(FlightsServerApplication.class);
 
 		Properties properties = new Properties();
 		properties.put("server.port", "8080");
-		properties.put("graphqlio.server.schemaLocationPattern", "**/*.sample1.graphql");
+		properties.put("graphqlio.server.schemaLocationPattern", "**/*.flights.graphql");
 		properties.put("graphqlio.server.endpoint", "/api/data/graph");
 		properties.put("graphqlio.toolssubscribe.useEmbeddedRedis", "true");
 		properties.put("spring.redis.host", "localhost");
@@ -65,7 +75,7 @@ public class SampleServerApplication implements ApplicationRunner {
 
 	private GsServer graphqlioServer;
 
-	SampleServerApplication(GsServer graphqlioServer) {
+	FlightsServerApplication(GsServer graphqlioServer) {
 		this.graphqlioServer = graphqlioServer;
 	}
 

@@ -37,6 +37,14 @@ import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+/**
+ * Client application for the counter increase sample.
+ * The counter is increased every second for 50 seconds.
+ * 
+ * @author Michael Schäfer
+ * @author Torsten Kühnert
+ */
+
 public class CounterClientIncrease {
 
 	private final String Query = "[1,0,\"GRAPHQL-REQUEST\",query { counter { increase { value } } } ]";

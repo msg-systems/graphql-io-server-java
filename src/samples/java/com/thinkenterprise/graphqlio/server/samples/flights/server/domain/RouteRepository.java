@@ -24,22 +24,54 @@
  * **  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * *
  ******************************************************************************/
-package com.thinkenterprise.graphqlio.server.samples.sample1.client;
+package com.thinkenterprise.graphqlio.server.samples.flights.server.domain;
 
-import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketSession;
-import org.springframework.web.socket.handler.TextWebSocketHandler;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Random;
 
-public class SampleClientWebSocketHandler extends TextWebSocketHandler {
+import org.springframework.stereotype.Component;
 
-	@Override
-	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-		System.out.println("message received: " + message.getPayload());
+/**
+ * A simple repository where the route instances are hold.
+ * 
+ * @author Michael Schäfer
+ * @author Torsten Kühnert
+ */
+
+@Component
+public class RouteRepository {
+
+	HashMap<String, Route> repositoryMap = new HashMap<String, Route>();
+
+	public RouteRepository() {
+		Route a = new Route("LH2113", "MUC", "BRE");
+		a.setId(new Random().nextLong());
+		repositoryMap.put("LH2113", a);
+
+		Route b = new Route("BA7611", "HAM", "BCN");
+		b.setId(new Random().nextLong());
+		repositoryMap.put("BA7611", b);
+
+		Route c = new Route("UA1000", "FRA", "CGN");
+		c.setId(new Random().nextLong());
+		repositoryMap.put("UA1000", c);
 	}
 
-	@Override
-	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-		System.out.println("connection established: " + session.getId());
+	public Collection<Route> findAll() {
+		return repositoryMap.values();
+	}
+
+	public Route getByFlightNumber(String flightNumber) {
+		return repositoryMap.get(flightNumber);
+	}
+
+	public Route save(Route route) {
+		if (route.getId() == null) {
+			route.setId(new Random().nextLong());
+		}
+		repositoryMap.put(route.getFlightNumber(), route);
+		return route;
 	}
 
 }

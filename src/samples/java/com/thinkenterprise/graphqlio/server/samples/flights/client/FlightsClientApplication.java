@@ -24,7 +24,7 @@
  * **  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * *
  ******************************************************************************/
-package com.thinkenterprise.graphqlio.server.samples.sample1.client;
+package com.thinkenterprise.graphqlio.server.samples.flights.client;
 
 import java.net.URI;
 
@@ -35,34 +35,68 @@ import org.springframework.web.socket.WebSocketHttpHeaders;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
+import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-public class SampleClientApplication {
+/**
+ * Client application for the flights sample.
+ * 1st query of all flights
+ * 2nd mutation of UA flight
+ * 3rd query of all flights
+ * 
+ * @author Michael Schäfer
+ * @author Torsten Kühnert
+ */
+
+public class FlightsClientApplication {
 
 	private final String Query = "[1,0,\"GRAPHQL-REQUEST\",query { allRoutes { id flightNumber departure destination } } ]";
+	private final String Mutation = "[1,0,\"GRAPHQL-REQUEST\",mutation { updateRoute { flightNumber: \\\"UA1000\\\" input: { flightNumber: \\\"XY9999\\\" departure: \\\"ABC\\\" destination: \\\"XYZ\\\" } } } ]";
 
 	public static void main(String[] args) {
-		new SampleClientApplication().runQuery();
+		new FlightsClientApplication().runQuery();
 	}
 
 	public void runQuery() {
 		try {
 			final WebSocketClient webSocketClient = new StandardWebSocketClient();
-			final WebSocketHandler webSocketHandler = new SampleClientWebSocketHandler();
+			final WebSocketHandler webSocketHandler = new FlightsClientWebSocketHandler();
 			final WebSocketHttpHeaders webSocketHttpHeaders = new WebSocketHttpHeaders();
 			final URI uri = URI.create("ws://127.0.0.1:8080/api/data/graph");
 
 			final WebSocketSession webSocketSession = webSocketClient
 					.doHandshake(webSocketHandler, webSocketHttpHeaders, uri).get();
 
-			final AbstractWebSocketMessage message = new TextMessage(Query);
+			AbstractWebSocketMessage message = new TextMessage(Query);
 			webSocketSession.sendMessage(message);
+			Thread.sleep(2000);
 
-			Thread.sleep(3000);
+			message = new TextMessage(Mutation);
+			webSocketSession.sendMessage(message);
+			Thread.sleep(2000);
+
+			message = new TextMessage(Query);
+			webSocketSession.sendMessage(message);
+			Thread.sleep(2000);
+
 			webSocketSession.close();
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private class FlightsClientWebSocketHandler extends TextWebSocketHandler {
+
+		@Override
+		protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+			System.out.println("message received: " + message.getPayload());
+		}
+
+		@Override
+		public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+			System.out.println("connection established: " + session.getId());
+		}
+
 	}
 
 }

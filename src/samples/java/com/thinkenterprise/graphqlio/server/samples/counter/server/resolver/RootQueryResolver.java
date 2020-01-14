@@ -39,6 +39,13 @@ import com.thinkenterprise.gts.tracking.GtsScope;
 
 import graphql.schema.DataFetchingEnvironment;
 
+/**
+ * Root query resolver for resolving counter.
+ * 
+ * @author Michael Schäfer
+ * @author Torsten Kühnert
+ */
+
 @Component
 public class RootQueryResolver implements GraphQLQueryResolver {
 

@@ -37,6 +37,15 @@ import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+/**
+ * Client application for the counter increase subscription sample.
+ * This client subscribes on the counter value.
+ * When the counter is increased this client is notificated by graphql-io-server.
+ * 
+ * @author Michael Schäfer
+ * @author Torsten Kühnert
+ */
+
 public class CounterClientSubscription {
 
 	private final String Query = "[1,0,\"GRAPHQL-REQUEST\",query { _Subscription { subscribe } counter { value } } ]";

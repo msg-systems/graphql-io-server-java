@@ -41,6 +41,17 @@ import com.thinkenterprise.gts.EnableGraphQLIOGtsLibraryModule;
 import com.thinkenterprise.gtt.EnableGraphQLIOGttLibraryModule;
 import com.thinkenterprise.wsf.EnableGraphQLIOWsfLibraryModule;
 
+/**
+ * Server application for the hello world sample.
+ * This spring boot application set the properties and starts it.
+ * The graphql-io-server is started by the ApplicationRunner implementation.
+ * On end of spring boot application the server should be stopped.
+ * 
+ * @author Michael Schäfer
+ * @author Dr. Edgar Müller
+ * @author Torsten Kühnert
+ */
+
 @SpringBootApplication
 @EnableGraphQLIOGsLibraryModule
 @EnableGraphQLIOGtsLibraryModule

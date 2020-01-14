@@ -30,6 +30,14 @@ import org.springframework.stereotype.Component;
 
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 
+/**
+ * Root query resolver for resolving hello.
+ * 
+ * @author Michael Schäfer
+ * @author Dr. Edgar Müller
+ * @author Torsten Kühnert
+ */
+
 @Component
 public class SampleHelloWorldResolver implements GraphQLQueryResolver {
 

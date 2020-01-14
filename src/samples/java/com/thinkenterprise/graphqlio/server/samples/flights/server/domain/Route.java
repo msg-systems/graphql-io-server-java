@@ -24,21 +24,42 @@
  * **  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * *
  ******************************************************************************/
-package com.thinkenterprise.graphqlio.server.samples.sample1.server.domain;
+package com.thinkenterprise.graphqlio.server.samples.flights.server.domain;
 
-public class UpdateRouteInput {
+import org.springframework.data.annotation.Id;
 
-	private String flightNumber = null;
-	private String departure = null;
-	private String destination = null;
+/**
+ * Implementation of the Route type from graphql schema.
+ * 
+ * @author Michael Schäfer
+ * @author Torsten Kühnert
+ */
 
-	UpdateRouteInput() {
+public class Route {
+
+	@Id
+	private Long id;
+
+	private String flightNumber;
+	private String departure;
+	private String destination;
+
+	public Route(String flightNumber) {
+		this.flightNumber = flightNumber;
 	}
 
-	UpdateRouteInput(String flightNumber, String departure, String destination) {
+	public Route(String flightNumber, String departure, String destination) {
 		this.flightNumber = flightNumber;
-		this.departure = departure;
 		this.destination = destination;
+		this.departure = departure;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getFlightNumber() {

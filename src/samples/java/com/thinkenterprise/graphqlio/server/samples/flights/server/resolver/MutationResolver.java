@@ -24,15 +24,15 @@
  * **  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * *
  ******************************************************************************/
-package com.thinkenterprise.graphqlio.server.samples.sample1.server.resolver;
+package com.thinkenterprise.graphqlio.server.samples.flights.server.resolver;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.coxautodev.graphql.tools.GraphQLMutationResolver;
-import com.thinkenterprise.graphqlio.server.samples.sample1.server.domain.Route;
-import com.thinkenterprise.graphqlio.server.samples.sample1.server.domain.RouteRepository;
-import com.thinkenterprise.graphqlio.server.samples.sample1.server.domain.UpdateRouteInput;
+import com.thinkenterprise.graphqlio.server.samples.flights.server.domain.Route;
+import com.thinkenterprise.graphqlio.server.samples.flights.server.domain.RouteRepository;
+import com.thinkenterprise.graphqlio.server.samples.flights.server.domain.UpdateRouteInput;
 import com.thinkenterprise.gts.context.GtsContext;
 import com.thinkenterprise.gts.tracking.GtsRecord;
 import com.thinkenterprise.gts.tracking.GtsRecord.GtsArityType;
@@ -40,6 +40,13 @@ import com.thinkenterprise.gts.tracking.GtsRecord.GtsOperationType;
 import com.thinkenterprise.gts.tracking.GtsScope;
 
 import graphql.schema.DataFetchingEnvironment;
+
+/**
+ * Root mutation resolver for resolving updateRoute.
+ * 
+ * @author Michael Schäfer
+ * @author Torsten Kühnert
+ */
 
 @Component
 public class MutationResolver implements GraphQLMutationResolver {

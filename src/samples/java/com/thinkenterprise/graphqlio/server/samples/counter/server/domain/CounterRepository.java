@@ -28,6 +28,13 @@ package com.thinkenterprise.graphqlio.server.samples.counter.server.domain;
 
 import org.springframework.stereotype.Component;
 
+/**
+ * A simple repository where the counter instance is hold.
+ * 
+ * @author Michael Schäfer
+ * @author Torsten Kühnert
+ */
+
 @Component
 public class CounterRepository {
 

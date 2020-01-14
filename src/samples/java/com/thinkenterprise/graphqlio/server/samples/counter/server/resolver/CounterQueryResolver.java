@@ -39,6 +39,13 @@ import com.thinkenterprise.gts.tracking.GtsScope;
 
 import graphql.schema.DataFetchingEnvironment;
 
+/**
+ * Object query resolver for resolving field increase in type Counter in graphql schema.
+ * 
+ * @author Michael Schäfer
+ * @author Torsten Kühnert
+ */
+
 @Component
 public class CounterQueryResolver implements GraphQLResolver<Counter> {
 
