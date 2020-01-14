@@ -289,22 +289,23 @@ public class CounterServerApplication implements ApplicationRunner {
 client subscribing to counter value, handler for responses and notifications:
 
 ```
-			final WebSocketClient webSocketClient = new StandardWebSocketClient();
-			final WebSocketHandler webSocketHandler = new CounterClientSubscriptionHandler();
-			final WebSocketHttpHeaders webSocketHttpHeaders = new WebSocketHttpHeaders();
-			final URI uri = URI.create("ws://127.0.0.1:8080/api/data/graph");
+	final WebSocketClient webSocketClient = new StandardWebSocketClient();
+	final WebSocketHandler webSocketHandler = new CounterClientSubscriptionHandler();
+	final WebSocketHttpHeaders webSocketHttpHeaders = new WebSocketHttpHeaders();
+	final URI uri = URI.create("ws://127.0.0.1:8080/api/data/graph");
 
-			final WebSocketSession webSocketSession = webSocketClient
+	final WebSocketSession webSocketSession = webSocketClient
 					.doHandshake(webSocketHandler, webSocketHttpHeaders, uri).get();
 
-			final AbstractWebSocketMessage message = new TextMessage(Query);
+	final AbstractWebSocketMessage message = new TextMessage(Query);
 			webSocketSession.sendMessage(message);
 
-			System.out.println("Subscription::waiting 60 seconds...");
-			Thread.sleep(60000);
-			webSocketSession.close();
+	System.out.println("Subscription::waiting 60 seconds...");
+	Thread.sleep(60000);
+	webSocketSession.close();
 
-class CounterClientSubscriptionHandler extends TextWebSocketHandler {
+
+	class CounterClientSubscriptionHandler extends TextWebSocketHandler {
 
 		@Override
 		protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
@@ -321,25 +322,26 @@ class CounterClientSubscriptionHandler extends TextWebSocketHandler {
 client increasing counter value every second:
 
 ```
-			final WebSocketClient webSocketClient = new StandardWebSocketClient();
-			final WebSocketHandler webSocketHandler = new CounterClientIncreaseHandler();
-			final WebSocketHttpHeaders webSocketHttpHeaders = new WebSocketHttpHeaders();
-			final URI uri = URI.create("ws://127.0.0.1:8080/api/data/graph");
+	final WebSocketClient webSocketClient = new StandardWebSocketClient();
+	final WebSocketHandler webSocketHandler = new CounterClientIncreaseHandler();
+	final WebSocketHttpHeaders webSocketHttpHeaders = new WebSocketHttpHeaders();
+	final URI uri = URI.create("ws://127.0.0.1:8080/api/data/graph");
 
-			final WebSocketSession webSocketSession = webSocketClient
+	final WebSocketSession webSocketSession = webSocketClient
 					.doHandshake(webSocketHandler, webSocketHttpHeaders, uri).get();
 
-			final AbstractWebSocketMessage message = new TextMessage(Query);
+	final AbstractWebSocketMessage message = new TextMessage(Query);
 
-			// sending this increase-message 50 times with 1 sec waiting
-			for (int i = 0; i < 50; i++) {
-				webSocketSession.sendMessage(message);
+	// sending this increase-message 50 times with 1 sec waiting
+	for (int i = 0; i < 50; i++) {
+		webSocketSession.sendMessage(message);
 
-				Thread.sleep(1000);
-			}
-			webSocketSession.close();
+		Thread.sleep(1000);
+	}
+	webSocketSession.close();
 
-class CounterClientIncreaseHandler extends TextWebSocketHandler {
+
+	class CounterClientIncreaseHandler extends TextWebSocketHandler {
 
 		@Override
 		protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
