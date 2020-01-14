@@ -118,7 +118,7 @@ Client requesting "hello":
 	webSocketSession.close();
 ```
 
-handler receiving response:
+Handler receiving response:
 
 ``` java
 	private static class SampleHelloWorldHandler extends TextWebSocketHandler {
@@ -141,7 +141,7 @@ handler receiving response:
 
 [Implementation of the Counter Sample](https://github.com/Thinkenterprise/graphql-io-server-java/tree/master/src/samples/java/com/thinkenterprise/graphqlio/server/samples/counter)
 
-graphql schema:
+Graphql schema:
 
 ``` 
 schema {
@@ -176,18 +176,6 @@ public class Counter {
 	}
 }
 
-@Component
-public class CounterRepository {
-
-	Counter counter = new Counter();
-
-	public CounterRepository() {
-	}
-
-	public Counter getCounter() {
-		return counter;
-	}
-}
 ```
 
 Graphql resolver classes:
@@ -240,7 +228,7 @@ public class CounterQueryResolver implements GraphQLResolver<Counter> {
 
 Spring boot application with graphql-io-server:
 
-```
+``` java
 @SpringBootApplication
 @EnableGraphQLIOServer
 public class CounterServerApplication implements ApplicationRunner {
