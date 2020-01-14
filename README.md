@@ -286,7 +286,7 @@ public class CounterServerApplication implements ApplicationRunner {
 }
 ```
 
-client subscribing to counter value:
+client subscribing to counter value, handler for responses and notifications:
 
 ```
 			final WebSocketClient webSocketClient = new StandardWebSocketClient();
@@ -303,6 +303,19 @@ client subscribing to counter value:
 			System.out.println("Subscription::waiting 60 seconds...");
 			Thread.sleep(60000);
 			webSocketSession.close();
+
+class CounterClientSubscriptionHandler extends TextWebSocketHandler {
+
+		@Override
+		protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+			System.out.println("Subscription::message received: " + message.getPayload());
+		}
+
+		@Override
+		public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+			System.out.println("Subscription::connection established: " + session.getId());
+		}
+	}
 ```
 
 client increasing counter value every second:
@@ -325,6 +338,19 @@ client increasing counter value every second:
 				Thread.sleep(1000);
 			}
 			webSocketSession.close();
+
+class CounterClientIncreaseHandler extends TextWebSocketHandler {
+
+		@Override
+		protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+			System.out.println("Increase::message received: " + message.getPayload());
+		}
+
+		@Override
+		public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+			System.out.println("Increase::connection established: " + session.getId());
+		}
+	}
 ```
 
 
