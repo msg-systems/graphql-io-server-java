@@ -27,9 +27,8 @@
 package com.thinkenterprise.graphqlio.server.samples.counter.server.resolver;
 
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.coxautodev.graphql.tools.GraphQLMutationResolver;
+import com.coxautodev.graphql.tools.GraphQLResolver;
 import com.thinkenterprise.graphqlio.server.samples.counter.server.domain.Counter;
 import com.thinkenterprise.graphqlio.server.samples.counter.server.domain.CounterRepository;
 import com.thinkenterprise.gts.context.GtsContext;
@@ -41,23 +40,22 @@ import com.thinkenterprise.gts.tracking.GtsScope;
 import graphql.schema.DataFetchingEnvironment;
 
 @Component
-public class MutationResolver implements GraphQLMutationResolver {
+public class CounterQueryResolver implements GraphQLResolver<Counter> {
 
 	private CounterRepository repo;
 
-	public MutationResolver(CounterRepository repo) {
+	public CounterQueryResolver(CounterRepository repo) {
 		this.repo = repo;
 	}
 
-	@Transactional
-	public Counter increase(DataFetchingEnvironment env) {
-		Counter counter = repo.getCounter();
+	public Counter increase(Counter counter, DataFetchingEnvironment env) {
+		// Counter counter = repo.getCounter();
 
-		counter.increase();
+		counter.inc();
 
 		GtsContext context = env.getContext();
 		GtsScope scope = context.getScope();
-		scope.addRecord(GtsRecord.builder().op(GtsOperationType.UPDATE).arity(GtsArityType.ONE)
+		scope.addRecord(GtsRecord.builder().op(GtsOperationType.UPDATE).arity(GtsArityType.ALL)
 				.dstType(Counter.class.getName()).dstIds(new String[] { "0" }).dstAttrs(new String[] { "*" }).build());
 
 		return counter;

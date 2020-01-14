@@ -40,16 +40,15 @@ import com.thinkenterprise.gts.tracking.GtsScope;
 import graphql.schema.DataFetchingEnvironment;
 
 @Component
-public class QueryResolver implements GraphQLQueryResolver {
+public class RootQueryResolver implements GraphQLQueryResolver {
 
 	private CounterRepository repo;
 
-	public QueryResolver(CounterRepository repo) {
+	public RootQueryResolver(CounterRepository repo) {
 		this.repo = repo;
 	}
 
 	public Counter counter(DataFetchingEnvironment env) {
-
 		Counter counter = repo.getCounter();
 
 		GtsContext context = env.getContext();
