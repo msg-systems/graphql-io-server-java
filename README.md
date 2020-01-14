@@ -38,8 +38,9 @@ dependencies {
 
 ## Hello World Sample
 
+https://github.com/Thinkenterprise/graphql-io-server-java/tree/master/src/samples/java/com/thinkenterprise/graphqlio/server/samples/helloworld
+
 graphql schema:
-(https://github.com/Thinkenterprise/graphql-io-server-java/blob/master/src/samples/resources/sample-schema.helloworld.graphql)
 
 ```
 schema {
@@ -142,6 +143,8 @@ handler receiving response:
 
 
 ## Counter Sample (increase, subscription)
+
+https://github.com/Thinkenterprise/graphql-io-server-java/tree/master/src/samples/java/com/thinkenterprise/graphqlio/server/samples/counter
 
 graphql schema:
 
