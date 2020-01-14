@@ -42,7 +42,7 @@ graphql schema:
 
 ```
 schema {
-   query: Query
+	query: Query
 }
 type Query {
 	hello: String!
@@ -106,19 +106,37 @@ public class SampleHelloWorldApplication implements ApplicationRunner {
 client requesting "hello":
 
 ```
-			String helloWorldQuery = "[1,0,\"GRAPHQL-REQUEST\",query { hello } ]";
+	String helloWorldQuery = "[1,0,\"GRAPHQL-REQUEST\",query { hello } ]";
 
-			SampleHelloWorldHandler webSocketHandler = new SampleHelloWorldHandler();
-			WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
-			WebSocketClient webSocketClient = new StandardWebSocketClient();
-			URI uri = URI.create("ws://127.0.0.1:8080/api/data/graph");
-			WebSocketSession webSocketSession = webSocketClient.doHandshake(webSocketHandler, headers, uri).get();
+	SampleHelloWorldHandler webSocketHandler = new SampleHelloWorldHandler();
+	WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
+	WebSocketClient webSocketClient = new StandardWebSocketClient();
+	URI uri = URI.create("ws://127.0.0.1:8080/api/data/graph");
+	WebSocketSession webSocketSession = webSocketClient.doHandshake(webSocketHandler, headers, uri).get();
 
-			webSocketSession.sendMessage(new TextMessage(helloWorldQuery));
+	webSocketSession.sendMessage(new TextMessage(helloWorldQuery));
 
-			Thread.sleep(200);
+	Thread.sleep(200);
 
-			webSocketSession.close();
+	webSocketSession.close();
+```
+
+handler receiving response:
+
+```
+	private static class SampleHelloWorldHandler extends TextWebSocketHandler {
+
+		@Override
+		protected void handleTextMessage(WebSocketSession session, TextMessage message) {
+			System.out.println("message received : id = " + session.getId());
+			System.out.println("                 : message = " + message.getPayload());
+		}
+
+		@Override
+		public void afterConnectionEstablished(WebSocketSession session) {
+			System.out.println("connection est.  : id = " + session.getId());
+		}
+	}
 ```
 
 

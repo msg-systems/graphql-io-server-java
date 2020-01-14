@@ -68,13 +68,13 @@ public class SampleHelloWorldJavaClient {
 	private static class SampleHelloWorldHandler extends TextWebSocketHandler {
 
 		@Override
-		protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+		protected void handleTextMessage(WebSocketSession session, TextMessage message) {
 			System.out.println("message received : id = " + session.getId());
 			System.out.println("                 : message = " + message.getPayload());
 		}
 
 		@Override
-		public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+		public void afterConnectionEstablished(WebSocketSession session) {
 			System.out.println("connection est.  : id = " + session.getId());
 		}
 
