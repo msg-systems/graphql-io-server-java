@@ -39,6 +39,7 @@ dependencies {
 ## Hello World Sample
 
 graphql schema:
+(https://github.com/Thinkenterprise/graphql-io-server-java/blob/master/src/samples/resources/sample-schema.helloworld.graphql)
 
 ```
 schema {
