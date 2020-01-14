@@ -142,8 +142,185 @@ handler receiving response:
 
 ## Counter Sample (increase, subscription)
 
+graphql schema:
+
 ```
-FIXME
+schema {
+	query: Query
+}
+type Query {
+	counter: Counter
+}
+type Counter {
+	value: Int
+	increase: Counter
+}
+```
+
+graphql domain classes:
+
+```
+public class Counter {
+
+	private int value = 0;
+
+	public int getValue() {
+		return value;
+	}
+
+	public void setValue(int value) {
+		this.value = value;
+	}
+
+	public void inc() {
+		this.value++;
+	}
+}
+
+@Component
+public class CounterRepository {
+
+	Counter counter = new Counter();
+
+	public CounterRepository() {
+	}
+
+	public Counter getCounter() {
+		return counter;
+	}
+}
+```
+
+graphql resolver classes:
+
+```
+@Component
+public class RootQueryResolver implements GraphQLQueryResolver {
+
+	private CounterRepository repo;
+
+	public RootQueryResolver(CounterRepository repo) {
+		this.repo = repo;
+	}
+
+	public Counter counter(DataFetchingEnvironment env) {
+		Counter counter = repo.getCounter();
+
+		GtsContext context = env.getContext();
+		GtsScope scope = context.getScope();
+		scope.addRecord(GtsRecord.builder().op(GtsOperationType.READ).arity(GtsArityType.ALL)
+				.dstType(Counter.class.getName()).dstIds(new String[] { "0" }).dstAttrs(new String[] { "*" }).build());
+
+		return counter;
+	}
+}
+
+@Component
+public class CounterQueryResolver implements GraphQLResolver<Counter> {
+
+	private CounterRepository repo;
+
+	public CounterQueryResolver(CounterRepository repo) {
+		this.repo = repo;
+	}
+
+	public Counter increase(Counter counter, DataFetchingEnvironment env) {
+		// Counter counter = repo.getCounter();
+
+		counter.inc();
+
+		GtsContext context = env.getContext();
+		GtsScope scope = context.getScope();
+		scope.addRecord(GtsRecord.builder().op(GtsOperationType.UPDATE).arity(GtsArityType.ALL)
+				.dstType(Counter.class.getName()).dstIds(new String[] { "0" }).dstAttrs(new String[] { "*" }).build());
+
+		return counter;
+	}
+}
+```
+
+spring boot application with graphql-io-server:
+
+```
+@SpringBootApplication
+@EnableGraphQLIOWsfLibraryModule
+@EnableGraphQLIOGttLibraryModule
+@EnableGraphQLIOGtsLibraryModule
+@EnableGraphQLIOGsLibraryModule
+public class CounterServerApplication implements ApplicationRunner {
+
+	public static void main(String[] args) {
+		SpringApplication application = new SpringApplication(CounterServerApplication.class);
+
+		Properties properties = new Properties();
+		properties.put("server.port", "8080");
+		properties.put("graphqlio.server.schemaLocationPattern", "**/*.counter.graphql");
+		properties.put("graphqlio.server.endpoint", "/api/data/graph");
+		properties.put("graphqlio.toolssubscribe.useEmbeddedRedis", "true");
+		properties.put("spring.redis.host", "localhost");
+		properties.put("spring.redis.port", "26379");
+
+		application.setDefaultProperties(properties);
+		application.run(args);
+	}
+
+	private GsServer graphqlioServer;
+
+	CounterServerApplication(GsServer graphqlioServer) {
+		this.graphqlioServer = graphqlioServer;
+	}
+
+	@Override
+	public void run(ApplicationArguments args) throws Exception {
+		this.graphqlioServer.start();
+	}
+
+	@PreDestroy
+	public void destroy() throws Exception {
+		this.graphqlioServer.stop();
+	}
+}
+```
+
+client subscribing to counter value:
+
+```
+			final WebSocketClient webSocketClient = new StandardWebSocketClient();
+			final WebSocketHandler webSocketHandler = new CounterClientSubscriptionHandler();
+			final WebSocketHttpHeaders webSocketHttpHeaders = new WebSocketHttpHeaders();
+			final URI uri = URI.create("ws://127.0.0.1:8080/api/data/graph");
+
+			final WebSocketSession webSocketSession = webSocketClient
+					.doHandshake(webSocketHandler, webSocketHttpHeaders, uri).get();
+
+			final AbstractWebSocketMessage message = new TextMessage(Query);
+			webSocketSession.sendMessage(message);
+
+			System.out.println("Subscription::waiting 60 seconds...");
+			Thread.sleep(60000);
+			webSocketSession.close();
+```
+
+client increasing counter value every second:
+
+```
+			final WebSocketClient webSocketClient = new StandardWebSocketClient();
+			final WebSocketHandler webSocketHandler = new CounterClientIncreaseHandler();
+			final WebSocketHttpHeaders webSocketHttpHeaders = new WebSocketHttpHeaders();
+			final URI uri = URI.create("ws://127.0.0.1:8080/api/data/graph");
+
+			final WebSocketSession webSocketSession = webSocketClient
+					.doHandshake(webSocketHandler, webSocketHttpHeaders, uri).get();
+
+			final AbstractWebSocketMessage message = new TextMessage(Query);
+
+			// sending this increase-message 50 times with 1 sec waiting
+			for (int i = 0; i < 50; i++) {
+				webSocketSession.sendMessage(message);
+
+				Thread.sleep(1000);
+			}
+			webSocketSession.close();
 ```
 
 
