@@ -38,7 +38,7 @@ dependencies {
 
 ## Hello World Sample
 
-https://github.com/Thinkenterprise/graphql-io-server-java/tree/master/src/samples/java/com/thinkenterprise/graphqlio/server/samples/helloworld
+[Reference to the implementation] (https://github.com/Thinkenterprise/graphql-io-server-java/tree/master/src/samples/java/com/thinkenterprise/graphqlio/server/samples/helloworld)
 
 graphql schema:
 
@@ -53,7 +53,7 @@ type Query {
 
 graphql resolver class:
 
-```
+``` java
 @Component
 public class SampleHelloWorldResolver implements GraphQLQueryResolver {
 	public String hello() {
@@ -64,33 +64,28 @@ public class SampleHelloWorldResolver implements GraphQLQueryResolver {
 
 spring boot application with graphql-io-server:
 
-```
+```java
 @SpringBootApplication
-@EnableGraphQLIOGsLibraryModule
-@EnableGraphQLIOGtsLibraryModule
-@EnableGraphQLIOGttLibraryModule
-@EnableGraphQLIOWsfLibraryModule
+@EnableGraphQLIOServer
 public class SampleHelloWorldApplication implements ApplicationRunner {
+
+        // GraphQL Server
+	private GsServer graphqlioServer;
+	
+	SampleHelloWorldApplication(GsServer graphqlioServer) {
+		this.graphqlioServer = graphqlioServer;
+	}
 
 	public static void main(String[] args) {
 		SpringApplication application = new SpringApplication(SampleHelloWorldApplication.class);
 		
 		Properties properties = new Properties();
-		properties.put("server.port", "8080");
 		properties.put("graphqlio.server.schemaLocationPattern", "**/*.helloworld.graphql");
 		properties.put("graphqlio.server.endpoint", "/api/data/graph");
 		properties.put("graphqlio.toolssubscribe.useEmbeddedRedis", "true");
-		properties.put("spring.redis.host", "localhost");
-		properties.put("spring.redis.port", "26379");
-		
+			
 		application.setDefaultProperties(properties);
 		application.run(args);
-	}
-	
-	private GsServer graphqlioServer;
-	
-	SampleHelloWorldApplication(GsServer graphqlioServer) {
-		this.graphqlioServer = graphqlioServer;
 	}
 	
 	@Override
@@ -105,9 +100,9 @@ public class SampleHelloWorldApplication implements ApplicationRunner {
 }
 ```
 
-client requesting "hello":
+Client requesting "hello":
 
-```
+``` java
 	String helloWorldQuery = "[1,0,\"GRAPHQL-REQUEST\",query { hello } ]";
 
 	SampleHelloWorldHandler webSocketHandler = new SampleHelloWorldHandler();
@@ -125,7 +120,7 @@ client requesting "hello":
 
 handler receiving response:
 
-```
+``` java
 	private static class SampleHelloWorldHandler extends TextWebSocketHandler {
 
 		@Override
@@ -144,11 +139,11 @@ handler receiving response:
 
 ## Counter Sample (increase, subscription)
 
-https://github.com/Thinkenterprise/graphql-io-server-java/tree/master/src/samples/java/com/thinkenterprise/graphqlio/server/samples/counter
+[Implementation of the Counter Sample](https://github.com/Thinkenterprise/graphql-io-server-java/tree/master/src/samples/java/com/thinkenterprise/graphqlio/server/samples/counter)
 
 graphql schema:
 
-```
+``` 
 schema {
 	query: Query
 }
@@ -161,9 +156,9 @@ type Counter {
 }
 ```
 
-graphql domain classes:
+Graphql domain classes:
 
-```
+``` java
 public class Counter {
 
 	private int value = 0;
@@ -195,9 +190,9 @@ public class CounterRepository {
 }
 ```
 
-graphql resolver classes:
+Graphql resolver classes:
 
-```
+``` java
 @Component
 public class RootQueryResolver implements GraphQLQueryResolver {
 
@@ -229,7 +224,7 @@ public class CounterQueryResolver implements GraphQLResolver<Counter> {
 	}
 
 	public Counter increase(Counter counter, DataFetchingEnvironment env) {
-		// Counter counter = repo.getCounter();
+		Counter counter = repo.getCounter();
 
 		counter.inc();
 
@@ -243,36 +238,32 @@ public class CounterQueryResolver implements GraphQLResolver<Counter> {
 }
 ```
 
-spring boot application with graphql-io-server:
+Spring boot application with graphql-io-server:
 
 ```
 @SpringBootApplication
-@EnableGraphQLIOWsfLibraryModule
-@EnableGraphQLIOGttLibraryModule
-@EnableGraphQLIOGtsLibraryModule
-@EnableGraphQLIOGsLibraryModule
+@EnableGraphQLIOServer
 public class CounterServerApplication implements ApplicationRunner {
-
-	public static void main(String[] args) {
-		SpringApplication application = new SpringApplication(CounterServerApplication.class);
-
-		Properties properties = new Properties();
-		properties.put("server.port", "8080");
-		properties.put("graphqlio.server.schemaLocationPattern", "**/*.counter.graphql");
-		properties.put("graphqlio.server.endpoint", "/api/data/graph");
-		properties.put("graphqlio.toolssubscribe.useEmbeddedRedis", "true");
-		properties.put("spring.redis.host", "localhost");
-		properties.put("spring.redis.port", "26379");
-
-		application.setDefaultProperties(properties);
-		application.run(args);
-	}
 
 	private GsServer graphqlioServer;
 
 	CounterServerApplication(GsServer graphqlioServer) {
 		this.graphqlioServer = graphqlioServer;
 	}
+
+	public static void main(String[] args) {
+		SpringApplication application = new SpringApplication(CounterServerApplication.class);
+
+		Properties properties = new Properties();
+		properties.put("graphqlio.server.schemaLocationPattern", "**/*.counter.graphql");
+		properties.put("graphqlio.server.endpoint", "/api/data/graph");
+		properties.put("graphqlio.toolssubscribe.useEmbeddedRedis", "true");
+		
+		application.setDefaultProperties(properties);
+		application.run(args);
+	}
+
+	
 
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
@@ -286,9 +277,9 @@ public class CounterServerApplication implements ApplicationRunner {
 }
 ```
 
-client subscribing to counter value, handler for responses and notifications:
+Client subscribing to counter value, handler for responses and notifications:
 
-```
+``` java
 	final WebSocketClient webSocketClient = new StandardWebSocketClient();
 	final WebSocketHandler webSocketHandler = new CounterClientSubscriptionHandler();
 	final WebSocketHttpHeaders webSocketHttpHeaders = new WebSocketHttpHeaders();
@@ -321,7 +312,7 @@ client subscribing to counter value, handler for responses and notifications:
 
 client increasing counter value every second, handler for responses:
 
-```
+``` java
 	final WebSocketClient webSocketClient = new StandardWebSocketClient();
 	final WebSocketHandler webSocketHandler = new CounterClientIncreaseHandler();
 	final WebSocketHttpHeaders webSocketHttpHeaders = new WebSocketHttpHeaders();
