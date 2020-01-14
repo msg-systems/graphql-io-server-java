@@ -35,6 +35,7 @@ import org.springframework.web.socket.WebSocketHttpHeaders;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
+import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 public class CounterClientIncrease {
 
@@ -68,6 +69,20 @@ public class CounterClientIncrease {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private class CounterClientIncreaseHandler extends TextWebSocketHandler {
+
+		@Override
+		protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+			System.out.println("Increase::message received: " + message.getPayload());
+		}
+
+		@Override
+		public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+			System.out.println("Increase::connection established: " + session.getId());
+		}
+
 	}
 
 }

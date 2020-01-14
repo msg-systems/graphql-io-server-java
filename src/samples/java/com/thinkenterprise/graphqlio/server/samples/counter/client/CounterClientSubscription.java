@@ -35,6 +35,7 @@ import org.springframework.web.socket.WebSocketHttpHeaders;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
+import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 public class CounterClientSubscription {
 
@@ -64,6 +65,20 @@ public class CounterClientSubscription {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private class CounterClientSubscriptionHandler extends TextWebSocketHandler {
+
+		@Override
+		protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+			System.out.println("Subscription::message received: " + message.getPayload());
+		}
+
+		@Override
+		public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+			System.out.println("Subscription::connection established: " + session.getId());
+		}
+
 	}
 
 }
