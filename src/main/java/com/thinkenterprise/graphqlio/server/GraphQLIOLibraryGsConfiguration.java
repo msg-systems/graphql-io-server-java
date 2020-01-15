@@ -42,7 +42,7 @@ import org.springframework.context.annotation.FilterType;
  */
 
 @Configuration
-@ComponentScan(basePackageClasses = GraphQLIOLibraryGsConfiguration.class, excludeFilters = @ComponentScan.Filter(type = FilterType.REGEX, pattern = "com.thinkenterprise.graphqlio.server.samples.*"))
+@ComponentScan(basePackageClasses = GraphQLIOLibraryGsConfiguration.class, excludeFilters = @ComponentScan.Filter(type = FilterType.REGEX, pattern = "com.thinkenterprise.*.samples.*"))
 public class GraphQLIOLibraryGsConfiguration {
 
 	private static final Logger logger = LoggerFactory.getLogger(GraphQLIOLibraryGsConfiguration.class);
