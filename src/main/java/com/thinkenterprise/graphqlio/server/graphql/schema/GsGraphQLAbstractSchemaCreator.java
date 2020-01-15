@@ -45,6 +45,13 @@ import com.thinkenterprise.gtt.types.GttVoidType;
 import graphql.schema.GraphQLScalarType;
 import graphql.schema.GraphQLSchema;
 
+/**
+ * abstract class GsGraphQLAbstractSchemaCreator
+ *
+ * @author Michael Schäfer
+ * @author Dr. Edgar Müller
+ */
+
 public abstract class GsGraphQLAbstractSchemaCreator implements GsGraphQLSchemaCreator {
 
 	List<GraphQLScalarType> scalarTypes = new ArrayList<>();

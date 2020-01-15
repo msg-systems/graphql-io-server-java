@@ -28,6 +28,13 @@ package com.thinkenterprise.graphqlio.server.graphql.schema;
 
 import graphql.schema.GraphQLSchema;
 
+/**
+ * class GsGraphQLSchemaCreator
+ *
+ * @author Michael Schäfer
+ * @author Dr. Edgar Müller
+ */
+
 public interface GsGraphQLSchemaCreator {
 
 	GraphQLSchema create();

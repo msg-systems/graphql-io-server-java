@@ -9,6 +9,13 @@ import com.thinkenterprise.gts.actuator.GtsCounter;
 import com.thinkenterprise.gts.actuator.GtsCounterNames;
 import com.thinkenterprise.gts.actuator.GtsCounterNotification;
 
+/**
+ * class GsCounter
+ *
+ * @author Michael Schäfer
+ * @author Dr. Edgar Müller
+ */
+
 @Component
 public class GsCounter implements GtsCounter {
 	

@@ -38,6 +38,12 @@ import org.springframework.stereotype.Component;
 import graphql.schema.GraphQLScalarType;
 import graphql.schema.GraphQLSchema;
 
+/**
+ * class GsGraphQLSimpleSchemaCreator
+ *
+ * @author Michael Schäfer
+ * @author Dr. Edgar Müller
+ */
 
 @Component
 public class GsGraphQLSimpleSchemaCreator extends GsGraphQLAbstractSchemaCreator {

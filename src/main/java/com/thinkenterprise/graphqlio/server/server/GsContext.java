@@ -34,6 +34,13 @@ import com.thinkenterprise.wsf.domain.WsfFrame;
 
 import graphql.schema.GraphQLSchema;
 
+/**
+ * class GsContext
+ *
+ * @author Michael Schäfer
+ * @author Dr. Edgar Müller
+ */
+
 public class GsContext {
 
 	private WebSocketSession webSocketSession;

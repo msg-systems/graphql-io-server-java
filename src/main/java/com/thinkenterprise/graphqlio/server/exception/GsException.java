@@ -26,6 +26,13 @@
  ******************************************************************************/
 package com.thinkenterprise.graphqlio.server.exception;
 
+/**
+ * class GsException
+ *
+ * @author Michael Schäfer
+ * @author Dr. Edgar Müller
+ */
+
 public class GsException extends RuntimeException {
 
     /**

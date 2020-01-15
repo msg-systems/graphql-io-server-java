@@ -26,8 +26,6 @@
  ******************************************************************************/
 package com.thinkenterprise.graphqlio.server;
 
-
-
 import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
@@ -36,17 +34,21 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
 
+/**
+ * Class for library module configuration
+ *
+ * @author Michael Schäfer
+ * @author Dr. Edgar Müller
+ */
+
 @Configuration
-@ComponentScan(basePackageClasses = GraphQLIOLibraryGsConfiguration.class,
-				excludeFilters = @ComponentScan.Filter(type = FilterType.REGEX, pattern = "com.thinkenterprise.graphqlio.server.samples.*"))
+@ComponentScan(basePackageClasses = GraphQLIOLibraryGsConfiguration.class, excludeFilters = @ComponentScan.Filter(type = FilterType.REGEX, pattern = "com.thinkenterprise.graphqlio.server.samples.*"))
 public class GraphQLIOLibraryGsConfiguration {
 
-	
-	  private static final Logger logger = LoggerFactory.getLogger(GraphQLIOLibraryGsConfiguration.class);
+	private static final Logger logger = LoggerFactory.getLogger(GraphQLIOLibraryGsConfiguration.class);
 
-	  @PostConstruct
-	  public void postConstruct(){
-	    logger.info("GraphQLIOLIbrary GS Module Loaded!");
-	  }
+	@PostConstruct
+	public void postConstruct() {
+		logger.info("GraphQLIOLIbrary GS Module Loaded!");
+	}
 }
-

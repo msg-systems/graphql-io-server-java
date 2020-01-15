@@ -43,7 +43,12 @@ import static graphql.schema.idl.RuntimeWiring.newRuntimeWiring;
 
 import org.springframework.core.io.Resource;
 
-
+/**
+ * class GsGraphQLStandardSchemaCreator
+ *
+ * @author Michael Schäfer
+ * @author Dr. Edgar Müller
+ */
 
 //@Component
 public class GsGraphQLStandardSchemaCreator extends GsGraphQLAbstractSchemaCreator {

@@ -28,6 +28,13 @@ package com.thinkenterprise.graphqlio.server.execution;
 
 import com.thinkenterprise.graphqlio.server.server.GsContext;
 
+/**
+ * class GsExecutionStrategy
+ *
+ * @author Michael Schäfer
+ * @author Dr. Edgar Müller
+ */
+
 public interface GsExecutionStrategy {
 	
 	void execute(GsContext graphQLIOContext); 
