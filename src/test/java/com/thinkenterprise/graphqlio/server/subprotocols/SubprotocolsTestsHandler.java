@@ -32,9 +32,7 @@ import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 import com.thinkenterprise.graphqlio.server.handler.GsWebSocketHandler;
 
 /**
- * Class used to process any incoming message sent by clients via WebSocket
- * supports subprotocols (CBOR, MsgPack, Text)
- * triggers process to indicate outdating queries and notifies clients
+ * websockethandler class for testing subprotocols
  *
  * @author Michael Schäfer
  * @author Torsten Kühnert

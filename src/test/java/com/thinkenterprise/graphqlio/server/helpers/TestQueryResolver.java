@@ -43,9 +43,7 @@ import com.thinkenterprise.gts.tracking.GtsRecord.GtsOperationType;
 import graphql.schema.DataFetchingEnvironment;
 
 /**
- * Class used to process any incoming message sent by clients via WebSocket
- * supports subprotocols (CBOR, MsgPack, Text)
- * triggers process to indicate outdating queries and notifies clients
+ * query resolver for testing
  *
  * @author Michael Schäfer
  * @author Torsten Kühnert

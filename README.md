@@ -268,6 +268,8 @@ public class CounterServerApplication implements ApplicationRunner {
 Client subscribing to counter value, handler for responses and notifications:
 
 ``` java
+	final String Query = "[1,0,\"GRAPHQL-REQUEST\",query { _Subscription { subscribe } counter { value } } ]";
+
 	final WebSocketClient webSocketClient = new StandardWebSocketClient();
 	final WebSocketHandler webSocketHandler = new CounterClientSubscriptionHandler();
 	final WebSocketHttpHeaders webSocketHttpHeaders = new WebSocketHttpHeaders();
@@ -301,6 +303,8 @@ Client subscribing to counter value, handler for responses and notifications:
 client increasing counter value every second, handler for responses:
 
 ``` java
+	final String Query = "[1,0,\"GRAPHQL-REQUEST\",query { counter { increase { value } } } ]";
+
 	final WebSocketClient webSocketClient = new StandardWebSocketClient();
 	final WebSocketHandler webSocketHandler = new CounterClientIncreaseHandler();
 	final WebSocketHttpHeaders webSocketHttpHeaders = new WebSocketHttpHeaders();

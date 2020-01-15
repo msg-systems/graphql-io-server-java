@@ -41,9 +41,7 @@ import com.thinkenterprise.graphqlio.server.handler.GsWebSocketHandler;
 import com.thinkenterprise.graphqlio.server.helpers.TestRoute;
 
 /**
- * Class used to process any incoming message sent by clients via WebSocket
- * supports subprotocols (CBOR, MsgPack, Text) triggers process to indicate
- * outdating queries and notifies clients
+ * websockethandler Class for testing subscriptions
  *
  * @author Michael Schäfer
  * @author Torsten Kühnert
