@@ -103,7 +103,7 @@ class SubscriptionTests {
 	private final String flight_3 = "{\"flightNumber\":\"LH2084\",\"departure\":\"HAM\",\"destination\":\"ROM\"}";
 	private final String flight_4 = "{\"flightNumber\":\"LH2084\",\"departure\":\"ROM\",\"destination\":\"HAM\"}";
 
-	@Test
+	// @Test
 	void textAnswer() {
 		try {
 			SubscriptionTestsHandler webSocketHandler = new SubscriptionTestsHandler();
