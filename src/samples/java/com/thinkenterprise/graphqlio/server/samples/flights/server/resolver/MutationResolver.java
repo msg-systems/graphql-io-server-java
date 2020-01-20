@@ -30,7 +30,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.coxautodev.graphql.tools.GraphQLMutationResolver;
-import com.thinkenterprise.graphqlio.server.samples.flights.server.domain.Route;
+import com.thinkenterprise.graphqlio.server.samples.flights.server.domain.Flight;
 import com.thinkenterprise.graphqlio.server.samples.flights.server.domain.RouteRepository;
 import com.thinkenterprise.graphqlio.server.samples.flights.server.domain.UpdateRouteInput;
 import com.thinkenterprise.gts.context.GtsContext;
@@ -58,20 +58,20 @@ public class MutationResolver implements GraphQLMutationResolver {
 	}
 
 	@Transactional
-	public Route updateRoute(String flightNumber, UpdateRouteInput input, DataFetchingEnvironment env) {
-		Route route = routeRepository.getByFlightNumber(flightNumber);
+	public Flight updateRoute(String flightNumber, UpdateRouteInput input, DataFetchingEnvironment env) {
+		Flight flight = routeRepository.getByFlightNumber(flightNumber);
 
-		route.setFlightNumber(input.getFlightNumber());
-		route.setDeparture(input.getDeparture());
-		route.setDestination(input.getDestination());
+		flight.setFlightNumber(input.getFlightNumber());
+		flight.setDeparture(input.getDeparture());
+		flight.setDestination(input.getDestination());
 
-		Route modifiedRoute = null;
-		modifiedRoute = routeRepository.save(route);
+		Flight modifiedRoute = null;
+		modifiedRoute = routeRepository.save(flight);
 
 		GtsContext context = env.getContext();
 		GtsScope scope = context.getScope();
 		scope.addRecord(GtsRecord.builder().op(GtsOperationType.UPDATE).arity(GtsArityType.ONE)
-				.dstType(Route.class.getName()).dstIds(new String[] { modifiedRoute.getId().toString() })
+				.dstType(Flight.class.getName()).dstIds(new String[] { modifiedRoute.getId().toString() })
 				.dstAttrs(new String[] { "*" }).build());
 
 		return modifiedRoute;

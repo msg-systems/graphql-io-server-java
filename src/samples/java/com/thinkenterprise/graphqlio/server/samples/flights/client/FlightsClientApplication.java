@@ -38,10 +38,8 @@ import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 /**
- * Client application for the flights sample.
- * 1st query of all flights
- * 2nd mutation of UA flight
- * 3rd query of all flights
+ * Client application for the flights sample. 1st query of all flights 2nd
+ * mutation of UA flight 3rd query of all flights
  * 
  * @author Michael Schäfer
  * @author Torsten Kühnert
@@ -49,8 +47,8 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 public class FlightsClientApplication {
 
-	private final String Query = "[1,0,\"GRAPHQL-REQUEST\",query { allRoutes { id flightNumber departure destination } } ]";
-	private final String Mutation = "[1,0,\"GRAPHQL-REQUEST\",mutation { updateRoute { flightNumber: \\\"UA1000\\\" input: { flightNumber: \\\"XY9999\\\" departure: \\\"ABC\\\" destination: \\\"XYZ\\\" } } } ]";
+	private final String Query = "[1,0,\"GRAPHQL-REQUEST\",{\"query\":\"query { allRoutes { id flightNumber departure destination } }\"} ]";
+	private final String Mutation = "[1,0,\"GRAPHQL-REQUEST\",{\"query\":\"mutation { updateRoute { flightNumber: \\\"UA1000\\\", input: { flightNumber: \\\"XY9999\\\" departure: \\\"ABC\\\" destination: \\\"XYZ\\\" } } }\"} ]";
 
 	public static void main(String[] args) {
 		new FlightsClientApplication().runQuery();

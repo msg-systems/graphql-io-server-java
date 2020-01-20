@@ -35,7 +35,7 @@ import org.springframework.data.annotation.Id;
  * @author Torsten Kühnert
  */
 
-public class Route {
+public class Flight {
 
 	@Id
 	private Long id;
@@ -44,11 +44,11 @@ public class Route {
 	private String departure;
 	private String destination;
 
-	public Route(String flightNumber) {
+	public Flight(String flightNumber) {
 		this.flightNumber = flightNumber;
 	}
 
-	public Route(String flightNumber, String departure, String destination) {
+	public Flight(String flightNumber, String departure, String destination) {
 		this.flightNumber = flightNumber;
 		this.destination = destination;
 		this.departure = departure;

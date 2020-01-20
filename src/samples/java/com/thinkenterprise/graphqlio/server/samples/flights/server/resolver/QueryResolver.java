@@ -32,7 +32,7 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
-import com.thinkenterprise.graphqlio.server.samples.flights.server.domain.Route;
+import com.thinkenterprise.graphqlio.server.samples.flights.server.domain.Flight;
 import com.thinkenterprise.graphqlio.server.samples.flights.server.domain.RouteRepository;
 import com.thinkenterprise.gts.context.GtsContext;
 import com.thinkenterprise.gts.tracking.GtsRecord;
@@ -58,11 +58,11 @@ public class QueryResolver implements GraphQLQueryResolver {
 		this.routeRepository = routeRepository;
 	}
 
-	public List<Route> allRoutes(DataFetchingEnvironment env) {
+	public List<Flight> allRoutes(DataFetchingEnvironment env) {
 
-		Iterable<Route> allRoutes = routeRepository.findAll();
+		Iterable<Flight> allRoutes = routeRepository.findAll();
 
-		List<Route> allRoutesList = new ArrayList<>();
+		List<Flight> allRoutesList = new ArrayList<>();
 		allRoutes.forEach(allRoutesList::add);
 
 		List<String> dstIds = new ArrayList<>();
@@ -74,7 +74,7 @@ public class QueryResolver implements GraphQLQueryResolver {
 		GtsContext context = env.getContext();
 		GtsScope scope = context.getScope();
 		scope.addRecord(
-				GtsRecord.builder().op(GtsOperationType.READ).arity(GtsArityType.ALL).dstType(Route.class.getName())
+				GtsRecord.builder().op(GtsOperationType.READ).arity(GtsArityType.ALL).dstType(Flight.class.getName())
 						.dstIds(dstIds.toArray(new String[dstIds.size()])).dstAttrs(new String[] { "*" }).build());
 
 		return allRoutesList;

@@ -42,36 +42,36 @@ import org.springframework.stereotype.Component;
 @Component
 public class RouteRepository {
 
-	HashMap<String, Route> repositoryMap = new HashMap<String, Route>();
+	HashMap<String, Flight> repositoryMap = new HashMap<String, Flight>();
 
 	public RouteRepository() {
-		Route a = new Route("LH2113", "MUC", "BRE");
+		Flight a = new Flight("LH2113", "MUC", "BRE");
 		a.setId(new Random().nextLong());
 		repositoryMap.put("LH2113", a);
 
-		Route b = new Route("BA7611", "HAM", "BCN");
+		Flight b = new Flight("BA7611", "HAM", "BCN");
 		b.setId(new Random().nextLong());
 		repositoryMap.put("BA7611", b);
 
-		Route c = new Route("UA1000", "FRA", "CGN");
+		Flight c = new Flight("UA1000", "FRA", "CGN");
 		c.setId(new Random().nextLong());
 		repositoryMap.put("UA1000", c);
 	}
 
-	public Collection<Route> findAll() {
+	public Collection<Flight> findAll() {
 		return repositoryMap.values();
 	}
 
-	public Route getByFlightNumber(String flightNumber) {
+	public Flight getByFlightNumber(String flightNumber) {
 		return repositoryMap.get(flightNumber);
 	}
 
-	public Route save(Route route) {
-		if (route.getId() == null) {
-			route.setId(new Random().nextLong());
+	public Flight save(Flight flight) {
+		if (flight.getId() == null) {
+			flight.setId(new Random().nextLong());
 		}
-		repositoryMap.put(route.getFlightNumber(), route);
-		return route;
+		repositoryMap.put(flight.getFlightNumber(), flight);
+		return flight;
 	}
 
 }
