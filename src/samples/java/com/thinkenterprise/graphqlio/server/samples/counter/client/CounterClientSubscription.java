@@ -48,7 +48,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 public class CounterClientSubscription {
 
-	private final String Query = "[1,0,\"GRAPHQL-REQUEST\",query { _Subscription { subscribe } counter { value } } ]";
+	private final String Query = "[1,0,\"GRAPHQL-REQUEST\",{\"query\":\"query { _Subscription { subscribe } counter { value } }\"}]";
 
 	public static void main(String[] args) {
 		new CounterClientSubscription().runQuery();

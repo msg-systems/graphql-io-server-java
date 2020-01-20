@@ -479,7 +479,7 @@ public class GsWebSocketHandler extends AbstractWebSocketHandler implements Appl
 					throw new GtsSubscriptionTypeException("GsWebSocketHandler.getSubscriptionScopeId: expect parameter <sid> for _Subscription");				
 				}
 			}
-			else if (message.contains(REQUEST_MESSAGE_PART_TYPE_QUERY)) {
+			else {
 				if (((message.contains(REQUEST_MESSAGE_PART_METHOD_UNSUBSCRIBE) ||
 						  message.contains(REQUEST_MESSAGE_PART_METHOD_PAUSE)	 ||
 						  message.contains(REQUEST_MESSAGE_PART_METHOD_RESUME) )) ) {	
@@ -490,9 +490,7 @@ public class GsWebSocketHandler extends AbstractWebSocketHandler implements Appl
 					/// regular query message
 					return null;
 				}				
-			} else 
-				//// only QUERY or MUTATION messages supported
-				throw new GtsSubscriptionTypeException("GsWebSocketHandler.getSubscriptionScopeId: only QUERY or MUTATION messages supported");								
+			}
 		}
 		
 		return null;

@@ -90,11 +90,11 @@ class SubscriptionTests {
 		this.routeResolver.init();
 	}
 
-	private final String subscriptionQuery1 = "[1,0,\"GRAPHQL-REQUEST\",query { _Subscription { subscribe } routes { flightNumber departure destination disabled signature bookingDate } } ]";
-	private final String mutationQuery2a = "[1,0,\"GRAPHQL-REQUEST\",mutation { updateRoute(flightNumber: \"LH2084\" input: { flightNumber: \"LH2084\" departure: \"HAM\" destination: \"ROM\" disabled: true signature: null } ) { flightNumber departure destination disabled signature bookingDate } } ]";
-	private final String mutationQuery2b = "[1,0,\"GRAPHQL-REQUEST\",mutation { updateRoute(flightNumber: \"LH2122\" input: { flightNumber: \"LH2122\" departure: \"FRA\" destination: \"BCN\" disabled: true signature: null } ) { flightNumber departure destination disabled signature bookingDate } } ]";
-	private final String unsubscribeQuery3 = "[1,0,\"GRAPHQL-REQUEST\",mutation { _Subscription { unsubscribe( sid: \"%s\" ) } } ]";
-	private final String mutationQuery4 = "[1,0,\"GRAPHQL-REQUEST\",mutation { updateRoute(flightNumber: \"LH2084\" input: { flightNumber: \"LH2084\" departure: \"ROM\" destination: \"HAM\" disabled: false } ) { flightNumber departure destination disabled signature bookingDate } } ]";
+	private final String subscriptionQuery1 = "[1,0,\"GRAPHQL-REQUEST\",{\"query\":\"query { _Subscription { subscribe } routes { flightNumber departure destination disabled signature bookingDate } }\"} ]";
+	private final String mutationQuery2a = "[1,0,\"GRAPHQL-REQUEST\",{\"query\" : \"mutation { updateRoute(flightNumber: \\\"LH2084\\\" input: { flightNumber: \\\"LH2084\\\" departure: \\\"HAM\\\" destination: \\\"ROM\\\" disabled: true signature: null } ) { flightNumber departure destination disabled signature bookingDate } }\" } ]";
+	private final String mutationQuery2b = "[1,0,\"GRAPHQL-REQUEST\",{\"query\": \"mutation { updateRoute(flightNumber: \\\"LH2122\\\" input: { flightNumber: \\\"LH2122\\\" departure: \\\"FRA\\\" destination: \\\"BCN\\\" disabled: true signature: null } ) { flightNumber departure destination disabled signature bookingDate } }\" } ]";
+	private final String unsubscribeQuery3 = "[1,0,\"GRAPHQL-REQUEST\",{\"query\":\"mutation { _Subscription { unsubscribe( sid: \\\"%s\\\" ) } }\"} ]";
+	private final String mutationQuery4 = "[1,0,\"GRAPHQL-REQUEST\",{\"query\":\"mutation { updateRoute(flightNumber: \\\"LH2084\\\" input: { flightNumber: \\\"LH2084\\\" departure: \\\"ROM\\\" destination: \\\"HAM\\\" disabled: false } ) { flightNumber departure destination disabled signature bookingDate } }\"} ]";
 
 	private final String flight_1a = "{\"flightNumber\":\"LH2084\",\"departure\":\"CGN\",\"destination\":\"BER\"}";
 	private final String flight_1b = "{\"flightNumber\":\"LH2122\",\"departure\":\"MUC\",\"destination\":\"BRE\"}";
@@ -103,7 +103,7 @@ class SubscriptionTests {
 	private final String flight_3 = "{\"flightNumber\":\"LH2084\",\"departure\":\"HAM\",\"destination\":\"ROM\"}";
 	private final String flight_4 = "{\"flightNumber\":\"LH2084\",\"departure\":\"ROM\",\"destination\":\"HAM\"}";
 
-	// @Test
+	@Test
 	void textAnswer() {
 		try {
 			SubscriptionTestsHandler webSocketHandler = new SubscriptionTestsHandler();

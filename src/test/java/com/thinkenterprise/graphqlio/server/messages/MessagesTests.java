@@ -93,7 +93,7 @@ class MessagesTests {
 		this.routeResolver.init();
 	}
 
-	private final String simpleQuery = "[1,0,\"GRAPHQL-REQUEST\",query { routes { flightNumber departure destination } } ]";
+	private final String simpleQuery = "[1,0,\"GRAPHQL-REQUEST\", {\"query\":\"query { routes { flightNumber departure destination } }\"} ]";
 
 	@Test
 	void textAnswer() {
@@ -136,7 +136,7 @@ class MessagesTests {
 		}
 	}
 
-	private final String mutationQuery = "[1,0,\"GRAPHQL-REQUEST\",mutation { updateRoute( flightNumber: \"LH2084\" input: { flightNumber: \"LH2084\" departure: \"HAM\" destination: \"MUC\" disabled: false } ) { flightNumber departure destination } } ]";
+	private final String mutationQuery = "[1,0,\"GRAPHQL-REQUEST\", {\"query\":\"mutation { updateRoute( flightNumber: \\\"LH2084\\\" input: { flightNumber: \\\"LH2084\\\" departure: \\\"HAM\\\" destination: \\\"MUC\\\" disabled: false } ) { flightNumber departure destination } }\"} ]";
 
 	@Test
 	void cborAnswer() {
@@ -168,7 +168,7 @@ class MessagesTests {
 			// [1,1,"GRAPHQL-RESPONSE",{"data":{"updateRoute":{"flightNumber":"LH2084","departure":"HAM","destination":"MUC"}}}]
 
 			String flight_a = "{\"flightNumber\":\"LH2084\",\"departure\":\"HAM\",\"destination\":\"MUC\"}";
-			// Assert.assertTrue(webSocketHandler.routes.contains(new Route(flight_a)));
+			Assert.assertTrue(webSocketHandler.routes.contains(new TestRoute(flight_a)));
 
 			webSocketSession.close();
 

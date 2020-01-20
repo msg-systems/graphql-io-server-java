@@ -67,34 +67,50 @@ public class SubscriptionTestsHandler extends AbstractWebSocketHandler {
 			this.text_count++;
 			this.count++;
 			String msg = ((TextMessage) message).getPayload();
-			this.addFlights(msg);
-			this.handleSubecriptionIds(msg);
-			this.notifier_count += msg.indexOf("GRAPHQL-NOTIFIER") > 0 ? 1 : 0;
+			if (isNotifier(msg)) {
+				this.notifier_count++;
+			} else {
+				this.addFlights(msg);
+				this.handleSubecriptionIds(msg);
+			}
 
 		} else if (GsWebSocketHandler.SUB_PROTOCOL_CBOR.equalsIgnoreCase(session.getAcceptedProtocol())) {
 			this.cbor_count++;
 			this.count++;
 			String msg = GsWebSocketHandler.getFromCbor((BinaryMessage) message);
-			this.addFlights(msg);
-			this.handleSubecriptionIds(msg);
-			this.notifier_count += msg.indexOf("GRAPHQL-NOTIFIER") > 0 ? 1 : 0;
+			if (isNotifier(msg)) {
+				this.notifier_count++;
+			} else {
+				this.addFlights(msg);
+				this.handleSubecriptionIds(msg);
+			}
 
 		} else if (GsWebSocketHandler.SUB_PROTOCOL_MSGPACK.equalsIgnoreCase(session.getAcceptedProtocol())) {
 			this.msgpack_count++;
 			this.count++;
 			String msg = GsWebSocketHandler.getFromMsgPack((BinaryMessage) message);
-			this.addFlights(msg);
-			this.handleSubecriptionIds(msg);
-			this.notifier_count += msg.indexOf("GRAPHQL-NOTIFIER") > 0 ? 1 : 0;
+			if (isNotifier(msg)) {
+				this.notifier_count++;
+			} else {
+				this.addFlights(msg);
+				this.handleSubecriptionIds(msg);
+			}
 
 		} else {
 			this.default_count++;
 			this.count++;
 			String msg = ((TextMessage) message).getPayload();
-			this.addFlights(msg);
-			this.handleSubecriptionIds(msg);
-			this.notifier_count += msg.indexOf("GRAPHQL-NOTIFIER") > 0 ? 1 : 0;
+			if (isNotifier(msg)) {
+				this.notifier_count++;
+			} else {
+				this.addFlights(msg);
+				this.handleSubecriptionIds(msg);
+			}
 		}
+	}
+
+	private boolean isNotifier(String msg) {
+		return msg.indexOf("GRAPHQL-NOTIFY") > 0;
 	}
 
 	// [1,1,"GRAPHQL-RESPONSE",{"data":{"_Subscription":{"subscribe":"2250bf90-f6a4-4a4d-9587-4e538bb2d4ab"},"routes":[{"flightNumber":"LH2122","departure":"MUC","destination":"BRE"},{"flightNumber":"LH2084","departure":"CGN","destination":"BER"}]}}]
@@ -106,8 +122,10 @@ public class SubscriptionTestsHandler extends AbstractWebSocketHandler {
 
 		if (pos_gql > 0 && pos_sub > 0 && pos > 0) {
 			payload = payload.substring(pos - 1, payload.indexOf("}", pos) + 1);
+			System.out.println("handleSubecriptionIds payload = " + payload);
 			JSONObject json = new JSONObject(payload);
 			String subscriptionId = json.getString("subscribe");
+			System.out.println("handleSubecriptionIds subscriptionId = " + subscriptionId);
 			this.subscriptionIds.add(subscriptionId);
 		}
 	}

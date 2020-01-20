@@ -41,7 +41,8 @@ import com.thinkenterprise.graphqlio.server.handler.GsWebSocketHandler;
 import com.thinkenterprise.graphqlio.server.helpers.TestRoute;
 
 /**
- * websockethandler class for testing queries, mutations, subscriptions and messages with subprotocols
+ * websockethandler class for testing queries, mutations, subscriptions and
+ * messages with subprotocols
  *
  * @author Michael Schäfer
  * @author Torsten Kühnert
@@ -93,6 +94,9 @@ public class MessagesTestsHandler extends AbstractWebSocketHandler {
 		int pos = msg.indexOf("{\"data\":");
 		if (pos > 0) {
 			String jsonStr = msg.substring(pos);
+			jsonStr = jsonStr.substring(0, jsonStr.length() - 1);
+			// System.out.println("jsonStr = " + jsonStr);
+
 			JSONObject jsonObj = new JSONObject(jsonStr);
 			JSONObject dataObj = jsonObj.getJSONObject("data");
 
@@ -102,13 +106,15 @@ public class MessagesTestsHandler extends AbstractWebSocketHandler {
 				for (int i = 0; i < routesArr.length(); i++) {
 					JSONObject flightObj = routesArr.getJSONObject(i);
 
-					this.routes.add(new TestRoute(flightObj.toString()));
+					TestRoute newRoute = new TestRoute(flightObj.toString());
+					this.routes.add(newRoute);
 				}
 
 			} else if (dataObj.has("updateRoute")) {
 				JSONObject flightObj = dataObj.getJSONObject("updateRoute");
 
-				this.routes.add(new TestRoute(flightObj.toString()));
+				TestRoute newRoute = new TestRoute(flightObj.toString());
+				this.routes.add(newRoute);
 			}
 		}
 	}

@@ -119,7 +119,6 @@ public class TestRoute {
 	public boolean equals(Object obj) {
 		if (obj == null || !(obj instanceof TestRoute)) {
 			return false;
-
 		}
 
 		TestRoute route = (TestRoute) obj;
@@ -142,6 +141,12 @@ public class TestRoute {
 		} else {
 			return false;
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "TestRoute [flightNumber=" + flightNumber + ", departure=" + departure + ", destination=" + destination
+				+ "]";
 	}
 
 }

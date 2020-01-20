@@ -91,7 +91,7 @@ class SubprotocolsTests {
 		this.routeResolver.init();
 	}
 
-	private final String simpleQuery = "[1,0,\"GRAPHQL-REQUEST\",query { _Subscription { subscribe } _Subscription { subscribe } } ]";
+	private final String simpleQuery = "[1,0,\"GRAPHQL-REQUEST\",{\"query\":\"query { _Subscription { subscribe } _Subscription { subscribe } }\"}]";
 
 	@Test
 	void textAnswer() {

@@ -44,7 +44,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 public class SampleHelloWorldJavaClient {
 
-	private static final String helloWorldQuery = "[1,0,\"GRAPHQL-REQUEST\",query { hello } ]";
+	private static final String helloWorldQuery = "[1,0,\"GRAPHQL-REQUEST\",{\"query\":\"query { hello }\"}]";
 
 	public static void main(String[] args) {
 		try {
