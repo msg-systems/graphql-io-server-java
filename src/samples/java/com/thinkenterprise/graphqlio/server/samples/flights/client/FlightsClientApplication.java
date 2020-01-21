@@ -65,7 +65,7 @@ public class FlightsClientApplication {
 					.doHandshake(webSocketHandler, webSocketHttpHeaders, uri).get();
 
 			AbstractWebSocketMessage message = new TextMessage(Query);
-			webSocketSession.sendMessage(message);
+			// webSocketSession.sendMessage(message);
 			Thread.sleep(2000);
 
 			message = new TextMessage(Mutation);

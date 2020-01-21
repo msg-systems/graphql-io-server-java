@@ -41,8 +41,6 @@ import org.msgpack.core.MessageUnpacker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationListener;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.CloseStatus;
@@ -52,7 +50,6 @@ import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 
-import com.thinkenterprise.graphqlio.server.actuator.custom.GsGraphqlioCounterEndpoint;
 import com.thinkenterprise.graphqlio.server.execution.GsExecutionStrategy;
 import com.thinkenterprise.graphqlio.server.graphql.schema.GsGraphQLSchemaCreator;
 import com.thinkenterprise.graphqlio.server.server.GsContext;
@@ -64,7 +61,6 @@ import com.thinkenterprise.gts.tracking.GtsScope;
 import com.thinkenterprise.wsf.converter.WsfConverter;
 import com.thinkenterprise.wsf.domain.WsfFrame;
 import com.thinkenterprise.wsf.domain.WsfFrameType;
-import com.thinkenterprise.wsf.event.WsfInboundFrameEvent;
 
 import co.nstant.in.cbor.CborDecoder;
 import co.nstant.in.cbor.CborEncoder;
@@ -83,8 +79,7 @@ import graphql.GraphQLException;
  * @author Torsten Kühnert
  */
 
-
-public class GsWebSocketHandler extends AbstractWebSocketHandler implements ApplicationListener<WsfInboundFrameEvent>, SubProtocolCapable {
+public class GsWebSocketHandler extends AbstractWebSocketHandler implements SubProtocolCapable {
 
 	public static final String SUB_PROTOCOL_TEXT = "text";
 	public static final String SUB_PROTOCOL_CBOR = "cbor";
@@ -428,17 +423,6 @@ public class GsWebSocketHandler extends AbstractWebSocketHandler implements Appl
 
 	}
 
-	@Override
-	public void onApplicationEvent(WsfInboundFrameEvent event) {
-		try {
-			webSocketSessions.get(event.getCid())
-					.sendMessage(new TextMessage(requestConverter.convert(event.getFrame())));
-		} catch (IOException e) {
-			logger.error("Error occured in GsWebSocketHandler.onApplicationEvent: ", e);
-		}
-	}
-
-	
 	/// check if message is a "Subscription - mutation" and contains valid UUID 
 	private String getSubscriptionScopeId( String requestMessage ) {
 		
