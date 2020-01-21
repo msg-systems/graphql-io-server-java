@@ -26,6 +26,17 @@
  ******************************************************************************/
 package com.thinkenterprise.graphqlio.server.autoconfiguration;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.socket.config.annotation.EnableWebSocket;
+import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
+
 import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -39,24 +50,12 @@ import com.thinkenterprise.graphqlio.server.graphql.schema.GsGraphQLSchemaCreato
 import com.thinkenterprise.graphqlio.server.graphql.schema.GsGraphQLSimpleSchemaCreator;
 import com.thinkenterprise.graphqlio.server.handler.GsWebSocketHandler;
 import com.thinkenterprise.gts.actuator.GtsCounter;
-import com.thinkenterprise.gts.actuator.GtsCounterNotification;
 import com.thinkenterprise.gts.evaluation.GtsEvaluation;
+import com.thinkenterprise.wsf.converter.WsfConverter;
+import com.thinkenterprise.wsf.converter.WsfFrameToMessageConverter;
+import com.thinkenterprise.wsf.domain.WsfFrameType;
 
 import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
-import org.springframework.web.socket.config.annotation.EnableWebSocket;
-import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
-import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
 /**
  * Class to automatically configure the beans for the GraphQL IO Server library based on conditions 
@@ -123,18 +122,46 @@ public class GsAutoConfiguration implements WebSocketConfigurer {
 
         return mapper;
     }
-		
+
+	// requestConverter = new WsfConverter(WsfFrameType.GRAPHQLREQUEST);
+	// responseConverter = new WsfConverter(WsfFrameType.GRAPHQLRESPONSE);
+	// notifyerConverter = new WsfConverter(WsfFrameType.GRAPHQLNOTIFIER);
+
+	@Bean
+	@ConditionalOnMissingBean
+	public WsfFrameToMessageConverter requestConverter() {
+		return new WsfConverter(WsfFrameType.GRAPHQLREQUEST);
+	}
+
+	@Bean
+	@ConditionalOnMissingBean
+	public WsfFrameToMessageConverter responseConverter() {
+		return new WsfConverter(WsfFrameType.GRAPHQLRESPONSE);
+	}
+
+	@Bean
+	@ConditionalOnMissingBean
+	public WsfFrameToMessageConverter notifyerConverter() {
+		return new WsfConverter(WsfFrameType.GRAPHQLNOTIFIER);
+	}
+
 	@Bean
 	@ConditionalOnMissingBean
 	public GsWebSocketHandler gsWebSocketHandler( GsExecutionStrategy gsExecutionStategy
 												, GtsEvaluation gtsEvaluation
 												, GsGraphQLSchemaCreator gsSchemaCreator
 												, GtsCounter gsGtsCounter
+												, WsfFrameToMessageConverter requestConverter
+												, WsfFrameToMessageConverter responseConverter
+												, WsfFrameToMessageConverter notifyerConverter
 												) {
 		return new GsWebSocketHandler	( gsExecutionStategy
 										, gtsEvaluation
 										, gsSchemaCreator
 										, gsGtsCounter
+										, requestConverter
+										, responseConverter
+										, notifyerConverter
 				);
 
 	}

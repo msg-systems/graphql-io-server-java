@@ -107,11 +107,14 @@ public class GsWebSocketHandler extends AbstractWebSocketHandler implements SubP
 	
 	@Autowired
 	public GsWebSocketHandler(GsExecutionStrategy executionStrategy,
-			GtsEvaluation evaluation, GsGraphQLSchemaCreator schemaCreator, GtsCounter gtsCounter) {
+			GtsEvaluation evaluation, GsGraphQLSchemaCreator schemaCreator, GtsCounter gtsCounter,
+			WsfFrameToMessageConverter requestConverter,
+			WsfFrameToMessageConverter responseConverter,
+			WsfFrameToMessageConverter notifyerConverter) {
 
-		requestConverter = new WsfConverter(WsfFrameType.GRAPHQLREQUEST);
-		responseConverter = new WsfConverter(WsfFrameType.GRAPHQLRESPONSE);
-		notifyerConverter = new WsfConverter(WsfFrameType.GRAPHQLNOTIFIER);
+		this.requestConverter = requestConverter;
+		this.responseConverter = responseConverter;
+		this.notifyerConverter = notifyerConverter;
 
 		graphQLIOQueryExecution = executionStrategy;
 		graphQLIOEvaluation = evaluation;
