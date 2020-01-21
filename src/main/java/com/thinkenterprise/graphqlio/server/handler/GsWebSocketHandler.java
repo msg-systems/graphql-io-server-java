@@ -59,6 +59,7 @@ import com.thinkenterprise.gts.exceptions.GtsSubscriptionTypeException;
 import com.thinkenterprise.gts.tracking.GtsConnection;
 import com.thinkenterprise.gts.tracking.GtsScope;
 import com.thinkenterprise.wsf.converter.WsfConverter;
+import com.thinkenterprise.wsf.converter.WsfFrameToMessageConverter;
 import com.thinkenterprise.wsf.domain.WsfFrame;
 import com.thinkenterprise.wsf.domain.WsfFrameType;
 
@@ -90,11 +91,11 @@ public class GsWebSocketHandler extends AbstractWebSocketHandler implements SubP
 	private final Map<String, GtsConnection> webSocketConnections = new ConcurrentHashMap<>();
 	private final Map<String, WebSocketSession> webSocketSessions = new ConcurrentHashMap<>();
 
-	private final WsfConverter requestConverter;
+	private final WsfFrameToMessageConverter requestConverter;
 
-	private final WsfConverter responseConverter;
+	private final WsfFrameToMessageConverter responseConverter;
 
-	private final WsfConverter notifyerConverter;
+	private final WsfFrameToMessageConverter notifyerConverter;
 
 	private final GsExecutionStrategy graphQLIOQueryExecution;
 
@@ -111,6 +112,7 @@ public class GsWebSocketHandler extends AbstractWebSocketHandler implements SubP
 		requestConverter = new WsfConverter(WsfFrameType.GRAPHQLREQUEST);
 		responseConverter = new WsfConverter(WsfFrameType.GRAPHQLRESPONSE);
 		notifyerConverter = new WsfConverter(WsfFrameType.GRAPHQLNOTIFIER);
+
 		graphQLIOQueryExecution = executionStrategy;
 		graphQLIOEvaluation = evaluation;
 		gsGraphQLSchemaCreator = schemaCreator;
@@ -281,8 +283,6 @@ public class GsWebSocketHandler extends AbstractWebSocketHandler implements SubP
 			logger.error(e.toString());				
 ///			ToDo: Shall we notify client???			
 		}
-
-		
 	}
 
 	private void sendAnswerBackToClient(WebSocketSession session, String answerFrame) throws Exception {
@@ -401,8 +401,6 @@ public class GsWebSocketHandler extends AbstractWebSocketHandler implements SubP
 		}		
 		webSocketConnections.remove(session.getId());
 		webSocketSessions.remove(session.getId());
-		
-		
 	}
 
 	private void sendNotifierMessageToClients(Map<String, Set<String>> sids4cid, WsfFrame requestMessage)
@@ -412,15 +410,22 @@ public class GsWebSocketHandler extends AbstractWebSocketHandler implements SubP
 
 		for (String cid : cids) {
 			WsfFrame message = WsfFrame.builder().fid(requestMessage.getFid()).rid(requestMessage.getRid())
-					.type(WsfFrameType.GRAPHQLNOTIFIER).data(notifyerConverter.createData(sids4cid.get(cid))).build();
+					.type(WsfFrameType.GRAPHQLNOTIFIER).data(createData(sids4cid.get(cid))).build();
 			String frame = notifyerConverter.convert(message);
 			WebSocketSession sessionForCid = webSocketSessions.get(cid);
 			if (sessionForCid != null ) {
 				sendAnswerBackToClient(sessionForCid, frame);
 			}
-
 		}
+	}
 
+	private String surroundWithQuotes(String value) {
+		return "\"" + value + "\"";
+	}
+
+	private String createData(Set<String> set) {
+		String result = set.isEmpty() ? "" : surroundWithQuotes(String.join(surroundWithQuotes(", "), set));
+		return "{" + surroundWithQuotes("data") + ":[" +  result + "]}";
 	}
 
 	/// check if message is a "Subscription - mutation" and contains valid UUID 
@@ -480,7 +485,6 @@ public class GsWebSocketHandler extends AbstractWebSocketHandler implements SubP
 		return null;
 	}
 	
-	
 	/// helper function
 	private UUID isValidUUID(String uuidString) {
 		UUID resultUUID = null;
@@ -493,8 +497,6 @@ public class GsWebSocketHandler extends AbstractWebSocketHandler implements SubP
 		return resultUUID;	
 	}
 	
-	
-
 	@Override
 	public List<String> getSubProtocols() {
 		return Arrays.asList(SUB_PROTOCOL_TEXT, SUB_PROTOCOL_CBOR, SUB_PROTOCOL_MSGPACK);
