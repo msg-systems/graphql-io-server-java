@@ -25,13 +25,22 @@
 10. GsExecutionStrategy Why ist htis class in a seperate Package or the implementation not there? 
 11. Motivation of GraphQLIOLibraryGsConfiguration & GraphQLIOLibraryGsConfiguration
 12. Right samples are missing
+```
+-> done! (tku)
+```
 13. Production Configuration Properties are missing 
 14. Some Configuration Properties are unclear. Why do we need graphql.servlet.mapping for example 
 15. GraphQL Schema places an file naming should be changed 
 16. Naming Method Convention whenThenElse for all Tests 
 17. GraphQlIoSubscriptionTests Problem with Do you want the application "redis-server-2.8.19.app" to accept incoming network connections?
 18. GraphQlIoSubscriptionTestsHandler I don't understand this class. Why do we implement a new Handler here. 
+```
+-> because it's a real client-server-test where messages are flowing. So different message-formats and message-values are counted and interpreted. And on the end of one test checked with assertions.
+```
 19. The same here GraphQlIoSubprotocolsTestsHandler
+```
+-> same backgrounds here
+```
 20. Property Generator for our Properties is missing 
 
 # Discussion 
