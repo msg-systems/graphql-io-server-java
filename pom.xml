@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.thinkenterprise</groupId>
+	<groupId>com.graphqlio</groupId>
 	<artifactId>graphql-io-server-java</artifactId>
 	<version>0.0.1</version>
 	<packaging>jar</packaging>
@@ -59,19 +59,19 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>com.thinkenterprise</groupId>
+			<groupId>com.graphqlio</groupId>
 			<artifactId>graphql-tools-types-java</artifactId>
 			<version>0.0.9</version>
 		</dependency>
 
 		<dependency>
-			<groupId>com.thinkenterprise</groupId>
+			<groupId>com.graphqlio</groupId>
 			<artifactId>graphql-tools-subscribe-java</artifactId>
 			<version>0.0.9</version>
 		</dependency>
 
 		<dependency>
-			<groupId>com.thinkenterprise</groupId>
+			<groupId>com.graphqlio</groupId>
 			<artifactId>websocket-framed-java</artifactId>
 			<version>0.0.9</version>
 		</dependency>
