@@ -58,7 +58,6 @@ import com.graphqlio.gts.tracking.GtsScope;
 import com.graphqlio.server.execution.GsExecutionStrategy;
 import com.graphqlio.server.graphql.schema.GsGraphQLSchemaCreator;
 import com.graphqlio.server.server.GsContext;
-import com.graphqlio.wsf.converter.WsfConverter;
 import com.graphqlio.wsf.converter.WsfFrameToMessageConverter;
 import com.graphqlio.wsf.domain.WsfFrame;
 import com.graphqlio.wsf.domain.WsfFrameType;
@@ -91,35 +90,30 @@ public class GsWebSocketHandler extends AbstractWebSocketHandler implements SubP
 	private final Map<String, GtsConnection> webSocketConnections = new ConcurrentHashMap<>();
 	private final Map<String, WebSocketSession> webSocketSessions = new ConcurrentHashMap<>();
 
-	private final WsfFrameToMessageConverter requestConverter;
-
-	private final WsfFrameToMessageConverter responseConverter;
-
-	private final WsfFrameToMessageConverter notifyerConverter;
-
 	private final GsExecutionStrategy graphQLIOQueryExecution;
-
 	private final GtsEvaluation graphQLIOEvaluation;
-
 	private final GsGraphQLSchemaCreator gsGraphQLSchemaCreator;
-
 	private final GtsCounter gsGtsCounter;
-	
+
+	private final WsfFrameToMessageConverter requestConverter;
+	private final WsfFrameToMessageConverter responseConverter;
+	private final WsfFrameToMessageConverter notifyConverter;
+
 	@Autowired
 	public GsWebSocketHandler(GsExecutionStrategy executionStrategy,
 			GtsEvaluation evaluation, GsGraphQLSchemaCreator schemaCreator, GtsCounter gtsCounter,
 			WsfFrameToMessageConverter requestConverter,
 			WsfFrameToMessageConverter responseConverter,
-			WsfFrameToMessageConverter notifyerConverter) {
+			WsfFrameToMessageConverter notifyConverter) {
+
+		this.graphQLIOQueryExecution = executionStrategy;
+		this.graphQLIOEvaluation = evaluation;
+		this.gsGraphQLSchemaCreator = schemaCreator;
+		this.gsGtsCounter = gtsCounter;
 
 		this.requestConverter = requestConverter;
 		this.responseConverter = responseConverter;
-		this.notifyerConverter = notifyerConverter;
-
-		graphQLIOQueryExecution = executionStrategy;
-		graphQLIOEvaluation = evaluation;
-		gsGraphQLSchemaCreator = schemaCreator;
-		gsGtsCounter = gtsCounter;
+		this.notifyConverter = notifyConverter;
 	}
 
 	@Override
@@ -414,7 +408,7 @@ public class GsWebSocketHandler extends AbstractWebSocketHandler implements SubP
 		for (String cid : cids) {
 			WsfFrame message = WsfFrame.builder().fid(requestMessage.getFid()).rid(requestMessage.getRid())
 					.type(WsfFrameType.GRAPHQLNOTIFIER).data(createData(sids4cid.get(cid))).build();
-			String frame = notifyerConverter.convert(message);
+			String frame = notifyConverter.convert(message);
 			WebSocketSession sessionForCid = webSocketSessions.get(cid);
 			if (sessionForCid != null ) {
 				sendAnswerBackToClient(sessionForCid, frame);

@@ -38,9 +38,9 @@ import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 /**
- * Client application for the counter increase subscription sample.
- * This client subscribes on the counter value.
- * When the counter is increased this client is notificated by graphql-io-server.
+ * Client application for the counter increase subscription sample. This client
+ * subscribes on the counter value. When the counter is increased this client is
+ * notificated by graphql-io-server.
  * 
  * @author Michael Schäfer
  * @author Torsten Kühnert
@@ -49,6 +49,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 public class CounterClientSubscription {
 
 	private final String Query = "[1,0,\"GRAPHQL-REQUEST\",{\"query\":\"query { _Subscription { subscribe } counter { value } }\"}]";
+	private final String Query2 = "[3,1,\"GRAPHQL-REQUEST\",{\"query\":\"query { _Subscription { subscribe } counter { value value } }\"}]";
 
 	public static void main(String[] args) {
 		new CounterClientSubscription().runQuery();
@@ -64,7 +65,10 @@ public class CounterClientSubscription {
 			final WebSocketSession webSocketSession = webSocketClient
 					.doHandshake(webSocketHandler, webSocketHttpHeaders, uri).get();
 
-			final AbstractWebSocketMessage message = new TextMessage(Query);
+			AbstractWebSocketMessage message = new TextMessage(Query);
+			webSocketSession.sendMessage(message);
+			// second subscriber:
+			message = new TextMessage(Query2);
 			webSocketSession.sendMessage(message);
 
 			System.out.println("Subscription::waiting 60 seconds...");

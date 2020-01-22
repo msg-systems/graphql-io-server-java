@@ -24,47 +24,22 @@
  * **  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * *
  ******************************************************************************/
-package com.graphqlio.server.samples.counter.server.resolver;
+package com.graphqlio.server.converter;
 
-import org.springframework.stereotype.Component;
-
-import com.coxautodev.graphql.tools.GraphQLQueryResolver;
-import com.graphqlio.gts.context.GtsContext;
-import com.graphqlio.gts.tracking.GtsRecord;
-import com.graphqlio.gts.tracking.GtsScope;
-import com.graphqlio.gts.tracking.GtsRecord.GtsArityType;
-import com.graphqlio.gts.tracking.GtsRecord.GtsOperationType;
-import com.graphqlio.server.samples.counter.server.domain.Counter;
-import com.graphqlio.server.samples.counter.server.domain.CounterRepository;
-
-import graphql.schema.DataFetchingEnvironment;
+import com.graphqlio.wsf.converter.WsfConverter;
+import com.graphqlio.wsf.domain.WsfFrameType;
 
 /**
- * Root query resolver for resolving counter.
- * 
+ * Class used to convert request-frames
+ *
  * @author Michael Schäfer
  * @author Torsten Kühnert
  */
 
-@Component
-public class RootQueryResolver implements GraphQLQueryResolver {
+public class WsfRequestConverter extends WsfConverter {
 
-	private CounterRepository repo;
-
-	public RootQueryResolver(CounterRepository repo) {
-		this.repo = repo;
-	}
-
-	public Counter counter(DataFetchingEnvironment env) {
-		System.out.println("RootQueryResolver");
-		Counter counter = repo.getCounter();
-
-		GtsContext context = env.getContext();
-		GtsScope scope = context.getScope();
-		scope.addRecord(GtsRecord.builder().op(GtsOperationType.READ).arity(GtsArityType.ALL)
-				.dstType(Counter.class.getName()).dstIds(new String[] { "0" }).dstAttrs(new String[] { "*" }).build());
-
-		return counter;
+	public WsfRequestConverter() {
+		super(WsfFrameType.GRAPHQLREQUEST);
 	}
 
 }

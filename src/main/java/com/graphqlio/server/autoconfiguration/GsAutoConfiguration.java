@@ -45,15 +45,15 @@ import com.graphqlio.gts.actuator.GtsCounter;
 import com.graphqlio.gts.evaluation.GtsEvaluation;
 import com.graphqlio.server.actuator.custom.GsGraphqlioCounterEndpoint;
 import com.graphqlio.server.actuator.metrics.GsGraphqlioMeterRegistryCounter;
+import com.graphqlio.server.converter.WsfNotifyConverter;
+import com.graphqlio.server.converter.WsfRequestConverter;
+import com.graphqlio.server.converter.WsfResponseConverter;
 import com.graphqlio.server.execution.GsExecutionStrategy;
 import com.graphqlio.server.graphql.GsGraphQLExecution;
 import com.graphqlio.server.graphql.GsGraphQLService;
 import com.graphqlio.server.graphql.schema.GsGraphQLSchemaCreator;
 import com.graphqlio.server.graphql.schema.GsGraphQLSimpleSchemaCreator;
 import com.graphqlio.server.handler.GsWebSocketHandler;
-import com.graphqlio.wsf.converter.WsfConverter;
-import com.graphqlio.wsf.converter.WsfFrameToMessageConverter;
-import com.graphqlio.wsf.domain.WsfFrameType;
 
 import io.micrometer.core.instrument.MeterRegistry;
 
@@ -128,21 +128,18 @@ public class GsAutoConfiguration implements WebSocketConfigurer {
 	// notifyerConverter = new WsfConverter(WsfFrameType.GRAPHQLNOTIFIER);
 
 	@Bean
-	@ConditionalOnMissingBean
-	public WsfFrameToMessageConverter requestConverter() {
-		return new WsfConverter(WsfFrameType.GRAPHQLREQUEST);
+	public WsfRequestConverter requestConverter() {
+		return new WsfRequestConverter();
 	}
 
 	@Bean
-	@ConditionalOnMissingBean
-	public WsfFrameToMessageConverter responseConverter() {
-		return new WsfConverter(WsfFrameType.GRAPHQLRESPONSE);
+	public WsfResponseConverter responseConverter() {
+		return new WsfResponseConverter();
 	}
 
 	@Bean
-	@ConditionalOnMissingBean
-	public WsfFrameToMessageConverter notifyerConverter() {
-		return new WsfConverter(WsfFrameType.GRAPHQLNOTIFIER);
+	public WsfNotifyConverter notifyerConverter() {
+		return new WsfNotifyConverter();
 	}
 
 	@Bean
@@ -151,9 +148,9 @@ public class GsAutoConfiguration implements WebSocketConfigurer {
 												, GtsEvaluation gtsEvaluation
 												, GsGraphQLSchemaCreator gsSchemaCreator
 												, GtsCounter gsGtsCounter
-												, WsfFrameToMessageConverter requestConverter
-												, WsfFrameToMessageConverter responseConverter
-												, WsfFrameToMessageConverter notifyerConverter
+												, WsfRequestConverter requestConverter
+												, WsfResponseConverter responseConverter
+												, WsfNotifyConverter notifyConverter
 												) {
 		return new GsWebSocketHandler	( gsExecutionStategy
 										, gtsEvaluation
@@ -161,15 +158,13 @@ public class GsAutoConfiguration implements WebSocketConfigurer {
 										, gsGtsCounter
 										, requestConverter
 										, responseConverter
-										, notifyerConverter
+										, notifyConverter
 				);
 
 	}
-	
-	
 
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {	 
     	registry.addHandler(this.handler, gsProperties.getEndpoint());   
 	}
-    
+
 }
