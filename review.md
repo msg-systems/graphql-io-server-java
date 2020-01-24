@@ -53,7 +53,9 @@
 10. Production Configuration Properties are missing - Edgar 
 11. Some Configuration Properties are unclear. Why do we need graphql.servlet.mapping for example - Edgar (Autoconfiguration)
 12. GraphQL Schema places an file naming should be changed - Michael 
+
 13. Naming Method Convention whenThenElse for all Tests - Torsten 
+
 14. Property Generator for our Properties is missing - Edgar (Autoconfiguration)
 
 15. Samples werden nicht im Eclipse angezeigt, da die Sample Folder nicht automatisch in den Classpath ... - Torsten Nachdenken 
