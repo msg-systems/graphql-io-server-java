@@ -24,10 +24,10 @@
    - abstract class GsGraphQLAbstractSchemaCreator implements GsGraphQLSchemaCreator
      - impementiert: getGraphQLSchema()
      - implementiert initScalarTypes()
-   - wird implementiert von:
-     - GsGraphQLSimpleSchemaCreator > nutzen wir
-     - ruft initScalarTypes() auf
-     - GsGraphQLStandardSchemaCreator -> unbenutzt
+     - wird extended von:
+       - GsGraphQLSimpleSchemaCreator > nutzen wir
+       - ruft initScalarTypes() auf
+       - GsGraphQLStandardSchemaCreator -> unbenutzt
 
 6. GsGraphQLEngine Why do we have no interface there but for GsGraphQLExecution - Torsten 
 
