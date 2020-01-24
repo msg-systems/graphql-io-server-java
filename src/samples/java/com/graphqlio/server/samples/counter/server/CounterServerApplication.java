@@ -30,6 +30,7 @@ import java.util.Properties;
 
 import javax.annotation.PreDestroy;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
@@ -42,10 +43,10 @@ import com.graphqlio.server.server.GsServer;
 import com.graphqlio.wsf.EnableGraphQLIOWsfLibraryModule;
 
 /**
- * Server application for the counter sample.
- * This spring boot application set the properties and starts it.
- * The graphql-io-server is started by the ApplicationRunner implementation.
- * On end of spring boot application the server should be stopped.
+ * Server application for the counter sample. This spring boot application set
+ * the properties and starts it. The graphql-io-server is started by the
+ * ApplicationRunner implementation. On end of spring boot application the
+ * server should be stopped.
  * 
  * @author Michael Schäfer
  * @author Torsten Kühnert
@@ -59,8 +60,6 @@ import com.graphqlio.wsf.EnableGraphQLIOWsfLibraryModule;
 public class CounterServerApplication implements ApplicationRunner {
 
 	public static void main(String[] args) {
-		SpringApplication application = new SpringApplication(CounterServerApplication.class);
-
 		Properties properties = new Properties();
 		properties.put("server.port", "8080");
 		properties.put("graphqlio.server.schemaLocationPattern", "**/*.counter.graphql");
@@ -69,15 +68,13 @@ public class CounterServerApplication implements ApplicationRunner {
 		properties.put("spring.redis.host", "localhost");
 		properties.put("spring.redis.port", "26379");
 
+		SpringApplication application = new SpringApplication(CounterServerApplication.class);
 		application.setDefaultProperties(properties);
 		application.run(args);
 	}
 
+	@Autowired
 	private GsServer graphqlioServer;
-
-	CounterServerApplication(GsServer graphqlioServer) {
-		this.graphqlioServer = graphqlioServer;
-	}
 
 	@Override
 	public void run(ApplicationArguments args) throws Exception {

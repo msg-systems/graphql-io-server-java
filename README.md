@@ -36,110 +36,10 @@ dependencies {
 
 # Samples 
 
-## Hello World Sample
-
-[Link to the Hello World Sample ...](https://github.com/Thinkenterprise/graphql-io-server-java/tree/master/src/samples/java/com/thinkenterprise/graphqlio/server/samples/helloworld)
-
-graphql schema:
-
-```
-schema {
-	query: Query
-}
-type Query {
-	hello: String!
-}
-```
-
-graphql resolver class:
-
-``` java
-@Component
-public class SampleHelloWorldResolver implements GraphQLQueryResolver {
-	public String hello() {
-		return "Hello World";
-	}
-}
-```
-
-spring boot application with graphql-io-server:
-
-```java
-@SpringBootApplication
-@EnableGraphQLIOServer
-public class SampleHelloWorldApplication implements ApplicationRunner {
-
-        // GraphQL Server
-	private GsServer graphqlioServer;
-	
-	SampleHelloWorldApplication(GsServer graphqlioServer) {
-		this.graphqlioServer = graphqlioServer;
-	}
-
-	public static void main(String[] args) {
-		SpringApplication application = new SpringApplication(SampleHelloWorldApplication.class);
-		
-		Properties properties = new Properties();
-		properties.put("graphqlio.server.schemaLocationPattern", "**/*.helloworld.graphql");
-		properties.put("graphqlio.server.endpoint", "/api/data/graph");
-		properties.put("graphqlio.toolssubscribe.useEmbeddedRedis", "true");
-			
-		application.setDefaultProperties(properties);
-		application.run(args);
-	}
-	
-	@Override
-	public void run(ApplicationArguments args) throws Exception {
-		this.graphqlioServer.start();
-	}
-	
-	@PreDestroy
-	public void destroy() throws Exception {
-		this.graphqlioServer.stop();
-	}
-}
-```
-
-Client requesting "hello":
-
-``` java
-	String helloWorldQuery = "[1,0,\"GRAPHQL-REQUEST\",query { hello } ]";
-
-	SampleHelloWorldHandler webSocketHandler = new SampleHelloWorldHandler();
-	WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
-	WebSocketClient webSocketClient = new StandardWebSocketClient();
-	URI uri = URI.create("ws://127.0.0.1:8080/api/data/graph");
-	WebSocketSession webSocketSession = webSocketClient.doHandshake(webSocketHandler, headers, uri).get();
-
-	webSocketSession.sendMessage(new TextMessage(helloWorldQuery));
-
-	Thread.sleep(200);
-
-	webSocketSession.close();
-```
-
-Handler receiving response:
-
-``` java
-	private static class SampleHelloWorldHandler extends TextWebSocketHandler {
-
-		@Override
-		protected void handleTextMessage(WebSocketSession session, TextMessage message) {
-			System.out.println("message received : id = " + session.getId());
-			System.out.println("                 : message = " + message.getPayload());
-		}
-
-		@Override
-		public void afterConnectionEstablished(WebSocketSession session) {
-			System.out.println("connection est.  : id = " + session.getId());
-		}
-	}
-```
-
-
 ## Counter Sample (increase, subscription)
 
 [Link to the Hello Counter Sample ...](https://github.com/Thinkenterprise/graphql-io-server-java/tree/master/src/samples/java/com/thinkenterprise/graphqlio/server/samples/counter)
+
 
 Graphql schema:
 
@@ -156,27 +56,6 @@ type Counter {
 }
 ```
 
-Graphql domain classes:
-
-``` java
-public class Counter {
-
-	private int value = 0;
-
-	public int getValue() {
-		return value;
-	}
-
-	public void setValue(int value) {
-		this.value = value;
-	}
-
-	public void inc() {
-		this.value++;
-	}
-}
-
-```
 
 Graphql resolver classes:
 
@@ -184,19 +63,20 @@ Graphql resolver classes:
 @Component
 public class RootQueryResolver implements GraphQLQueryResolver {
 
-	private CounterRepository repo;
-
-	public RootQueryResolver(CounterRepository repo) {
-		this.repo = repo;
-	}
-
 	public Counter counter(DataFetchingEnvironment env) {
-		Counter counter = repo.getCounter();
+		Counter counter = counterRepository.getCounter();
 
 		GtsContext context = env.getContext();
 		GtsScope scope = context.getScope();
-		scope.addRecord(GtsRecord.builder().op(GtsOperationType.READ).arity(GtsArityType.ALL)
-				.dstType(Counter.class.getName()).dstIds(new String[] { "0" }).dstAttrs(new String[] { "*" }).build());
+		scope.addRecord(
+			GtsRecord.builder()
+				.op(GtsOperationType.READ)
+				.arity(GtsArityType.ALL)
+				.dstType(Counter.class.getName())
+				.dstIds(new String[] { "0" })
+				.dstAttrs(new String[] { "*" })
+				.build()
+			);
 
 		return counter;
 	}
@@ -205,26 +85,28 @@ public class RootQueryResolver implements GraphQLQueryResolver {
 @Component
 public class CounterQueryResolver implements GraphQLResolver<Counter> {
 
-	private CounterRepository repo;
-
-	public CounterQueryResolver(CounterRepository repo) {
-		this.repo = repo;
-	}
-
 	public Counter increase(Counter counter, DataFetchingEnvironment env) {
-		Counter counter = repo.getCounter();
+		Counter counter = counterRepository.getCounter();
 
 		counter.inc();
 
 		GtsContext context = env.getContext();
 		GtsScope scope = context.getScope();
-		scope.addRecord(GtsRecord.builder().op(GtsOperationType.UPDATE).arity(GtsArityType.ALL)
-				.dstType(Counter.class.getName()).dstIds(new String[] { "0" }).dstAttrs(new String[] { "*" }).build());
+		scope.addRecord(
+			GtsRecord.builder()
+				.op(GtsOperationType.UPDATE)
+				.arity(GtsArityType.ALL)
+				.dstType(Counter.class.getName())
+				.dstIds(new String[] { "0" })
+				.dstAttrs(new String[] { "*" })
+				.build()
+			);
 
 		return counter;
 	}
 }
 ```
+
 
 Spring boot application with graphql-io-server:
 
@@ -233,25 +115,19 @@ Spring boot application with graphql-io-server:
 @EnableGraphQLIOServer
 public class CounterServerApplication implements ApplicationRunner {
 
-	private GsServer graphqlioServer;
-
-	CounterServerApplication(GsServer graphqlioServer) {
-		this.graphqlioServer = graphqlioServer;
-	}
-
 	public static void main(String[] args) {
-		SpringApplication application = new SpringApplication(CounterServerApplication.class);
-
 		Properties properties = new Properties();
 		properties.put("graphqlio.server.schemaLocationPattern", "**/*.counter.graphql");
 		properties.put("graphqlio.server.endpoint", "/api/data/graph");
 		properties.put("graphqlio.toolssubscribe.useEmbeddedRedis", "true");
-		
+
+		SpringApplication application = new SpringApplication(CounterServerApplication.class);
 		application.setDefaultProperties(properties);
 		application.run(args);
 	}
 
-	
+	@Autowired
+	private GsServer graphqlioServer;
 
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
@@ -265,7 +141,8 @@ public class CounterServerApplication implements ApplicationRunner {
 }
 ```
 
-Client subscribing to counter value, handler for responses and notifications:
+
+Client subscribing to counter.value, handler for responses and notifications:
 
 ``` java
 	final String Query = "[1,0,\"GRAPHQL-REQUEST\",query { _Subscription { subscribe } counter { value } } ]";
@@ -279,26 +156,13 @@ Client subscribing to counter value, handler for responses and notifications:
 			.doHandshake(webSocketHandler, webSocketHttpHeaders, uri).get();
 
 	final AbstractWebSocketMessage message = new TextMessage(Query);
-			webSocketSession.sendMessage(message);
+	webSocketSession.sendMessage(message);
 
 	System.out.println("Subscription::waiting 60 seconds...");
 	Thread.sleep(60000);
 	webSocketSession.close();
-
-
-	class CounterClientSubscriptionHandler extends TextWebSocketHandler {
-
-		@Override
-		protected void handleTextMessage(WebSocketSession session, TextMessage message) {
-			System.out.println("Subscription::message received: " + message.getPayload());
-		}
-
-		@Override
-		public void afterConnectionEstablished(WebSocketSession session) {
-			System.out.println("Subscription::connection established: " + session.getId());
-		}
-	}
 ```
+
 
 client increasing counter value every second, handler for responses:
 
@@ -321,20 +185,6 @@ client increasing counter value every second, handler for responses:
 		Thread.sleep(1000);
 	}
 	webSocketSession.close();
-
-
-	class CounterClientIncreaseHandler extends TextWebSocketHandler {
-
-		@Override
-		protected void handleTextMessage(WebSocketSession session, TextMessage message) {
-			System.out.println("Increase::message received: " + message.getPayload());
-		}
-
-		@Override
-		public void afterConnectionEstablished(WebSocketSession session) {
-			System.out.println("Increase::connection established: " + session.getId());
-		}
-	}
 ```
 
 
