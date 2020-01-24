@@ -24,45 +24,20 @@
  * **  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * *
  ******************************************************************************/
-package com.graphqlio.server.graphql;
-
-import static graphql.GraphQL.newGraphQL;
-
-import org.springframework.stereotype.Component;
-
-import com.graphqlio.server.execution.GsEngineStrategy;
+package com.graphqlio.server.execution;
 
 import graphql.GraphQL;
 import graphql.schema.GraphQLSchema;
 
-
 /**
- * Component responsible to create GraphQL engine based on GraphQL Schema 
+ * class GsEngineStrategy
  *
  * @author Michael Schäfer
- * @author Dr. Edgar Müller
  * @author Torsten Kühnert
  */
-@Component
-public class GsGraphQLEngine implements GsEngineStrategy {
 
-	final org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger();
-	
-    private GraphQL graphQL = null;
-    
-    public GraphQL getGraphQLEngine() {
-    	return graphQL;
-    }
-    
-	@Override
-    public GraphQL create (GraphQLSchema schema) {
-		if ( schema != null) {
-			log.info("Creating GraphQLSchema");	
-			graphQL = newGraphQL(schema).build();
-			
-			return graphQL;
-		}
-		return graphQL;    	
-    }
-	
+public interface GsEngineStrategy {
+
+	public GraphQL create(GraphQLSchema schema);
+
 }
