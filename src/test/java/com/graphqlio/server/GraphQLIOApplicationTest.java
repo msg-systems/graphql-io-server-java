@@ -10,7 +10,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @Tag("junit5")
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class GraphQlIoApplicationTests {
+class GraphQLIOApplicationTest {
 
 	@Test
 	void contextLoads() {

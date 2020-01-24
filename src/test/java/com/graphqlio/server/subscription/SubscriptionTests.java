@@ -48,8 +48,8 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 
-import com.graphqlio.server.helpers.TestQueryResolver;
-import com.graphqlio.server.helpers.TestRoute;
+import com.graphqlio.server.helpers.RootQueryResolverTest;
+import com.graphqlio.server.helpers.FlightTest;
 import com.graphqlio.server.server.GsServer;
 
 /**
@@ -73,7 +73,7 @@ class SubscriptionTests {
 	private GsServer graphqlioServer;
 
 	@Autowired
-	private TestQueryResolver routeResolver;
+	private RootQueryResolverTest routeResolver;
 
 	@BeforeAll
 	private void startServers() throws IOException {
@@ -136,12 +136,12 @@ class SubscriptionTests {
 			Assert.assertTrue(webSocketHandler.subscriptionIds.size() == 1);
 			Assert.assertTrue(webSocketHandler.notifier_count == 0);
 
-			Assert.assertTrue(webSocketHandler.routes.contains(new TestRoute(flight_1a)));
-			Assert.assertTrue(webSocketHandler.routes.contains(new TestRoute(flight_1b)));
-			Assert.assertTrue(routeResolver.allRoutes.values().contains(new TestRoute(flight_1a)));
-			Assert.assertTrue(routeResolver.allRoutes.values().contains(new TestRoute(flight_1b)));
-			Assert.assertTrue(!routeResolver.allRoutes.values().contains(new TestRoute(flight_2a)));
-			Assert.assertTrue(!routeResolver.allRoutes.values().contains(new TestRoute(flight_2b)));
+			Assert.assertTrue(webSocketHandler.routes.contains(new FlightTest(flight_1a)));
+			Assert.assertTrue(webSocketHandler.routes.contains(new FlightTest(flight_1b)));
+			Assert.assertTrue(routeResolver.allRoutes.values().contains(new FlightTest(flight_1a)));
+			Assert.assertTrue(routeResolver.allRoutes.values().contains(new FlightTest(flight_1b)));
+			Assert.assertTrue(!routeResolver.allRoutes.values().contains(new FlightTest(flight_2a)));
+			Assert.assertTrue(!routeResolver.allRoutes.values().contains(new FlightTest(flight_2b)));
 
 			////////////////////////////
 			// 2nd: mutationQuery2a & mutationQuery2b
@@ -166,12 +166,12 @@ class SubscriptionTests {
 			Assert.assertTrue(webSocketHandler.subscriptionIds.size() == 1);
 			Assert.assertTrue(webSocketHandler.notifier_count == 2);
 
-			Assert.assertTrue(webSocketHandler.routes.contains(new TestRoute(flight_2a)));
-			Assert.assertTrue(webSocketHandler.routes.contains(new TestRoute(flight_2b)));
-			Assert.assertTrue(routeResolver.allRoutes.values().contains(new TestRoute(flight_2a)));
-			Assert.assertTrue(routeResolver.allRoutes.values().contains(new TestRoute(flight_2b)));
-			Assert.assertTrue(!routeResolver.allRoutes.values().contains(new TestRoute(flight_1a)));
-			Assert.assertTrue(!routeResolver.allRoutes.values().contains(new TestRoute(flight_1b)));
+			Assert.assertTrue(webSocketHandler.routes.contains(new FlightTest(flight_2a)));
+			Assert.assertTrue(webSocketHandler.routes.contains(new FlightTest(flight_2b)));
+			Assert.assertTrue(routeResolver.allRoutes.values().contains(new FlightTest(flight_2a)));
+			Assert.assertTrue(routeResolver.allRoutes.values().contains(new FlightTest(flight_2b)));
+			Assert.assertTrue(!routeResolver.allRoutes.values().contains(new FlightTest(flight_1a)));
+			Assert.assertTrue(!routeResolver.allRoutes.values().contains(new FlightTest(flight_1b)));
 
 			////////////////////////////
 			// 3rd: unsubscribeQuery3
@@ -194,9 +194,9 @@ class SubscriptionTests {
 			Assert.assertTrue(webSocketHandler.subscriptionIds.size() == 1);
 			Assert.assertTrue(webSocketHandler.notifier_count == 2);
 
-			Assert.assertTrue(webSocketHandler.routes.contains(new TestRoute(flight_3)));
-			Assert.assertTrue(routeResolver.allRoutes.values().contains(new TestRoute(flight_3)));
-			Assert.assertTrue(!routeResolver.allRoutes.values().contains(new TestRoute(flight_4)));
+			Assert.assertTrue(webSocketHandler.routes.contains(new FlightTest(flight_3)));
+			Assert.assertTrue(routeResolver.allRoutes.values().contains(new FlightTest(flight_3)));
+			Assert.assertTrue(!routeResolver.allRoutes.values().contains(new FlightTest(flight_4)));
 
 			////////////////////////////
 			// 4th: mutationQuery4
@@ -219,9 +219,9 @@ class SubscriptionTests {
 			Assert.assertTrue(webSocketHandler.subscriptionIds.size() == 1);
 			Assert.assertTrue(webSocketHandler.notifier_count == 2);
 
-			Assert.assertTrue(webSocketHandler.routes.contains(new TestRoute(flight_4)));
-			Assert.assertTrue(routeResolver.allRoutes.values().contains(new TestRoute(flight_4)));
-			Assert.assertTrue(!routeResolver.allRoutes.values().contains(new TestRoute(flight_3)));
+			Assert.assertTrue(webSocketHandler.routes.contains(new FlightTest(flight_4)));
+			Assert.assertTrue(routeResolver.allRoutes.values().contains(new FlightTest(flight_4)));
+			Assert.assertTrue(!routeResolver.allRoutes.values().contains(new FlightTest(flight_3)));
 
 			webSocketSession.close();
 

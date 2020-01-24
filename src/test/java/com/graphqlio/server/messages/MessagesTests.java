@@ -50,8 +50,8 @@ import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 
 import com.graphqlio.server.handler.GsWebSocketHandler;
-import com.graphqlio.server.helpers.TestQueryResolver;
-import com.graphqlio.server.helpers.TestRoute;
+import com.graphqlio.server.helpers.RootQueryResolverTest;
+import com.graphqlio.server.helpers.FlightTest;
 import com.graphqlio.server.server.GsServer;
 
 /**
@@ -76,7 +76,7 @@ class MessagesTests {
 	private GsServer graphqlioServer;
 
 	@Autowired
-	private TestQueryResolver routeResolver;
+	private RootQueryResolverTest routeResolver;
 
 	@BeforeAll
 	private void startServers() throws IOException {
@@ -126,8 +126,8 @@ class MessagesTests {
 
 			String flight_a = "{\"flightNumber\":\"LH2084\",\"departure\":\"CGN\",\"destination\":\"BER\"}";
 			String flight_b = "{\"flightNumber\":\"LH2122\",\"departure\":\"MUC\",\"destination\":\"BRE\"}";
-			Assert.assertTrue(webSocketHandler.routes.contains(new TestRoute(flight_a)));
-			Assert.assertTrue(webSocketHandler.routes.contains(new TestRoute(flight_b)));
+			Assert.assertTrue(webSocketHandler.routes.contains(new FlightTest(flight_a)));
+			Assert.assertTrue(webSocketHandler.routes.contains(new FlightTest(flight_b)));
 
 			webSocketSession.close();
 
@@ -168,7 +168,7 @@ class MessagesTests {
 			// [1,1,"GRAPHQL-RESPONSE",{"data":{"updateRoute":{"flightNumber":"LH2084","departure":"HAM","destination":"MUC"}}}]
 
 			String flight_a = "{\"flightNumber\":\"LH2084\",\"departure\":\"HAM\",\"destination\":\"MUC\"}";
-			Assert.assertTrue(webSocketHandler.routes.contains(new TestRoute(flight_a)));
+			Assert.assertTrue(webSocketHandler.routes.contains(new FlightTest(flight_a)));
 
 			webSocketSession.close();
 

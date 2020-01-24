@@ -38,7 +38,7 @@ import org.json.JSONObject;
  * @author Torsten Kühnert
  */
 
-public class TestRoute {
+public class FlightTest {
 
 	private String flightNumber = null;
 	private String departure = null;
@@ -47,12 +47,12 @@ public class TestRoute {
 	private UUID signature = null;
 	private Date bookingDate = null;
 
-	public TestRoute() {
+	public FlightTest() {
 		super();
 		this.flightNumber = "";
 	}
 
-	public TestRoute(String jsonStr) throws JSONException {
+	public FlightTest(String jsonStr) throws JSONException {
 		super();
 		JSONObject flightObj = new JSONObject(jsonStr);
 		this.flightNumber = flightObj.getString("flightNumber");
@@ -60,7 +60,7 @@ public class TestRoute {
 		this.destination = flightObj.getString("destination");
 	}
 
-	public TestRoute(String flightNumber, String departure, String destination) {
+	public FlightTest(String flightNumber, String departure, String destination) {
 		super();
 		this.flightNumber = flightNumber;
 		this.departure = departure;
@@ -117,11 +117,11 @@ public class TestRoute {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null || !(obj instanceof TestRoute)) {
+		if (obj == null || !(obj instanceof FlightTest)) {
 			return false;
 		}
 
-		TestRoute route = (TestRoute) obj;
+		FlightTest route = (FlightTest) obj;
 
 		if ((this.flightNumber != null && route.getFlightNumber() == null)
 				|| (this.departure != null && route.getDeparture() == null)

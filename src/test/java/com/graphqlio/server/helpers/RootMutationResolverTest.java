@@ -25,15 +25,10 @@
 
 package com.graphqlio.server.helpers;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.coxautodev.graphql.tools.GraphQLQueryResolver;
+import com.coxautodev.graphql.tools.GraphQLMutationResolver;
 import com.graphqlio.gts.context.GtsContext;
 import com.graphqlio.gts.tracking.GtsRecord;
 import com.graphqlio.gts.tracking.GtsScope;
@@ -43,43 +38,34 @@ import com.graphqlio.gts.tracking.GtsRecord.GtsOperationType;
 import graphql.schema.DataFetchingEnvironment;
 
 /**
- * query resolver for testing
+ * mutation resolver for testing
  *
  * @author Michael Schäfer
  * @author Torsten Kühnert
  */
 
 @Component
-public class TestQueryResolver implements GraphQLQueryResolver {
+public class RootMutationResolverTest implements GraphQLMutationResolver {
 
-	public Map<String, TestRoute> allRoutes = new HashMap<String, TestRoute>();
+	@Autowired
+	private RootQueryResolverTest routeResolver;
 
-	public TestQueryResolver() {
-		this.init();
-	}
+	public FlightTest updateRoute(String flightNumber, FlightTest input, DataFetchingEnvironment env) {
 
-	public void init() {
-		this.allRoutes = new HashMap<String, TestRoute>();
-		this.allRoutes.put("LH2084", new TestRoute("LH2084", "CGN", "BER"));
-		this.allRoutes.put("LH2122", new TestRoute("LH2122", "MUC", "BRE"));
-	}
+		FlightTest route = routeResolver.allRoutes.get(flightNumber);
 
-	public Collection<TestRoute> routes(DataFetchingEnvironment env) {
+		route.setFlightNumber(input.getFlightNumber());
+		route.setDeparture(input.getDeparture());
+		route.setDestination(input.getDestination());
+		route.setDisabled(input.getDisabled());
 
-		Collection<TestRoute> routes = new ArrayList<TestRoute>(this.allRoutes.values());
-
-		List<String> dstIds = new ArrayList<>();
-		if (!routes.isEmpty()) {
-			routes.forEach(route -> dstIds.add(route.getFlightNumber().toString()));
-		} else
-			dstIds.add("*");
 		GtsContext context = env.getContext();
 		GtsScope scope = context.getScope();
-		scope.addRecord(
-				GtsRecord.builder().op(GtsOperationType.READ).arity(GtsArityType.ALL).dstType(TestRoute.class.getName())
-						.dstIds(dstIds.toArray(new String[dstIds.size()])).dstAttrs(new String[] { "*" }).build());
+		scope.addRecord(GtsRecord.builder().op(GtsOperationType.UPDATE).arity(GtsArityType.ONE)
+				.dstType(FlightTest.class.getName()).dstIds(new String[] { route.getFlightNumber().toString() })
+				.dstAttrs(new String[] { "*" }).build());
 
-		return routes;
+		return route;
 	}
 
 }

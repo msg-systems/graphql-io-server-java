@@ -50,7 +50,7 @@ import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 
 import com.graphqlio.server.handler.GsWebSocketHandler;
-import com.graphqlio.server.helpers.TestQueryResolver;
+import com.graphqlio.server.helpers.RootQueryResolverTest;
 import com.graphqlio.server.server.GsServer;
 
 /**
@@ -74,7 +74,7 @@ class SubprotocolsTests {
 	private GsServer graphqlioServer;
 
 	@Autowired
-	private TestQueryResolver routeResolver;
+	private RootQueryResolverTest routeResolver;
 
 	@BeforeAll
 	private void startServers() throws IOException {

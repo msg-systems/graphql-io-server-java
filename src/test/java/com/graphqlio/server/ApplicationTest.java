@@ -11,10 +11,10 @@ import com.graphqlio.wsf.EnableGraphQLIOWsfLibraryModule;
 
 @SpringBootApplication
 @Configuration
-@ComponentScan(basePackageClasses = TestApplication.class, excludeFilters = @ComponentScan.Filter(type = FilterType.REGEX, pattern = "com.graphqlio.*.samples.*"))
+@ComponentScan(basePackageClasses = ApplicationTest.class, excludeFilters = @ComponentScan.Filter(type = FilterType.REGEX, pattern = "com.graphqlio.*.samples.*"))
 @EnableGraphQLIOGtsLibraryModule
 @EnableGraphQLIOGttLibraryModule
 @EnableGraphQLIOWsfLibraryModule
-public class TestApplication {
+public class ApplicationTest {
 
 }

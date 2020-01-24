@@ -38,7 +38,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 
 import com.graphqlio.server.handler.GsWebSocketHandler;
-import com.graphqlio.server.helpers.TestRoute;
+import com.graphqlio.server.helpers.FlightTest;
 
 /**
  * websockethandler class for testing queries, mutations, subscriptions and
@@ -57,7 +57,7 @@ public class MessagesTestsHandler extends AbstractWebSocketHandler {
 
 	public int count = 0;
 
-	public List<TestRoute> routes = new ArrayList<TestRoute>();
+	public List<FlightTest> routes = new ArrayList<FlightTest>();
 
 	@Override
 	public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
@@ -106,14 +106,14 @@ public class MessagesTestsHandler extends AbstractWebSocketHandler {
 				for (int i = 0; i < routesArr.length(); i++) {
 					JSONObject flightObj = routesArr.getJSONObject(i);
 
-					TestRoute newRoute = new TestRoute(flightObj.toString());
+					FlightTest newRoute = new FlightTest(flightObj.toString());
 					this.routes.add(newRoute);
 				}
 
 			} else if (dataObj.has("updateRoute")) {
 				JSONObject flightObj = dataObj.getJSONObject("updateRoute");
 
-				TestRoute newRoute = new TestRoute(flightObj.toString());
+				FlightTest newRoute = new FlightTest(flightObj.toString());
 				this.routes.add(newRoute);
 			}
 		}
