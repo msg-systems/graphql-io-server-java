@@ -18,16 +18,20 @@
 4. GSWebSocketHandler should be revised to much handler functions and cloud be improved  - Torsten (Pair Reviewing am Dienstag)
 
 5. GsGraphQLStandardSchemaCreator vs. GsGraphQLSchemaCreator what is the difference, what do we need? - initScalarTypes Was ist das - Torsten 
+
+```
    - interface GsGraphQLSchemaCreator
      - create()
      - getGraphQLSchema()
    - abstract class GsGraphQLAbstractSchemaCreator implements GsGraphQLSchemaCreator
      - impementiert: getGraphQLSchema()
-     - implementiert initScalarTypes()
-     - wird extended von:
-       - GsGraphQLSimpleSchemaCreator > nutzen wir
-       - ruft initScalarTypes() auf
-       - GsGraphQLStandardSchemaCreator -> unbenutzt
+     - initScalarTypes()
+   - class GsGraphQLSimpleSchemaCreator extends GsGraphQLAbstractSchemaCreator
+     - ruft initScalarTypes() auf
+     - ***von uns genutzt***
+   - class GsGraphQLStandardSchemaCreator extends GsGraphQLAbstractSchemaCreator
+     - ***unbenutzt***
+```
 
 6. GsGraphQLEngine Why do we have no interface there but for GsGraphQLExecution - Torsten 
 
