@@ -19,15 +19,15 @@
 
 5. GsGraphQLStandardSchemaCreator vs. GsGraphQLSchemaCreator what is the difference, what do we need? - initScalarTypes Was ist das - Torsten 
    - interface GsGraphQLSchemaCreator
-    - create()
-    - getGraphQLSchema()
+     - create()
+     - getGraphQLSchema()
    - abstract class GsGraphQLAbstractSchemaCreator implements GsGraphQLSchemaCreator
-    - impementiert: getGraphQLSchema()
-    - implementiert initScalarTypes()
+     - impementiert: getGraphQLSchema()
+     - implementiert initScalarTypes()
    - wird implementiert von:
-    - GsGraphQLSimpleSchemaCreator > nutzen wir
-    - ruft initScalarTypes() auf
-    - GsGraphQLStandardSchemaCreator -> unbenutzt
+     - GsGraphQLSimpleSchemaCreator > nutzen wir
+     - ruft initScalarTypes() auf
+     - GsGraphQLStandardSchemaCreator -> unbenutzt
 
 6. GsGraphQLEngine Why do we have no interface there but for GsGraphQLExecution - Torsten 
 
