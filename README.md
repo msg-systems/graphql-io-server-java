@@ -38,7 +38,7 @@ dependencies {
 
 ## Counter Sample (increase, subscription)
 
-[Link to the Hello Counter Sample ...](https://github.com/Thinkenterprise/graphql-io-server-java/tree/master/src/samples/java/com/thinkenterprise/graphqlio/server/samples/counter)
+[Link to the Counter Sample ...](https://github.com/Thinkenterprise/graphql-io-server-java/tree/master/src/samples/java/com/thinkenterprise/graphqlio/server/samples/counter)
 
 
 Graphql schema:
@@ -142,7 +142,7 @@ public class CounterServerApplication implements ApplicationRunner {
 ```
 
 
-Client subscribing to counter.value, handler for responses and notifications:
+Client subscribing to counter.value:
 
 ``` java
 	final String Query = "[1,0,\"GRAPHQL-REQUEST\",query { _Subscription { subscribe } counter { value } } ]";
@@ -164,7 +164,7 @@ Client subscribing to counter.value, handler for responses and notifications:
 ```
 
 
-client increasing counter value every second, handler for responses:
+client increasing counter.value every second:
 
 ``` java
 	final String Query = "[1,0,\"GRAPHQL-REQUEST\",query { counter { increase { value } } } ]";
