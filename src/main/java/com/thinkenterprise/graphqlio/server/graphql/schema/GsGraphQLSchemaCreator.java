@@ -26,6 +26,8 @@
  ******************************************************************************/
 package com.thinkenterprise.graphqlio.server.graphql.schema;
 
+import com.coxautodev.graphql.tools.GraphQLResolver;
+
 import graphql.schema.GraphQLSchema;
 
 /**
@@ -41,4 +43,5 @@ public interface GsGraphQLSchemaCreator {
 	
 	GraphQLSchema getGraphQLSchema();
 	
+	void registerGraphQLResolver( GraphQLResolver resolver);	
 }

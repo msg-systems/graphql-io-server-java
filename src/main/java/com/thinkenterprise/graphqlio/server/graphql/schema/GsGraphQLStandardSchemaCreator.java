@@ -43,6 +43,8 @@ import static graphql.schema.idl.RuntimeWiring.newRuntimeWiring;
 
 import org.springframework.core.io.Resource;
 
+import com.coxautodev.graphql.tools.GraphQLResolver;
+
 /**
  * class GsGraphQLStandardSchemaCreator
  *
@@ -50,9 +52,14 @@ import org.springframework.core.io.Resource;
  * @author Dr. Edgar Müller
  */
 
-//@Component
 public class GsGraphQLStandardSchemaCreator extends GsGraphQLAbstractSchemaCreator {
 
+	
+	public GsGraphQLStandardSchemaCreator(String schemaLocationPattern) {
+		super(schemaLocationPattern);
+	}
+		
+	
     @PostConstruct
     public GraphQLSchema create() { //throws IOException { 
     	    	

@@ -31,12 +31,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
-import com.thinkenterprise.graphqlio.server.autoconfiguration.GsProperties;
-import com.thinkenterprise.gts.autoconfiguration.GtsProperties;
+import com.coxautodev.graphql.tools.GraphQLResolver;
+import com.thinkenterprise.gts.resolver.GtsResolverRegistry;
+import com.thinkenterprise.gts.schema.GtsGraphQLIOSchema;
 import com.thinkenterprise.gtt.types.GttDateType;
 import com.thinkenterprise.gtt.types.GttJsonType;
 import com.thinkenterprise.gtt.types.GttUuidType;
@@ -56,15 +56,21 @@ public abstract class GsGraphQLAbstractSchemaCreator implements GsGraphQLSchemaC
 
 	List<GraphQLScalarType> scalarTypes = new ArrayList<>();
 	
-	@Autowired
-	private GsProperties gsProperties;
-		
-	@Autowired
-	private GtsProperties gtsProperties;
-
-	
 	GraphQLSchema graphQLSchema = null;
-		
+	
+	private String schemaLocationPattern;
+	
+	public GsGraphQLAbstractSchemaCreator(String schemaLocationPattern) {
+		super();
+		this.schemaLocationPattern = schemaLocationPattern;
+	}
+	
+	@Override
+	public void registerGraphQLResolver( GraphQLResolver resolver) {
+		GtsResolverRegistry.registerGraphQLResolver(resolver);		
+	};	
+	
+	
 	@Override
 	public GraphQLSchema getGraphQLSchema() {
 		return graphQLSchema;
@@ -82,12 +88,12 @@ public abstract class GsGraphQLAbstractSchemaCreator implements GsGraphQLSchemaC
 		
 		try {
 			PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-			resources = resolver.getResources("classpath*:" + gsProperties.getSchemaLocationPattern());			   		
+			resources = resolver.getResources("classpath*:" + this.schemaLocationPattern);			   		
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
-		Resource[] gtsResources = gtsProperties.getSchemaResources();
+		Resource[] gtsResources = GtsGraphQLIOSchema.getSchemaResources();
 		
 		return (Resource[]) ArrayUtils.addAll(resources, gtsResources);
 	}

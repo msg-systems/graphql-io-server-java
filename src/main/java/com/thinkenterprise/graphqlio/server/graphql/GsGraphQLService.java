@@ -26,11 +26,8 @@
  ******************************************************************************/
 package com.thinkenterprise.graphqlio.server.graphql;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Service;
-
 import com.thinkenterprise.graphqlio.server.graphql.schema.GsGraphQLSchemaCreator;
+import com.thinkenterprise.graphqlio.server.graphql.schema.GsGraphQLSimpleSchemaCreator;
 
 import graphql.GraphQL;
 import graphql.schema.GraphQLSchema;
@@ -43,20 +40,23 @@ import graphql.schema.GraphQLSchema;
  * @author Dr. Edgar Müller
  */
 
-
-@Service
-@Scope("singleton")
 public class GsGraphQLService {
 
 	final org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger();
 
 	
-	@Autowired
 	private GsGraphQLSchemaCreator graphQLSchemaCreator;
-		
-	@Autowired
-	private GsGraphQLEngine gsGgraphQLEngine;
-
+	
+	private GsGraphQLEngine gsGgraphQLEngine = new GsGraphQLEngine();
+	
+	
+	public GsGraphQLService (String schemaLocationPattern) {
+		this.graphQLSchemaCreator = new GsGraphQLSimpleSchemaCreator(schemaLocationPattern);
+	}
+	
+	public GsGraphQLSchemaCreator getSchemaCreator() { 
+		return this.graphQLSchemaCreator; 
+	}
 	
 	private GraphQLSchema graphQLSchema = null;
 	private GraphQL graphQL = null;

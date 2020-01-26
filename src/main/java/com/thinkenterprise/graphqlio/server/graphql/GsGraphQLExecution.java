@@ -53,10 +53,12 @@ public class GsGraphQLExecution implements GsExecutionStrategy {
 	
 	private final Logger logger = LoggerFactory.getLogger(GsGraphQLExecution.class);
 	
-	
-	@Autowired
 	private ObjectMapper objectMapper;
 
+	public GsGraphQLExecution(ObjectMapper objectMapper) {
+		this.objectMapper = objectMapper;
+	}
+	
 	@Override
 	public void execute(GsContext graphQLIOContext) {
 

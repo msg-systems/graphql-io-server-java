@@ -59,6 +59,7 @@ import com.thinkenterprise.graphqlio.server.server.GsContext;
 import com.thinkenterprise.gts.actuator.GtsCounter;
 import com.thinkenterprise.gts.evaluation.GtsEvaluation;
 import com.thinkenterprise.gts.exceptions.GtsSubscriptionTypeException;
+import com.thinkenterprise.gts.keyvaluestore.GtsKeyValueStore;
 import com.thinkenterprise.gts.tracking.GtsConnection;
 import com.thinkenterprise.gts.tracking.GtsScope;
 import com.thinkenterprise.wsf.converter.WsfConverter;
@@ -101,27 +102,44 @@ public class GsWebSocketHandler extends AbstractWebSocketHandler implements Appl
 
 	private final WsfConverter notifyerConverter;
 
-	private final GsExecutionStrategy graphQLIOQueryExecution;
+	private GtsCounter gsGtsCounter;
 
-	private final GtsEvaluation graphQLIOEvaluation;
+	private GtsKeyValueStore gsGtsKeyValueStore;
 
-	private final GsGraphQLSchemaCreator gsGraphQLSchemaCreator;
+	private GsExecutionStrategy graphQLIOQueryExecution;
 
-	private final GtsCounter gsGtsCounter;
+	private GsGraphQLSchemaCreator gsGraphQLSchemaCreator;
+
+	private GtsEvaluation graphQLIOEvaluation;	
 	
-	@Autowired
-	public GsWebSocketHandler(GsExecutionStrategy executionStrategy,
-			GtsEvaluation evaluation, GsGraphQLSchemaCreator schemaCreator, GtsCounter gtsCounter) {
 
+	@Autowired
+	public GsWebSocketHandler	() {
 		requestConverter = new WsfConverter(WsfFrameType.GRAPHQLREQUEST);
 		responseConverter = new WsfConverter(WsfFrameType.GRAPHQLRESPONSE);
 		notifyerConverter = new WsfConverter(WsfFrameType.GRAPHQLNOTIFIER);
-		graphQLIOQueryExecution = executionStrategy;
-		graphQLIOEvaluation = evaluation;
-		gsGraphQLSchemaCreator = schemaCreator;
-		gsGtsCounter = gtsCounter;
+	}
+	
+	public void setSchemaCreator( GsGraphQLSchemaCreator gsSchemaCreator ) {
+		this.gsGraphQLSchemaCreator = gsSchemaCreator;
+	}
+	
+	public void setExecutionStrategy( GsExecutionStrategy gsExecutionStrategy ) {
+		this.graphQLIOQueryExecution = gsExecutionStrategy;
 	}
 
+	public void setGtsEvaluation( GtsEvaluation gtsEvaluation ) {
+		this.graphQLIOEvaluation = gtsEvaluation;
+	}
+	
+	public void setGtsKeyValueStore( GtsKeyValueStore gtsKeyValueStore ) {
+		this.gsGtsKeyValueStore = gtsKeyValueStore;		
+	}
+	public void setGtsCounter ( GtsCounter gtsCounter ) {
+		this.gsGtsCounter = gtsCounter;
+
+	}
+	
 	@Override
 	public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
 

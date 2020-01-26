@@ -6,7 +6,7 @@
 
 	<groupId>com.thinkenterprise</groupId>
 	<artifactId>graphql-io-server-java</artifactId>
-	<version>0.0.1</version>
+	<version>0.0.9</version>
 	<packaging>jar</packaging>
 	<name>GS</name>
 	<description>GraphQL IO Server</description>
@@ -81,8 +81,7 @@
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
 			<version>20190722</version>
-		</dependency>
-		
+		</dependency>		
 
 	</dependencies>
 

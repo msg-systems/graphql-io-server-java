@@ -26,10 +26,12 @@
  ******************************************************************************/
 package com.thinkenterprise.graphqlio.server.graphql.schema;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.coxautodev.graphql.tools.GraphQLResolver;
 import com.coxautodev.graphql.tools.SchemaParser;
+import com.thinkenterprise.gts.resolver.GtsResolverRegistry;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -45,12 +47,12 @@ import graphql.schema.GraphQLSchema;
  * @author Dr. Edgar Müller
  */
 
-@Component
 public class GsGraphQLSimpleSchemaCreator extends GsGraphQLAbstractSchemaCreator {
 
-	@Autowired(required = false)
-	List<GraphQLResolver<?>> resolvers;
-	
+	public GsGraphQLSimpleSchemaCreator(String schemaLocationPattern) {
+		super(schemaLocationPattern);
+	}
+		
 	@Override
 	public GraphQLSchema create() {
 		
@@ -62,7 +64,7 @@ public class GsGraphQLSimpleSchemaCreator extends GsGraphQLAbstractSchemaCreator
 		graphQLSchema = SchemaParser.newParser()
 		               							.files(getFilePathes())
 		               							.scalars(recScalars)
-		               						    .resolvers(resolvers)
+		               						    .resolvers(GtsResolverRegistry.getResolvers())
 		               						    .build()
 		               						    .makeExecutableSchema();
 			          
