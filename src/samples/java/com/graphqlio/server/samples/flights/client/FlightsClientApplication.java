@@ -49,7 +49,8 @@ public class FlightsClientApplication {
 
 	private final String Query = "[1,5,\"GRAPHQL-REQUEST\",{\"query\":\"query { allRoutes { id flightNumber departure destination } }\"} ]";
 	private final String Subscription = "[3,8,\"GRAPHQL-REQUEST\",{\"query\":\"query { _Subscription { subscribe } allRoutes { id } }\"} ]";
-	private final String Mutation = "[7,2,\"GRAPHQL-REQUEST\",{\"query\":\"mutation { updateRoute ( flightNumber: \\\"UA1000\\\", input: { flightNumber: \\\"XY9999\\\" departure: \\\"ABC\\\" destination: \\\"XYZ\\\" } ) { id } }\"} ]";
+	private final String Subscription_2 = "[3,8,\"GRAPHQL-REQUEST\",{\"query\":\"query { _Subscription { subscribe } allRoutes { departure } }\"} ]";
+	private final String Mutation = "[7,2,\"GRAPHQL-REQUEST\",{\"query\":\"mutation { updateRoute ( flightNumber: \\\"UA1000\\\", input: { flightNumber: \\\"UA1000\\\" departure: \\\"ABC\\\" destination: \\\"XYZ\\\" } ) { id departure } }\"} ]";
 
 	public static void main(String[] args) {
 		new FlightsClientApplication().runQuery();
@@ -70,6 +71,10 @@ public class FlightsClientApplication {
 			Thread.sleep(2000);
 
 			message = new TextMessage(Subscription);
+			webSocketSession.sendMessage(message);
+			Thread.sleep(2000);
+
+			message = new TextMessage(Subscription_2);
 			webSocketSession.sendMessage(message);
 			Thread.sleep(2000);
 
