@@ -17,6 +17,22 @@
 
 4. GSWebSocketHandler should be revised to much handler functions and cloud be improved  - Torsten (Pair Reviewing am Dienstag)
 
+   - @Override **handleMessage**(WebSocketSession session, WebSocketMessage<?> message)
+     - hätte nicht unbedingt definiert werden müssen
+     - handelt aber session.getAcceptedProtocol()
+     - ruft deswegen auf:
+       - (a) **handleTextMessage**(session, (TextMessage) message);
+       - (b) **handleCborMessage**(session, (BinaryMessage) message);
+       - (c) **handleMsgPackMessage**(session, (BinaryMessage) message);
+   - alle 3 (a,b,c) rufen letztlich auf:
+     - **handleStringMessage**(session, input);
+     - diese Methode macht die komplette Execute-Bearbeitung
+     - (d) und macht den Reponse zum Client: **sendAnswerBackToClient**(session, answerFrame);
+     - (e) außerdem Notify, wenn nötig: **sendNotifierMessageToClients**(sids4cid, requestMessage);
+   - (d) unterscheidet nach session.getAcceptedProtocol()
+   - (e) **sendNotifierMessageToClients** ruft letztlich auch **sendAnswerBackToClient** auf
+   - tbd
+
 5. GsGraphQLStandardSchemaCreator vs. GsGraphQLSchemaCreator what is the difference, what do we need? - initScalarTypes Was ist das - Torsten 
 
    - interface **GsGraphQLSchemaCreator**
