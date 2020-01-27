@@ -94,7 +94,7 @@ class SubprotocolsTests {
 	private final String simpleQuery = "[1,0,\"GRAPHQL-REQUEST\",{\"query\":\"query { _Subscription { subscribe } _Subscription { subscribe } }\"}]";
 
 	@Test
-	void textAnswer() {
+	void whenSubprotocolTextIsSendThenSubprotocolTextIsAnswered() {
 		try {
 			SubprotocolsTestsHandler webSocketHandler = new SubprotocolsTestsHandler();
 
@@ -129,7 +129,7 @@ class SubprotocolsTests {
 	}
 
 	@Test
-	void cborAnswer() {
+	void whenSubprotocolCborIsSendThenSubprotocolCborIsAnswered() {
 		try {
 			SubprotocolsTestsHandler webSocketHandler = new SubprotocolsTestsHandler();
 
@@ -166,7 +166,7 @@ class SubprotocolsTests {
 	}
 
 	@Test
-	void msgpackAnswer() {
+	void whenSubprotocolMsgPackIsSendThenSubprotocolMsgPackIsAnswered() {
 		try {
 			SubprotocolsTestsHandler webSocketHandler = new SubprotocolsTestsHandler();
 
@@ -202,7 +202,7 @@ class SubprotocolsTests {
 	}
 
 	@Test
-	void defaultAnswer() {
+	void whenDefaultSubprotocolIsSendThenDefaultSubprotocolIsAnswered() {
 		try {
 			SubprotocolsTestsHandler webSocketHandler = new SubprotocolsTestsHandler();
 

@@ -104,7 +104,7 @@ class SubscriptionTests {
 	private final String flight_4 = "{\"flightNumber\":\"LH2084\",\"departure\":\"ROM\",\"destination\":\"HAM\"}";
 
 	@Test
-	void textAnswer() {
+	void whenSubscriptionIsUsedThenNotifictionsAreSend() {
 		try {
 			SubscriptionTestsHandler webSocketHandler = new SubscriptionTestsHandler();
 

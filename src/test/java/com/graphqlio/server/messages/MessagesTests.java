@@ -96,7 +96,7 @@ class MessagesTests {
 	private final String simpleQuery = "[1,0,\"GRAPHQL-REQUEST\", {\"query\":\"query { routes { flightNumber departure destination } }\"} ]";
 
 	@Test
-	void textAnswer() {
+	void whenMessageIsSendThenAnswerIsReturned() {
 		try {
 			MessagesTestsHandler webSocketHandler = new MessagesTestsHandler();
 
@@ -139,7 +139,7 @@ class MessagesTests {
 	private final String mutationQuery = "[1,0,\"GRAPHQL-REQUEST\", {\"query\":\"mutation { updateRoute( flightNumber: \\\"LH2084\\\" input: { flightNumber: \\\"LH2084\\\" departure: \\\"HAM\\\" destination: \\\"MUC\\\" disabled: false } ) { flightNumber departure destination } }\"} ]";
 
 	@Test
-	void cborAnswer() {
+	void whenMessageIsSendThenAnswerIsReturned2() {
 		try {
 			MessagesTestsHandler webSocketHandler = new MessagesTestsHandler();
 
