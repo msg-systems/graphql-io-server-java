@@ -56,6 +56,10 @@
 
 13. Naming Method Convention whenThenElse for all Tests - Torsten 
 
+```
+-> done! (tku)
+```
+
 14. Property Generator for our Properties is missing - Edgar (Autoconfiguration)
 
 15. Samples werden nicht im Eclipse angezeigt, da die Sample Folder nicht automatisch in den Classpath ... - Torsten Nachdenken 
