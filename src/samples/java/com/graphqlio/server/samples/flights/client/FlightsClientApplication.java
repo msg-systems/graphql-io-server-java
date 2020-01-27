@@ -47,8 +47,9 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 public class FlightsClientApplication {
 
-	private final String Query = "[1,0,\"GRAPHQL-REQUEST\",{\"query\":\"query { allRoutes { id flightNumber departure destination } }\"} ]";
-	private final String Mutation = "[1,0,\"GRAPHQL-REQUEST\",{\"query\":\"mutation { updateRoute { flightNumber: \\\"UA1000\\\", input: { flightNumber: \\\"XY9999\\\" departure: \\\"ABC\\\" destination: \\\"XYZ\\\" } } }\"} ]";
+	private final String Query = "[1,5,\"GRAPHQL-REQUEST\",{\"query\":\"query { allRoutes { id flightNumber departure destination } }\"} ]";
+	private final String Subscription = "[3,8,\"GRAPHQL-REQUEST\",{\"query\":\"query { _Subscription { subscribe } allRoutes { id } }\"} ]";
+	private final String Mutation = "[7,2,\"GRAPHQL-REQUEST\",{\"query\":\"mutation { updateRoute ( flightNumber: \\\"UA1000\\\", input: { flightNumber: \\\"XY9999\\\" departure: \\\"ABC\\\" destination: \\\"XYZ\\\" } ) { id } }\"} ]";
 
 	public static void main(String[] args) {
 		new FlightsClientApplication().runQuery();
@@ -65,7 +66,11 @@ public class FlightsClientApplication {
 					.doHandshake(webSocketHandler, webSocketHttpHeaders, uri).get();
 
 			AbstractWebSocketMessage message = new TextMessage(Query);
-			// webSocketSession.sendMessage(message);
+			webSocketSession.sendMessage(message);
+			Thread.sleep(2000);
+
+			message = new TextMessage(Subscription);
+			webSocketSession.sendMessage(message);
 			Thread.sleep(2000);
 
 			message = new TextMessage(Mutation);

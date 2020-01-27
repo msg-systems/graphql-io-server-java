@@ -39,14 +39,7 @@ public class UpdateRouteInput {
 	private String departure = null;
 	private String destination = null;
 
-	UpdateRouteInput(String flightNumber) {
-		this.flightNumber = flightNumber;
-	}
-
-	UpdateRouteInput(String flightNumber, String departure, String destination) {
-		this.flightNumber = flightNumber;
-		this.departure = departure;
-		this.destination = destination;
+	UpdateRouteInput() {
 	}
 
 	public String getFlightNumber() {
