@@ -30,6 +30,9 @@
      - ***von uns genutzt*** in GsAutoConfiguration
    - class **_GsGraphQLStandardSchemaCreator_** extends **GsGraphQLAbstractSchemaCreator**
      - ***unbenutzt***
+   - new GttUuidType() in **initScalarTypes** kann ersetzt werden durch:
+     - @Autowired
+     - GttUuidType gttUuidType;
 
 6. GsGraphQLEngine Why do we have no interface there but for GsGraphQLExecution - Torsten 
 
