@@ -1,0 +1,19 @@
+
+schema {
+   query: Query
+   mutation: Mutation
+}
+
+type Query {
+	getDate: Date
+	getJson: JSON
+	getUuid: UUID
+	getVoid: Void
+}
+
+type Mutation {
+	updateDate(date: Date, input: Date): Date
+	updateJson(json: JSON, input: JSON): JSON
+	updateUuid(uuid: UUID, input: UUID): UUID
+	updateVoid(vOID: Void, input: Void): Void
+}
