@@ -27,7 +27,7 @@
      - initScalarTypes()
    - class **GsGraphQLSimpleSchemaCreator** extends **GsGraphQLAbstractSchemaCreator**
      - ruft initScalarTypes() auf
-     - ***von uns genutzt***
+     - ***von uns genutzt*** in GsAutoConfiguration
    - class **_GsGraphQLStandardSchemaCreator_** extends **GsGraphQLAbstractSchemaCreator**
      - ***unbenutzt***
 
