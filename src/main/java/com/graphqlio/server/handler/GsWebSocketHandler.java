@@ -117,6 +117,37 @@ public class GsWebSocketHandler extends AbstractWebSocketHandler implements SubP
 	}
 
 	@Override
+	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+		webSocketConnections.put(session.getId(), 
+				GtsConnection.builder()
+					.fromSession(session)
+					.withGtsCounter(gsGtsCounter)
+					.build());
+		webSocketSessions.put(session.getId(), session);		
+	}
+
+	@Override
+	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+		GtsConnection connection = webSocketConnections.get(session.getId());
+		if (connection != null) {
+
+			///   remove entries from key value store
+	    	this.graphQLIOEvaluation.onCloseConnection(connection.getConnectionId());
+			
+			/// remove scopes from list in connections
+			connection.onClose();
+			
+		}		
+		webSocketConnections.remove(session.getId());
+		webSocketSessions.remove(session.getId());
+	}
+
+	@Override
+	public List<String> getSubProtocols() {
+		return Arrays.asList(SUB_PROTOCOL_TEXT, SUB_PROTOCOL_CBOR, SUB_PROTOCOL_MSGPACK);
+	}
+
+	@Override
 	public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
 
 		
@@ -305,101 +336,6 @@ public class GsWebSocketHandler extends AbstractWebSocketHandler implements SubP
 		}
 	}
 
-	public static String getFromCbor(BinaryMessage message) throws CborException {
-		List<DataItem> dataItems = CborDecoder.decode(message.getPayload().array());
-
-		// wenn keine Exception:
-		if (dataItems == null || dataItems.isEmpty()) {
-			// logging
-
-		} else if (!dataItems.isEmpty()) {
-			if (dataItems.size() >= 2) {
-				// logging
-			}
-
-			DataItem dataItem = dataItems.get(0);
-			// logging
-
-			if (dataItem instanceof ByteString) {
-				String input = new String(((ByteString) dataItem).getBytes());
-				// logging
-
-				return input;
-
-			} else {
-				// logging
-			}
-		}
-
-		// logging
-		return null;
-	}
-
-	public static String getFromMsgPack(BinaryMessage message) throws IOException {
-		MessageUnpacker unpacker = null;
-		String input = null;
-		try {
-			unpacker = MessagePack.newDefaultUnpacker(message.getPayload().array());
-			input = unpacker.unpackString();
-			// logging			
-		}
-		finally {
-			if (unpacker != null)
-				unpacker.close();			
-		}
-
-		return input;
-	}
-
-	public static BinaryMessage createFromStringCbor(String message) throws CborException {
-		byte[] bytes = message.getBytes();
-		DataItem dataItem = new ByteString(bytes);
-
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		new CborEncoder(os).encode(dataItem);
-
-		return new BinaryMessage(os.toByteArray());
-	}
-
-	public static BinaryMessage createFromStringMsgPack(String message) throws IOException {
-		MessageBufferPacker packer = null;
-		try {
-			packer = MessagePack.newDefaultBufferPacker();
-			packer.packString(message);
-		}
-		finally {
-			if (packer != null)
-				packer.close();			
-		}
-		return new BinaryMessage(packer.toByteArray());
-	}
-
-	@Override
-	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-		webSocketConnections.put(session.getId(), 
-				GtsConnection.builder()
-					.fromSession(session)
-					.withGtsCounter(gsGtsCounter)
-					.build());
-		webSocketSessions.put(session.getId(), session);		
-	}
-
-	@Override
-	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-		GtsConnection connection = webSocketConnections.get(session.getId());
-		if (connection != null) {
-
-			///   remove entries from key value store
-	    	this.graphQLIOEvaluation.onCloseConnection(connection.getConnectionId());
-			
-			/// remove scopes from list in connections
-			connection.onClose();
-			
-		}		
-		webSocketConnections.remove(session.getId());
-		webSocketSessions.remove(session.getId());
-	}
-
 	private void sendNotifierMessageToClients(Map<String, Set<String>> sids4cid, WsfFrame requestMessage)
 			throws Exception {
 
@@ -493,10 +429,74 @@ public class GsWebSocketHandler extends AbstractWebSocketHandler implements SubP
 		}						
 		return resultUUID;	
 	}
-	
-	@Override
-	public List<String> getSubProtocols() {
-		return Arrays.asList(SUB_PROTOCOL_TEXT, SUB_PROTOCOL_CBOR, SUB_PROTOCOL_MSGPACK);
+
+	public static String getFromCbor(BinaryMessage message) throws CborException {
+		List<DataItem> dataItems = CborDecoder.decode(message.getPayload().array());
+
+		// wenn keine Exception:
+		if (dataItems == null || dataItems.isEmpty()) {
+			// logging
+
+		} else if (!dataItems.isEmpty()) {
+			if (dataItems.size() >= 2) {
+				// logging
+			}
+
+			DataItem dataItem = dataItems.get(0);
+			// logging
+
+			if (dataItem instanceof ByteString) {
+				String input = new String(((ByteString) dataItem).getBytes());
+				// logging
+
+				return input;
+
+			} else {
+				// logging
+			}
+		}
+
+		// logging
+		return null;
 	}
-	
+
+	public static String getFromMsgPack(BinaryMessage message) throws IOException {
+		MessageUnpacker unpacker = null;
+		String input = null;
+		try {
+			unpacker = MessagePack.newDefaultUnpacker(message.getPayload().array());
+			input = unpacker.unpackString();
+			// logging			
+		}
+		finally {
+			if (unpacker != null)
+				unpacker.close();			
+		}
+
+		return input;
+	}
+
+	public static BinaryMessage createFromStringCbor(String message) throws CborException {
+		byte[] bytes = message.getBytes();
+		DataItem dataItem = new ByteString(bytes);
+
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		new CborEncoder(os).encode(dataItem);
+
+		return new BinaryMessage(os.toByteArray());
+	}
+
+	public static BinaryMessage createFromStringMsgPack(String message) throws IOException {
+		MessageBufferPacker packer = null;
+		try {
+			packer = MessagePack.newDefaultBufferPacker();
+			packer.packString(message);
+		}
+		finally {
+			if (packer != null)
+				packer.close();			
+		}
+		return new BinaryMessage(packer.toByteArray());
+	}
+
 }
