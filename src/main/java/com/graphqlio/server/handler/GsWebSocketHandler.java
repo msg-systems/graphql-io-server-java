@@ -246,17 +246,7 @@ public class GsWebSocketHandler extends AbstractWebSocketHandler implements SubP
 			session.sendMessage(new TextMessage((String) answerMessage));
 
 		} else if (answerMessage instanceof byte[]) {
-
-			if (WsfAbstractConverter.SUB_PROTOCOL_CBOR.equalsIgnoreCase(session.getAcceptedProtocol())) {
-				session.sendMessage(new BinaryMessage((byte[]) answerMessage));
-
-			} else if (WsfAbstractConverter.SUB_PROTOCOL_MSGPACK.equalsIgnoreCase(session.getAcceptedProtocol())) {
-				session.sendMessage(new BinaryMessage((byte[]) answerMessage));
-
-			} else {
-				throw new IllegalStateException("Unexpected websocket protocol & answerMessage type: "
-						+ session.getAcceptedProtocol() + " & " + answerMessage);
-			}
+			session.sendMessage(new BinaryMessage((byte[]) answerMessage));
 
 		} else {
 			throw new IllegalStateException("Unexpected websocket protocol & answerMessage type: "
