@@ -28,6 +28,8 @@ package com.graphqlio.server.samples.counter.client;
 
 import java.net.URI;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.AbstractWebSocketMessage;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketHandler;
@@ -81,14 +83,16 @@ public class CounterClientIncrease {
 
 	private class CounterClientIncreaseHandler extends TextWebSocketHandler {
 
+		private final Logger logger = LoggerFactory.getLogger(CounterClientIncreaseHandler.class);
+
 		@Override
 		protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-			System.out.println("Increase::message received: " + message.getPayload());
+			logger.info("Increase::message received: " + message.getPayload());
 		}
 
 		@Override
 		public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-			System.out.println("Increase::connection established: " + session.getId());
+			logger.info("Increase::connection established: " + session.getId());
 		}
 
 	}

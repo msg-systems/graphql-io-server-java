@@ -29,6 +29,8 @@ package com.graphqlio.server.samples.types.server.resolver;
 import java.util.Date;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
@@ -50,8 +52,10 @@ import graphql.schema.DataFetchingEnvironment;
 @Component
 public class RootQueryResolver implements GraphQLQueryResolver {
 
+	private final Logger logger = LoggerFactory.getLogger(RootQueryResolver.class);
+
 	public Date getDate(DataFetchingEnvironment env) {
-		System.out.println("RootQueryResolver::getDate");
+		logger.info("RootQueryResolver::getDate");
 
 		GtsContext context = env.getContext();
 		GtsScope scope = context.getScope();
@@ -62,7 +66,7 @@ public class RootQueryResolver implements GraphQLQueryResolver {
 	}
 
 	public String getJson(DataFetchingEnvironment env) {
-		System.out.println("RootQueryResolver::getJson");
+		logger.info("RootQueryResolver::getJson");
 
 		GtsContext context = env.getContext();
 		GtsScope scope = context.getScope();
@@ -73,7 +77,7 @@ public class RootQueryResolver implements GraphQLQueryResolver {
 	}
 
 	public UUID getUuid(DataFetchingEnvironment env) {
-		System.out.println("RootQueryResolver::getUuid");
+		logger.info("RootQueryResolver::getUuid");
 
 		GtsContext context = env.getContext();
 		GtsScope scope = context.getScope();
@@ -84,7 +88,7 @@ public class RootQueryResolver implements GraphQLQueryResolver {
 	}
 
 	public Void getVoid(DataFetchingEnvironment env) {
-		System.out.println("RootQueryResolver::getVoid");
+		logger.info("RootQueryResolver::getVoid");
 
 		GtsContext context = env.getContext();
 		GtsScope scope = context.getScope();

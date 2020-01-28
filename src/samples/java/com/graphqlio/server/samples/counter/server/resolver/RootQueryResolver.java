@@ -56,7 +56,6 @@ public class RootQueryResolver implements GraphQLQueryResolver {
 	}
 
 	public Counter counter(DataFetchingEnvironment env) {
-		System.out.println("RootQueryResolver");
 		Counter counter = repo.getCounter();
 
 		GtsContext context = env.getContext();

@@ -29,6 +29,8 @@ package com.graphqlio.server.samples.types.server.resolver;
 import java.util.Date;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.coxautodev.graphql.tools.GraphQLMutationResolver;
@@ -50,8 +52,10 @@ import graphql.schema.DataFetchingEnvironment;
 @Component
 public class RootMutationResolver implements GraphQLMutationResolver {
 
+	private final Logger logger = LoggerFactory.getLogger(RootMutationResolver.class);
+
 	public Date updateDate(Date date, Date input, DataFetchingEnvironment env) {
-		System.out.println("RootMutationResolver::updateDate::date = " + date);
+		logger.info("RootMutationResolver::updateDate::date = " + date);
 
 		GtsContext context = env.getContext();
 		GtsScope scope = context.getScope();
@@ -62,7 +66,7 @@ public class RootMutationResolver implements GraphQLMutationResolver {
 	}
 
 	public String updateJson(String json, String input, DataFetchingEnvironment env) {
-		System.out.println("RootMutationResolver::updateJson::json = " + json);
+		logger.info("RootMutationResolver::updateJson::json = " + json);
 
 		GtsContext context = env.getContext();
 		GtsScope scope = context.getScope();
@@ -73,7 +77,7 @@ public class RootMutationResolver implements GraphQLMutationResolver {
 	}
 
 	public UUID updateUuid(UUID uuid, UUID input, DataFetchingEnvironment env) {
-		System.out.println("RootMutationResolver::updateUuid::uuid = " + uuid);
+		logger.info("RootMutationResolver::updateUuid::uuid = " + uuid);
 
 		GtsContext context = env.getContext();
 		GtsScope scope = context.getScope();
@@ -84,7 +88,7 @@ public class RootMutationResolver implements GraphQLMutationResolver {
 	}
 
 	public Void updateVoid(Void vOID, Void input, DataFetchingEnvironment env) {
-		System.out.println("RootMutationResolver::updateVoid::vOID = " + vOID);
+		logger.info("RootMutationResolver::updateVoid::vOID = " + vOID);
 
 		GtsContext context = env.getContext();
 		GtsScope scope = context.getScope();

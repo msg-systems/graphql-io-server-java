@@ -28,6 +28,8 @@ package com.graphqlio.server.samples.flights.client;
 
 import java.net.URI;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.AbstractWebSocketMessage;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketHandler;
@@ -95,14 +97,16 @@ public class FlightsClientApplication {
 
 	private class FlightsClientWebSocketHandler extends TextWebSocketHandler {
 
+		private final Logger logger = LoggerFactory.getLogger(FlightsClientWebSocketHandler.class);
+
 		@Override
 		protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-			System.out.println("message received: " + message.getPayload());
+			logger.info("message received: " + message.getPayload());
 		}
 
 		@Override
 		public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-			System.out.println("connection established: " + session.getId());
+			logger.info("connection established: " + session.getId());
 		}
 
 	}

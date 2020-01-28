@@ -43,15 +43,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.socket.AbstractWebSocketMessage;
+import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketHttpHeaders;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 
-import com.graphqlio.server.handler.GsWebSocketHandler;
 import com.graphqlio.server.helpers.RootQueryResolverTest;
 import com.graphqlio.server.server.GsServer;
+import com.graphqlio.wsf.converter.WsfAbstractConverter;
 
 /**
  * Class for testing subprotocols
@@ -99,7 +100,7 @@ class SubprotocolsTests {
 			SubprotocolsTestsHandler webSocketHandler = new SubprotocolsTestsHandler();
 
 			WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
-			headers.setSecWebSocketProtocol(Arrays.asList(GsWebSocketHandler.SUB_PROTOCOL_TEXT));
+			headers.setSecWebSocketProtocol(Arrays.asList(WsfAbstractConverter.SUB_PROTOCOL_TEXT));
 
 			URI uri = URI.create("ws://127.0.0.1:" + port + "/api/data/graph");
 
@@ -134,11 +135,11 @@ class SubprotocolsTests {
 			SubprotocolsTestsHandler webSocketHandler = new SubprotocolsTestsHandler();
 
 			WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
-			headers.setSecWebSocketProtocol(Arrays.asList(GsWebSocketHandler.SUB_PROTOCOL_CBOR));
+			headers.setSecWebSocketProtocol(Arrays.asList(WsfAbstractConverter.SUB_PROTOCOL_CBOR));
 
 			URI uri = URI.create("ws://127.0.0.1:" + port + "/api/data/graph");
 
-			AbstractWebSocketMessage cborMessage = GsWebSocketHandler.createFromStringCbor(simpleQuery);
+			AbstractWebSocketMessage cborMessage = new BinaryMessage(WsfAbstractConverter.toCbor(simpleQuery));
 
 			WebSocketClient webSocketClient = new StandardWebSocketClient();
 			WebSocketSession webSocketSession = webSocketClient.doHandshake(webSocketHandler, headers, uri).get();
@@ -171,11 +172,11 @@ class SubprotocolsTests {
 			SubprotocolsTestsHandler webSocketHandler = new SubprotocolsTestsHandler();
 
 			WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
-			headers.setSecWebSocketProtocol(Arrays.asList(GsWebSocketHandler.SUB_PROTOCOL_MSGPACK));
+			headers.setSecWebSocketProtocol(Arrays.asList(WsfAbstractConverter.SUB_PROTOCOL_MSGPACK));
 
 			URI uri = URI.create("ws://127.0.0.1:" + port + "/api/data/graph");
 
-			AbstractWebSocketMessage msgpackMessage = GsWebSocketHandler.createFromStringMsgPack(simpleQuery);
+			AbstractWebSocketMessage msgpackMessage = new BinaryMessage(WsfAbstractConverter.toMsgPack(simpleQuery));
 
 			WebSocketClient webSocketClient = new StandardWebSocketClient();
 			WebSocketSession webSocketSession = webSocketClient.doHandshake(webSocketHandler, headers, uri).get();

@@ -25,20 +25,22 @@
 
 package com.graphqlio.server.subscription;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 
-import com.graphqlio.server.handler.GsWebSocketHandler;
 import com.graphqlio.server.helpers.FlightTest;
+import com.graphqlio.wsf.converter.WsfAbstractConverter;
 
 /**
  * websockethandler Class for testing subscriptions
@@ -48,6 +50,8 @@ import com.graphqlio.server.helpers.FlightTest;
  */
 
 public class SubscriptionTestsHandler extends AbstractWebSocketHandler {
+
+	private final Logger logger = LoggerFactory.getLogger(SubscriptionTestsHandler.class);
 
 	public int text_count = 0;
 	public int cbor_count = 0;
@@ -62,11 +66,25 @@ public class SubscriptionTestsHandler extends AbstractWebSocketHandler {
 	public List<String> subscriptionIds = new ArrayList<String>();
 
 	@Override
-	public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
-		if (GsWebSocketHandler.SUB_PROTOCOL_TEXT.equalsIgnoreCase(session.getAcceptedProtocol())) {
+	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+		logger.info("handleTextMessage");
+		this.handlePayload(session, message.getPayload());
+	}
+
+	@Override
+	protected void handleBinaryMessage(WebSocketSession session, BinaryMessage message) throws Exception {
+		logger.info("handleBinaryMessage");
+		this.handlePayload(session, message.getPayload());
+	}
+
+	protected void handlePayload(WebSocketSession session, Object payload) throws Exception {
+		logger.info("session.getAcceptedProtocol = " + session.getAcceptedProtocol());
+		logger.info("payload = " + payload);
+
+		if (WsfAbstractConverter.SUB_PROTOCOL_TEXT.equalsIgnoreCase(session.getAcceptedProtocol())) {
 			this.text_count++;
 			this.count++;
-			String msg = ((TextMessage) message).getPayload();
+			String msg = (String) payload;
 			if (isNotifier(msg)) {
 				this.notifier_count++;
 			} else {
@@ -74,10 +92,10 @@ public class SubscriptionTestsHandler extends AbstractWebSocketHandler {
 				this.handleSubecriptionIds(msg);
 			}
 
-		} else if (GsWebSocketHandler.SUB_PROTOCOL_CBOR.equalsIgnoreCase(session.getAcceptedProtocol())) {
+		} else if (WsfAbstractConverter.SUB_PROTOCOL_CBOR.equalsIgnoreCase(session.getAcceptedProtocol())) {
 			this.cbor_count++;
 			this.count++;
-			String msg = GsWebSocketHandler.getFromCbor((BinaryMessage) message);
+			String msg = WsfAbstractConverter.fromCbor((ByteBuffer) payload);
 			if (isNotifier(msg)) {
 				this.notifier_count++;
 			} else {
@@ -85,10 +103,10 @@ public class SubscriptionTestsHandler extends AbstractWebSocketHandler {
 				this.handleSubecriptionIds(msg);
 			}
 
-		} else if (GsWebSocketHandler.SUB_PROTOCOL_MSGPACK.equalsIgnoreCase(session.getAcceptedProtocol())) {
+		} else if (WsfAbstractConverter.SUB_PROTOCOL_MSGPACK.equalsIgnoreCase(session.getAcceptedProtocol())) {
 			this.msgpack_count++;
 			this.count++;
-			String msg = GsWebSocketHandler.getFromMsgPack((BinaryMessage) message);
+			String msg = WsfAbstractConverter.fromMsgPack((ByteBuffer) payload);
 			if (isNotifier(msg)) {
 				this.notifier_count++;
 			} else {
@@ -99,7 +117,7 @@ public class SubscriptionTestsHandler extends AbstractWebSocketHandler {
 		} else {
 			this.default_count++;
 			this.count++;
-			String msg = ((TextMessage) message).getPayload();
+			String msg = (String) payload;
 			if (isNotifier(msg)) {
 				this.notifier_count++;
 			} else {
@@ -122,10 +140,10 @@ public class SubscriptionTestsHandler extends AbstractWebSocketHandler {
 
 		if (pos_gql > 0 && pos_sub > 0 && pos > 0) {
 			payload = payload.substring(pos - 1, payload.indexOf("}", pos) + 1);
-			System.out.println("handleSubecriptionIds payload = " + payload);
+			logger.info("handleSubecriptionIds payload = " + payload);
 			JSONObject json = new JSONObject(payload);
 			String subscriptionId = json.getString("subscribe");
-			System.out.println("handleSubecriptionIds subscriptionId = " + subscriptionId);
+			logger.info("handleSubecriptionIds subscriptionId = " + subscriptionId);
 			this.subscriptionIds.add(subscriptionId);
 		}
 	}

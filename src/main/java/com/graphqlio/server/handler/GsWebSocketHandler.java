@@ -26,8 +26,6 @@
  ******************************************************************************/
 package com.graphqlio.server.handler;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -35,9 +33,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.msgpack.core.MessageBufferPacker;
-import org.msgpack.core.MessagePack;
-import org.msgpack.core.MessageUnpacker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +41,6 @@ import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.SubProtocolCapable;
 import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 
@@ -58,21 +52,17 @@ import com.graphqlio.gts.tracking.GtsScope;
 import com.graphqlio.server.execution.GsExecutionStrategy;
 import com.graphqlio.server.graphql.schema.GsGraphQLSchemaCreator;
 import com.graphqlio.server.server.GsContext;
+import com.graphqlio.wsf.converter.WsfAbstractConverter;
 import com.graphqlio.wsf.converter.WsfFrameToMessageConverter;
 import com.graphqlio.wsf.domain.WsfFrame;
 import com.graphqlio.wsf.domain.WsfFrameType;
 
-import co.nstant.in.cbor.CborDecoder;
-import co.nstant.in.cbor.CborEncoder;
-import co.nstant.in.cbor.CborException;
-import co.nstant.in.cbor.model.ByteString;
-import co.nstant.in.cbor.model.DataItem;
 import graphql.GraphQLException;
 
 /**
  * Class used to process any incoming message sent by clients via WebSocket
- * supports subprotocols (CBOR, MsgPack, Text)
- * triggers process to indicate outdating queries and notifies clients 
+ * supports subprotocols (CBOR, MsgPack, Text) triggers process to indicate
+ * outdating queries and notifies clients
  *
  * @author Michael Schäfer
  * @author Dr. Edgar Müller
@@ -80,10 +70,6 @@ import graphql.GraphQLException;
  */
 
 public class GsWebSocketHandler extends AbstractWebSocketHandler implements SubProtocolCapable {
-
-	public static final String SUB_PROTOCOL_TEXT = "text";
-	public static final String SUB_PROTOCOL_CBOR = "cbor";
-	public static final String SUB_PROTOCOL_MSGPACK = "msgpack";
 
 	private final Logger logger = LoggerFactory.getLogger(GsWebSocketHandler.class);
 
@@ -100,11 +86,9 @@ public class GsWebSocketHandler extends AbstractWebSocketHandler implements SubP
 	private final WsfFrameToMessageConverter notifyConverter;
 
 	@Autowired
-	public GsWebSocketHandler(GsExecutionStrategy executionStrategy,
-			GtsEvaluation evaluation, GsGraphQLSchemaCreator schemaCreator, GtsCounter gtsCounter,
-			WsfFrameToMessageConverter requestConverter,
-			WsfFrameToMessageConverter responseConverter,
-			WsfFrameToMessageConverter notifyConverter) {
+	public GsWebSocketHandler(GsExecutionStrategy executionStrategy, GtsEvaluation evaluation,
+			GsGraphQLSchemaCreator schemaCreator, GtsCounter gtsCounter, WsfFrameToMessageConverter requestConverter,
+			WsfFrameToMessageConverter responseConverter, WsfFrameToMessageConverter notifyConverter) {
 
 		this.graphQLIOQueryExecution = executionStrategy;
 		this.graphQLIOEvaluation = evaluation;
@@ -118,12 +102,9 @@ public class GsWebSocketHandler extends AbstractWebSocketHandler implements SubP
 
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-		webSocketConnections.put(session.getId(), 
-				GtsConnection.builder()
-					.fromSession(session)
-					.withGtsCounter(gsGtsCounter)
-					.build());
-		webSocketSessions.put(session.getId(), session);		
+		webSocketConnections.put(session.getId(),
+				GtsConnection.builder().fromSession(session).withGtsCounter(gsGtsCounter).build());
+		webSocketSessions.put(session.getId(), session);
 	}
 
 	@Override
@@ -131,141 +112,86 @@ public class GsWebSocketHandler extends AbstractWebSocketHandler implements SubP
 		GtsConnection connection = webSocketConnections.get(session.getId());
 		if (connection != null) {
 
-			///   remove entries from key value store
-	    	this.graphQLIOEvaluation.onCloseConnection(connection.getConnectionId());
-			
+			/// remove entries from key value store
+			this.graphQLIOEvaluation.onCloseConnection(connection.getConnectionId());
+
 			/// remove scopes from list in connections
 			connection.onClose();
-			
-		}		
+
+		}
 		webSocketConnections.remove(session.getId());
 		webSocketSessions.remove(session.getId());
 	}
 
 	@Override
 	public List<String> getSubProtocols() {
-		return Arrays.asList(SUB_PROTOCOL_TEXT, SUB_PROTOCOL_CBOR, SUB_PROTOCOL_MSGPACK);
-	}
-
-	@Override
-	public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
-
-		
-		// Client controls which protocol is used
-		// server just checks if protocol is supported.
-		// if there is no protocol information in message header 
-		// server tries to handle message as text message 
-		
-		
-		logger.info("GraphQLIO handleMessage received graphqlio message::getAcceptedProtocol = " + session.getAcceptedProtocol());
-
-		if (SUB_PROTOCOL_TEXT.equalsIgnoreCase(session.getAcceptedProtocol())
-				&& message instanceof TextMessage) {
-
-			this.handleTextMessage(session, (TextMessage) message);
-
-		} else if (SUB_PROTOCOL_CBOR.equalsIgnoreCase(session.getAcceptedProtocol())
-				&& message instanceof BinaryMessage) {
-
-			this.handleCborMessage(session, (BinaryMessage) message);
-
-		} else if (SUB_PROTOCOL_MSGPACK.equalsIgnoreCase(session.getAcceptedProtocol())
-				&& message instanceof BinaryMessage) {
-
-			this.handleMsgPackMessage(session, (BinaryMessage) message);
-
-		} else {
-			// super.handleMessage(session, message);
-			this.handleTextMessage(session, (TextMessage) message);
-		}
+		return Arrays.asList(WsfAbstractConverter.SUB_PROTOCOL_TEXT, WsfAbstractConverter.SUB_PROTOCOL_CBOR,
+				WsfAbstractConverter.SUB_PROTOCOL_MSGPACK);
 	}
 
 	@Override
 	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
 
-		logger.info("GraphQLIO handleTextMessage session :" + session);
+		logger.info("GraphQLIO handleTextMessage session    :" + session);
 		logger.info("GraphQLIO handleTextMessage session ID :" + session.getId());
-		logger.info("GraphQLIO handleTextMessage this :" + this);
-		logger.info("GraphQLIO handleTextMessage Thread :" + Thread.currentThread());
+		logger.info("GraphQLIO handleTextMessage this       :" + this);
+		logger.info("GraphQLIO handleTextMessage Thread     :" + Thread.currentThread());
 
-		this.handleStringMessage(session, message.getPayload());
+		this.handlePayload(session, message.getPayload());
 	}
 
-	protected void handleCborMessage(WebSocketSession session, BinaryMessage message) throws Exception {
+	@Override
+	protected void handleBinaryMessage(WebSocketSession session, BinaryMessage message) throws Exception {
 
-		logger.info("GraphQLIO handleCborMessage session :" + session);
-		logger.info("GraphQLIO handleCborMessage session ID :" + session.getId());
-		logger.info("GraphQLIO handleCborMessage this :" + this);
-		logger.info("GraphQLIO handleCborMessage Thread :" + Thread.currentThread());
+		logger.info("GraphQLIO handleBinaryMessage session    :" + session);
+		logger.info("GraphQLIO handleBinaryMessage session ID :" + session.getId());
+		logger.info("GraphQLIO handleBinaryMessage this       :" + this);
+		logger.info("GraphQLIO handleBinaryMessage Thread     :" + Thread.currentThread());
 
-		String input = getFromCbor(message);
-		logger.info("cbor.input = " + input);
-
-		if (input != null) {
-			this.handleStringMessage(session, input);
-		} else {
-			logger.info("GraphQLIO handleCborMessage : NO valid CBOR message");
-		}
+		this.handlePayload(session, message.getPayload());
 	}
 
-	protected void handleMsgPackMessage(WebSocketSession session, BinaryMessage message) throws Exception {
+	protected void handlePayload(WebSocketSession session, Object payload) throws Exception {
 
-		logger.info("GraphQLIO handleMsgPackMessage session :" + session);
-		logger.info("GraphQLIO handleMsgPackMessage session ID :" + session.getId());
-		logger.info("GraphQLIO handleMsgPackMessage this :" + this);
-		logger.info("GraphQLIO handleMsgPackMessage Thread :" + Thread.currentThread());
+		logger.info("GraphQLIO handlePayload = " + payload);
 
-		String input = getFromMsgPack(message);
-		logger.info("msgPack.input = " + input);
+		// Convert Message to Frame
+		WsfFrame requestMessage = requestConverter.convert(payload, session.getAcceptedProtocol());
 
-		this.handleStringMessage(session, input);
-	}
-
-	protected void handleStringMessage(WebSocketSession session, String message) throws Exception {
-
-		logger.info("GraphQLIO handle String message = " + message);
-
-		// Convert Frame to Message
-		WsfFrame requestMessage = requestConverter.convert(message);
-		
 		// Get the Connection, create a Scope and push it to the context
 		GtsConnection connection = webSocketConnections.get(session.getId());
 		GtsScope scope = null;
-		
-		/// check if request message is a Subscription message (any of unsubscribe, pause, resume) and retrieve scopeId 
+
+		/// check if request message is a Subscription message (any of unsubscribe,
+		/// pause, resume) and retrieve scopeId
 		/// returns valid UUID as String, null otherwise
-		
+
 		/// ToDo: check if Scope generation could be delegated to (Gts-)Resolver
-		/// and gts library holds GtsConnection map resp. GtsScope list 
-		
+		/// and gts library holds GtsConnection map resp. GtsScope list
+
 		String scopeId = null;
 		try {
 			scopeId = this.getSubscriptionScopeId(requestMessage.getData());
-		}
-		catch ( GtsSubscriptionTypeException e ){
-			
-			String graphQLConformError =
-					String.format("{\"errors\":[{\"message\":\"%s\"}]", e.getLocalizedMessage());
-			
-			WsfFrame errorMessage = WsfFrame.builder().fid(requestMessage.getFid()).rid(requestMessage.getRid())
+		} catch (GtsSubscriptionTypeException e) {
+
+			String graphQLConformError = String.format("{\"errors\":[{\"message\":\"%s\"}]", e.getLocalizedMessage());
+
+			WsfFrame errorFrame = WsfFrame.builder().fid(requestMessage.getFid()).rid(requestMessage.getRid())
 					.type(WsfFrameType.GRAPHQLRESPONSE).data(graphQLConformError).build();
-			
-			String answerFrame = responseConverter.convert(errorMessage);
+			Object errorMessage = responseConverter.convert(errorFrame, session.getAcceptedProtocol());
+
 			// Send back
-			sendAnswerBackToClient(session, answerFrame);
+			sendAnswerBackToClient(session, errorMessage);
+
 			return;
 		}
 
 		if (scopeId != null) {
 			scope = connection.getScopeById(scopeId);
-		}
-		else {
-			scope = GtsScope.builder()
-										.withQuery(requestMessage.getData())
-										.withConnectionId(connection.getConnectionId())
-										.withGtsCounter(gsGtsCounter)
-										.build();
-			connection.addScope(scope);			
+		} else {
+			scope = GtsScope.builder().withQuery(requestMessage.getData())
+					.withConnectionId(connection.getConnectionId()).withGtsCounter(gsGtsCounter).build();
+			connection.addScope(scope);
 		}
 
 		// Create Context Information for Execution
@@ -274,80 +200,83 @@ public class GsWebSocketHandler extends AbstractWebSocketHandler implements SubP
 				.build();
 
 		// Execute Message
-		// Exceptions are catched inside, transformed to GraphQLErrors and finally put into context response message
+		// Exceptions are catched inside, transformed to GraphQLErrors and finally put
+		// into context response message
 		logger.info("GraphQLIO start executing graphQLIOContext ....");
 		graphQLIOQueryExecution.execute(graphQLIOContext);
 		logger.info("GraphQLIO finished execution of graphQLIOContext ....");
 
 		// Convert Result Message to Frame
-		String answerFrame = responseConverter.convert(graphQLIOContext.getResponseMessage());
+		Object responseFrame = responseConverter.convert(graphQLIOContext.getResponseMessage(),
+				session.getAcceptedProtocol());
 
 		// Send back
-		sendAnswerBackToClient(session, answerFrame);
-		
+		sendAnswerBackToClient(session, responseFrame);
+
 		try {
-			
 			logger.info("GraphQLIOEvaluation Evaluating outdated Scopes ....");
-			
+
 			// Evaluate Subscriptions and notify clients
 			List<String> sids = graphQLIOEvaluation.evaluateOutdatedSids(graphQLIOContext.getScope());
 
 			logger.info("GraphQLIOEvaluation Finished Evaluating outdated Scopes ....");
-			
-			
+
 			sids.forEach(sid -> {
 				logger.info(String.format("GraphQLIO Scope Evaluation: Scope (%s) outdated", sid));
 			});
-			
-			if ( !sids.isEmpty()) {
+
+			if (!sids.isEmpty()) {
 				Map<String, Set<String>> sids4cid = graphQLIOEvaluation.evaluateOutdatedsSidsPerCid(sids,
-						webSocketConnections.values());			
-				
-				if ( sids4cid.size() > 0)
-					sendNotifierMessageToClients(sids4cid, requestMessage);
+						webSocketConnections.values());
+
+				if (sids4cid.size() > 0)
+					sendNotifierMessageToClients(session, sids4cid, requestMessage);
 			}
-		}
-		catch (GraphQLException e) {
-			logger.error(e.toString());				
+		} catch (GraphQLException e) {
+			logger.error(e.toString());
 ///			ToDo: Shall we notify client???			
 		}
 	}
 
-	private void sendAnswerBackToClient(WebSocketSession session, String answerFrame) throws Exception {
+	private void sendAnswerBackToClient(WebSocketSession session, Object answerMessage) throws Exception {
+		logger.info(String.format("sendAnswerBackToClient::getAcceptedProtocol = %s", session.getAcceptedProtocol()));
+		logger.info(String.format("sendAnswerBackToClient::answerMessage = %s", answerMessage));
 
-		logger.info(String.format("GraphQLIO sendAnswerBackToClient::getAcceptedProtocol = %s", session.getAcceptedProtocol()));
-		logger.info(String.format("GraphQLIO sendAnswerBackToClient::answerFrame = %s", answerFrame));
+		if (answerMessage instanceof String) {
+			session.sendMessage(new TextMessage((String) answerMessage));
 
-		if (SUB_PROTOCOL_TEXT.equalsIgnoreCase(session.getAcceptedProtocol())) {
+		} else if (answerMessage instanceof byte[]) {
 
-			session.sendMessage(new TextMessage(answerFrame));
+			if (WsfAbstractConverter.SUB_PROTOCOL_CBOR.equalsIgnoreCase(session.getAcceptedProtocol())) {
+				session.sendMessage(new BinaryMessage((byte[]) answerMessage));
 
-		} else if (SUB_PROTOCOL_CBOR.equalsIgnoreCase(session.getAcceptedProtocol())) {
+			} else if (WsfAbstractConverter.SUB_PROTOCOL_MSGPACK.equalsIgnoreCase(session.getAcceptedProtocol())) {
+				session.sendMessage(new BinaryMessage((byte[]) answerMessage));
 
-			session.sendMessage(createFromStringCbor(answerFrame));
-
-		} else if (SUB_PROTOCOL_MSGPACK.equalsIgnoreCase(session.getAcceptedProtocol())) {
-
-			session.sendMessage(createFromStringMsgPack(answerFrame));
+			} else {
+				throw new IllegalStateException("Unexpected websocket protocol & answerMessage type: "
+						+ session.getAcceptedProtocol() + " & " + answerMessage);
+			}
 
 		} else {
-			// DEFAULT is TEXT:
-			session.sendMessage(new TextMessage(answerFrame));
+			throw new IllegalStateException("Unexpected websocket protocol & answerMessage type: "
+					+ session.getAcceptedProtocol() + " & " + answerMessage);
 		}
 	}
 
-	private void sendNotifierMessageToClients(Map<String, Set<String>> sids4cid, WsfFrame requestMessage)
-			throws Exception {
+	private void sendNotifierMessageToClients(WebSocketSession session, Map<String, Set<String>> sids4cid,
+			WsfFrame requestMessage) throws Exception {
 
 		Set<String> cids = sids4cid.keySet();
 
 		for (String cid : cids) {
-			WsfFrame message = WsfFrame.builder().fid(requestMessage.getFid()).rid(requestMessage.getRid())
-					.type(WsfFrameType.GRAPHQLNOTIFIER).data(createData(sids4cid.get(cid))).build();
-			String frame = notifyConverter.convert(message);
 			WebSocketSession sessionForCid = webSocketSessions.get(cid);
-			if (sessionForCid != null ) {
-				sendAnswerBackToClient(sessionForCid, frame);
+			if (sessionForCid != null) {
+				WsfFrame notifyMessage = WsfFrame.builder().fid(requestMessage.getFid()).rid(requestMessage.getRid())
+						.type(WsfFrameType.GRAPHQLNOTIFIER).data(createData(sids4cid.get(cid))).build();
+
+				Object notifyFrame = notifyConverter.convert(notifyMessage, session.getAcceptedProtocol());
+				sendAnswerBackToClient(sessionForCid, notifyFrame);
 			}
 		}
 	}
@@ -358,12 +287,12 @@ public class GsWebSocketHandler extends AbstractWebSocketHandler implements SubP
 
 	private String createData(Set<String> set) {
 		String result = set.isEmpty() ? "" : surroundWithQuotes(String.join(surroundWithQuotes(", "), set));
-		return "{" + surroundWithQuotes("data") + ":[" +  result + "]}";
+		return "{" + surroundWithQuotes("data") + ":[" + result + "]}";
 	}
 
-	/// check if message is a "Subscription - mutation" and contains valid UUID 
-	private String getSubscriptionScopeId( String requestMessage ) {
-		
+	/// check if message is a "Subscription - mutation" and contains valid UUID
+	private String getSubscriptionScopeId(String requestMessage) {
+
 		final String REQUEST_MESSAGE_PART_TYPE_QUERY = "query";
 		final String REQUEST_MESSAGE_PART_TYPE_MUTATION = "mutation";
 		final String REQUEST_MESSAGE_PART_TYPE_SUBSCRIPTION = "_Subscription";
@@ -371,132 +300,63 @@ public class GsWebSocketHandler extends AbstractWebSocketHandler implements SubP
 		final String REQUEST_MESSAGE_PART_METHOD_UNSUBSCRIBE = "unsubscribe";
 		final String REQUEST_MESSAGE_PART_METHOD_PAUSE = "pause";
 		final String REQUEST_MESSAGE_PART_METHOD_RESUME = "resume";
-				
-		String message = StringUtils.deleteAny(requestMessage,  "\"");
-		message = StringUtils.deleteAny(message,  " ");
-		
+
+		String message = StringUtils.deleteAny(requestMessage, "\"");
+		message = StringUtils.deleteAny(message, " ");
+
 		if (message.contains(REQUEST_MESSAGE_PART_TYPE_SUBSCRIPTION)) {
 			if (message.contains(REQUEST_MESSAGE_PART_TYPE_MUTATION)) {
 				int indexOf = message.indexOf(REQUEST_MESSAGE_PART_SCOPE_ID);
 				if (indexOf > 0) {
 					indexOf += REQUEST_MESSAGE_PART_SCOPE_ID.length();
-					
-					String uuidString = null;				
+
+					String uuidString = null;
 					try {
-						uuidString = message.substring(indexOf, indexOf+36);
+						uuidString = message.substring(indexOf, indexOf + 36);
 						UUID uuid = isValidUUID(uuidString);
 						if (uuid != null) {
-							return uuidString;						
+							return uuidString;
+						} else {
+							throw new GtsSubscriptionTypeException(String.format(
+									"GsWebSocketHandler.getSubscriptionScopeId: uuidString (%s) does not represent a valid UUID",
+									uuidString));
 						}
-						else {
-							throw new GtsSubscriptionTypeException(String.format("GsWebSocketHandler.getSubscriptionScopeId: uuidString (%s) does not represent a valid UUID", uuidString));
-						}																
+					} catch (IndexOutOfBoundsException e) {
+						throw new GtsSubscriptionTypeException(String.format(
+								"GsWebSocketHandler.getSubscriptionScopeId: uuidString (%s) does not represent a valid UUID",
+								uuidString));
 					}
-					catch( IndexOutOfBoundsException e) {
-						throw new GtsSubscriptionTypeException(String.format("GsWebSocketHandler.getSubscriptionScopeId: uuidString (%s) does not represent a valid UUID", uuidString));					
-					}						
+				} else {
+					//// no scope id (sid) parameter
+					throw new GtsSubscriptionTypeException(
+							"GsWebSocketHandler.getSubscriptionScopeId: expect parameter <sid> for _Subscription");
 				}
-				else {  
-					//// no scope id (sid) parameter				
-					throw new GtsSubscriptionTypeException("GsWebSocketHandler.getSubscriptionScopeId: expect parameter <sid> for _Subscription");				
-				}
-			}
-			else {
-				if (((message.contains(REQUEST_MESSAGE_PART_METHOD_UNSUBSCRIBE) ||
-						  message.contains(REQUEST_MESSAGE_PART_METHOD_PAUSE)	 ||
-						  message.contains(REQUEST_MESSAGE_PART_METHOD_RESUME) )) ) {	
-					//// query/unsubscribe/pause/resume   not supported
-					throw new GtsSubscriptionTypeException("GsWebSocketHandler.getSubscriptionScopeId: expect _Subscription of type MUTATION");				
-				}
-				else {
+			} else {
+				if (((message.contains(REQUEST_MESSAGE_PART_METHOD_UNSUBSCRIBE)
+						|| message.contains(REQUEST_MESSAGE_PART_METHOD_PAUSE)
+						|| message.contains(REQUEST_MESSAGE_PART_METHOD_RESUME)))) {
+					//// query/unsubscribe/pause/resume not supported
+					throw new GtsSubscriptionTypeException(
+							"GsWebSocketHandler.getSubscriptionScopeId: expect _Subscription of type MUTATION");
+				} else {
 					/// regular query message
 					return null;
-				}				
+				}
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	/// helper function
 	private UUID isValidUUID(String uuidString) {
 		UUID resultUUID = null;
 		try {
-			resultUUID = UUID.fromString(uuidString);   //throws exception if string does not represent a valid UUID 
-		}
-		catch( IllegalArgumentException e) {
+			resultUUID = UUID.fromString(uuidString); // throws exception if string does not represent a valid UUID
+		} catch (IllegalArgumentException e) {
 			resultUUID = null;
-		}						
-		return resultUUID;	
-	}
-
-	public static String getFromCbor(BinaryMessage message) throws CborException {
-		List<DataItem> dataItems = CborDecoder.decode(message.getPayload().array());
-
-		// wenn keine Exception:
-		if (dataItems == null || dataItems.isEmpty()) {
-			// logging
-
-		} else if (!dataItems.isEmpty()) {
-			if (dataItems.size() >= 2) {
-				// logging
-			}
-
-			DataItem dataItem = dataItems.get(0);
-			// logging
-
-			if (dataItem instanceof ByteString) {
-				String input = new String(((ByteString) dataItem).getBytes());
-				// logging
-
-				return input;
-
-			} else {
-				// logging
-			}
 		}
-
-		// logging
-		return null;
-	}
-
-	public static String getFromMsgPack(BinaryMessage message) throws IOException {
-		MessageUnpacker unpacker = null;
-		String input = null;
-		try {
-			unpacker = MessagePack.newDefaultUnpacker(message.getPayload().array());
-			input = unpacker.unpackString();
-			// logging			
-		}
-		finally {
-			if (unpacker != null)
-				unpacker.close();			
-		}
-
-		return input;
-	}
-
-	public static BinaryMessage createFromStringCbor(String message) throws CborException {
-		byte[] bytes = message.getBytes();
-		DataItem dataItem = new ByteString(bytes);
-
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		new CborEncoder(os).encode(dataItem);
-
-		return new BinaryMessage(os.toByteArray());
-	}
-
-	public static BinaryMessage createFromStringMsgPack(String message) throws IOException {
-		MessageBufferPacker packer = null;
-		try {
-			packer = MessagePack.newDefaultBufferPacker();
-			packer.packString(message);
-		}
-		finally {
-			if (packer != null)
-				packer.close();			
-		}
-		return new BinaryMessage(packer.toByteArray());
+		return resultUUID;
 	}
 
 }

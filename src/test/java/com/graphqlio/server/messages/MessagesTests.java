@@ -38,21 +38,24 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.socket.AbstractWebSocketMessage;
+import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketHttpHeaders;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 
-import com.graphqlio.server.handler.GsWebSocketHandler;
-import com.graphqlio.server.helpers.RootQueryResolverTest;
 import com.graphqlio.server.helpers.FlightTest;
+import com.graphqlio.server.helpers.RootQueryResolverTest;
 import com.graphqlio.server.server.GsServer;
+import com.graphqlio.wsf.converter.WsfAbstractConverter;
 
 /**
  * test class for testing queries, mutations, subscriptions and messages with
@@ -68,6 +71,8 @@ import com.graphqlio.server.server.GsServer;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestInstance(Lifecycle.PER_CLASS)
 class MessagesTests {
+
+	private final Logger logger = LoggerFactory.getLogger(MessagesTests.class);
 
 	@LocalServerPort
 	private int port;
@@ -96,26 +101,28 @@ class MessagesTests {
 	private final String simpleQuery = "[1,0,\"GRAPHQL-REQUEST\", {\"query\":\"query { routes { flightNumber departure destination } }\"} ]";
 
 	@Test
-	void whenMessageIsSendThenAnswerIsReturned() {
+	void whenTextMessageIsSendThenAnswerIsReturned() {
 		try {
 			MessagesTestsHandler webSocketHandler = new MessagesTestsHandler();
 
 			WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
-			headers.setSecWebSocketProtocol(Arrays.asList(GsWebSocketHandler.SUB_PROTOCOL_TEXT));
+			headers.setSecWebSocketProtocol(Arrays.asList(WsfAbstractConverter.SUB_PROTOCOL_TEXT));
 
 			URI uri = URI.create("ws://127.0.0.1:" + port + "/api/data/graph");
 
-			AbstractWebSocketMessage textMessage = new TextMessage(simpleQuery);
+			AbstractWebSocketMessage message = new TextMessage(simpleQuery);
 
 			WebSocketClient webSocketClient = new StandardWebSocketClient();
 			WebSocketSession webSocketSession = webSocketClient.doHandshake(webSocketHandler, headers, uri).get();
-			webSocketSession.sendMessage(textMessage);
+			webSocketSession.sendMessage(message);
 
 			long start = System.currentTimeMillis();
 			// maximal 1 sec:
 			while (webSocketHandler.count < 1 && System.currentTimeMillis() - start < 1000) {
 				Thread.sleep(100);
 			}
+
+			logger.info("webSocketHandler = " + webSocketHandler);
 
 			Assert.assertTrue(webSocketHandler.text_count == 1);
 			Assert.assertTrue(webSocketHandler.cbor_count == 0);
@@ -139,26 +146,28 @@ class MessagesTests {
 	private final String mutationQuery = "[1,0,\"GRAPHQL-REQUEST\", {\"query\":\"mutation { updateRoute( flightNumber: \\\"LH2084\\\" input: { flightNumber: \\\"LH2084\\\" departure: \\\"HAM\\\" destination: \\\"MUC\\\" disabled: false } ) { flightNumber departure destination } }\"} ]";
 
 	@Test
-	void whenMessageIsSendThenAnswerIsReturned2() {
+	void whenBinaryMessageIsSendThenAnswerIsReturned() {
 		try {
 			MessagesTestsHandler webSocketHandler = new MessagesTestsHandler();
 
 			WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
-			headers.setSecWebSocketProtocol(Arrays.asList(GsWebSocketHandler.SUB_PROTOCOL_CBOR));
+			headers.setSecWebSocketProtocol(Arrays.asList(WsfAbstractConverter.SUB_PROTOCOL_CBOR));
 
 			URI uri = URI.create("ws://127.0.0.1:" + port + "/api/data/graph");
 
-			AbstractWebSocketMessage textMessage = GsWebSocketHandler.createFromStringCbor(mutationQuery);
+			AbstractWebSocketMessage message = new BinaryMessage(WsfAbstractConverter.toCbor(mutationQuery));
 
 			WebSocketClient webSocketClient = new StandardWebSocketClient();
 			WebSocketSession webSocketSession = webSocketClient.doHandshake(webSocketHandler, headers, uri).get();
-			webSocketSession.sendMessage(textMessage);
+			webSocketSession.sendMessage(message);
 
 			long start = System.currentTimeMillis();
 			// maximal 1 sec:
 			while (webSocketHandler.count < 1 && System.currentTimeMillis() - start < 1000) {
 				Thread.sleep(100);
 			}
+
+			logger.info("webSocketHandler = " + webSocketHandler);
 
 			Assert.assertTrue(webSocketHandler.text_count == 0);
 			Assert.assertTrue(webSocketHandler.cbor_count == 1);

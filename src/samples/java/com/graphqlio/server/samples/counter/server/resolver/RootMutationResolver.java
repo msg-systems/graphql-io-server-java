@@ -56,7 +56,6 @@ public class RootMutationResolver implements GraphQLMutationResolver {
 	}
 
 	public Counter counter(DataFetchingEnvironment env) {
-		System.out.println("RootMutationResolver");
 		Counter counter = repo.getCounter();
 
 		GtsContext context = env.getContext();

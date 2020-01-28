@@ -25,11 +25,14 @@
 
 package com.graphqlio.server.subprotocols;
 
-import org.springframework.web.socket.WebSocketMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.socket.BinaryMessage;
+import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 
-import com.graphqlio.server.handler.GsWebSocketHandler;
+import com.graphqlio.wsf.converter.WsfAbstractConverter;
 
 /**
  * websockethandler class for testing subprotocols
@@ -40,6 +43,8 @@ import com.graphqlio.server.handler.GsWebSocketHandler;
 
 public class SubprotocolsTestsHandler extends AbstractWebSocketHandler {
 
+	private final Logger logger = LoggerFactory.getLogger(SubprotocolsTestsHandler.class);
+
 	public int text_count = 0;
 	public int cbor_count = 0;
 	public int msgpack_count = 0;
@@ -48,14 +53,28 @@ public class SubprotocolsTestsHandler extends AbstractWebSocketHandler {
 	public int count = 0;
 
 	@Override
-	public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
-		if (GsWebSocketHandler.SUB_PROTOCOL_TEXT.equalsIgnoreCase(session.getAcceptedProtocol())) {
+	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+		logger.info("handleTextMessage");
+		this.handlePayload(session, message.getPayload());
+	}
+
+	@Override
+	protected void handleBinaryMessage(WebSocketSession session, BinaryMessage message) throws Exception {
+		logger.info("handleBinaryMessage");
+		this.handlePayload(session, message.getPayload());
+	}
+
+	protected void handlePayload(WebSocketSession session, Object payload) throws Exception {
+		logger.info("session.getAcceptedProtocol = " + session.getAcceptedProtocol());
+		logger.info("payload = " + payload);
+
+		if (WsfAbstractConverter.SUB_PROTOCOL_TEXT.equalsIgnoreCase(session.getAcceptedProtocol())) {
 			this.text_count++;
 			this.count++;
-		} else if (GsWebSocketHandler.SUB_PROTOCOL_CBOR.equalsIgnoreCase(session.getAcceptedProtocol())) {
+		} else if (WsfAbstractConverter.SUB_PROTOCOL_CBOR.equalsIgnoreCase(session.getAcceptedProtocol())) {
 			this.cbor_count++;
 			this.count++;
-		} else if (GsWebSocketHandler.SUB_PROTOCOL_MSGPACK.equalsIgnoreCase(session.getAcceptedProtocol())) {
+		} else if (WsfAbstractConverter.SUB_PROTOCOL_MSGPACK.equalsIgnoreCase(session.getAcceptedProtocol())) {
 			this.msgpack_count++;
 			this.count++;
 		} else {

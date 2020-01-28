@@ -48,8 +48,8 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 
-import com.graphqlio.server.helpers.RootQueryResolverTest;
 import com.graphqlio.server.helpers.FlightTest;
+import com.graphqlio.server.helpers.RootQueryResolverTest;
 import com.graphqlio.server.server.GsServer;
 
 /**

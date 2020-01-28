@@ -25,20 +25,22 @@
 
 package com.graphqlio.server.messages;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 
-import com.graphqlio.server.handler.GsWebSocketHandler;
 import com.graphqlio.server.helpers.FlightTest;
+import com.graphqlio.wsf.converter.WsfAbstractConverter;
 
 /**
  * websockethandler class for testing queries, mutations, subscriptions and
@@ -50,6 +52,8 @@ import com.graphqlio.server.helpers.FlightTest;
 
 public class MessagesTestsHandler extends AbstractWebSocketHandler {
 
+	private final Logger logger = LoggerFactory.getLogger(MessagesTestsHandler.class);
+
 	public int text_count = 0;
 	public int cbor_count = 0;
 	public int msgpack_count = 0;
@@ -60,29 +64,55 @@ public class MessagesTestsHandler extends AbstractWebSocketHandler {
 	public List<FlightTest> routes = new ArrayList<FlightTest>();
 
 	@Override
-	public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
-		if (GsWebSocketHandler.SUB_PROTOCOL_TEXT.equalsIgnoreCase(session.getAcceptedProtocol())) {
+	public String toString() {
+		return "MessagesTestsHandler [text_count=" + text_count + ", cbor_count=" + cbor_count + ", msgpack_count="
+				+ msgpack_count + ", default_count=" + default_count + ", count=" + count + ", routes=" + routes + "]";
+	}
+
+	@Override
+	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+		logger.info("handleTextMessage");
+		this.handlePayload(session, message.getPayload());
+	}
+
+	@Override
+	protected void handleBinaryMessage(WebSocketSession session, BinaryMessage message) throws Exception {
+		logger.info("handleBinaryMessage");
+		this.handlePayload(session, message.getPayload());
+	}
+
+	protected void handlePayload(WebSocketSession session, Object payload) throws Exception {
+		logger.info("session.getAcceptedProtocol = " + session.getAcceptedProtocol());
+		logger.info("payload = " + payload);
+
+		if (payload instanceof String
+				&& WsfAbstractConverter.SUB_PROTOCOL_TEXT.equalsIgnoreCase(session.getAcceptedProtocol())) {
+
 			this.text_count++;
 			this.count++;
-			String msg = ((TextMessage) message).getPayload();
+			String msg = (String) payload;
 			this.addFlights(msg);
 
-		} else if (GsWebSocketHandler.SUB_PROTOCOL_CBOR.equalsIgnoreCase(session.getAcceptedProtocol())) {
+		} else if (payload instanceof ByteBuffer
+				&& WsfAbstractConverter.SUB_PROTOCOL_CBOR.equalsIgnoreCase(session.getAcceptedProtocol())) {
+
 			this.cbor_count++;
 			this.count++;
-			String msg = GsWebSocketHandler.getFromCbor((BinaryMessage) message);
+			String msg = WsfAbstractConverter.fromCbor((ByteBuffer) payload);
 			this.addFlights(msg);
 
-		} else if (GsWebSocketHandler.SUB_PROTOCOL_MSGPACK.equalsIgnoreCase(session.getAcceptedProtocol())) {
+		} else if (payload instanceof ByteBuffer
+				&& WsfAbstractConverter.SUB_PROTOCOL_MSGPACK.equalsIgnoreCase(session.getAcceptedProtocol())) {
+
 			this.msgpack_count++;
 			this.count++;
-			String msg = GsWebSocketHandler.getFromMsgPack((BinaryMessage) message);
+			String msg = WsfAbstractConverter.fromMsgPack((ByteBuffer) payload);
 			this.addFlights(msg);
 
 		} else {
 			this.default_count++;
 			this.count++;
-			String msg = ((TextMessage) message).getPayload();
+			String msg = (String) payload;
 			this.addFlights(msg);
 		}
 	}
@@ -95,7 +125,7 @@ public class MessagesTestsHandler extends AbstractWebSocketHandler {
 		if (pos > 0) {
 			String jsonStr = msg.substring(pos);
 			jsonStr = jsonStr.substring(0, jsonStr.length() - 1);
-			// System.out.println("jsonStr = " + jsonStr);
+			// logger.info("jsonStr = " + jsonStr);
 
 			JSONObject jsonObj = new JSONObject(jsonStr);
 			JSONObject dataObj = jsonObj.getJSONObject("data");
@@ -115,7 +145,13 @@ public class MessagesTestsHandler extends AbstractWebSocketHandler {
 
 				FlightTest newRoute = new FlightTest(flightObj.toString());
 				this.routes.add(newRoute);
+
+			} else {
+				logger.info("route not added! (1)");
 			}
+
+		} else {
+			logger.info("route not added! (2)");
 		}
 	}
 

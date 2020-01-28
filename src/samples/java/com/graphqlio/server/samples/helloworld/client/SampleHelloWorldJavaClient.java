@@ -28,6 +28,8 @@ package com.graphqlio.server.samples.helloworld.client;
 
 import java.net.URI;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketHttpHeaders;
 import org.springframework.web.socket.WebSocketSession;
@@ -67,15 +69,17 @@ public class SampleHelloWorldJavaClient {
 
 	private static class SampleHelloWorldHandler extends TextWebSocketHandler {
 
+		private final Logger logger = LoggerFactory.getLogger(SampleHelloWorldHandler.class);
+
 		@Override
 		protected void handleTextMessage(WebSocketSession session, TextMessage message) {
-			System.out.println("message received : id = " + session.getId());
-			System.out.println("                 : message = " + message.getPayload());
+			logger.info("message received : id = " + session.getId());
+			logger.info("                 : message = " + message.getPayload());
 		}
 
 		@Override
 		public void afterConnectionEstablished(WebSocketSession session) {
-			System.out.println("connection est.  : id = " + session.getId());
+			logger.info("connection est.  : id = " + session.getId());
 		}
 
 	}

@@ -28,6 +28,8 @@ package com.graphqlio.server.samples.counter.client;
 
 import java.net.URI;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.AbstractWebSocketMessage;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketHandler;
@@ -47,6 +49,8 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
  */
 
 public class CounterClientSubscription {
+
+	private final Logger logger = LoggerFactory.getLogger(CounterClientSubscription.class);
 
 	private final String Query = "[1,0,\"GRAPHQL-REQUEST\",{\"query\":\"query { _Subscription { subscribe } counter { value } }\"}]";
 	private final String Query2 = "[3,1,\"GRAPHQL-REQUEST\",{\"query\":\"query { _Subscription { subscribe } counter { value value } }\"}]";
@@ -71,7 +75,7 @@ public class CounterClientSubscription {
 			message = new TextMessage(Query2);
 			webSocketSession.sendMessage(message);
 
-			System.out.println("Subscription::waiting 60 seconds...");
+			logger.info("Subscription::waiting 60 seconds...");
 			Thread.sleep(60000);
 			webSocketSession.close();
 
@@ -84,12 +88,12 @@ public class CounterClientSubscription {
 
 		@Override
 		protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-			System.out.println("Subscription::message received: " + message.getPayload());
+			logger.info("Subscription::message received: " + message.getPayload());
 		}
 
 		@Override
 		public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-			System.out.println("Subscription::connection established: " + session.getId());
+			logger.info("Subscription::connection established: " + session.getId());
 		}
 
 	}
