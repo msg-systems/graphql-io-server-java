@@ -92,26 +92,13 @@
 15. Samples werden nicht im Eclipse angezeigt, da die Sample Folder nicht automatisch in den Classpath ... - Torsten Nachdenken 
 
 ```
-			<plugin>
-			  <groupId>org.codehaus.mojo</groupId>
-			  <artifactId>build-helper-maven-plugin</artifactId>
-			  <!-- <version>1.7</version> -->
-			  <executions>
-			    <execution>
-			      <!-- <id>add-source</id> -->
-			      <phase>generate-sources</phase>
-			      <goals>
-			        <goal>add-source</goal>
-			      </goals>
-			      <configuration>
-			        <sources>
-			          <source>/src/samples/java/</source>
-			        </sources>
-			      </configuration>
-			    </execution>
-			  </executions>
-			</plugin>
+-> look in wsf: pom.xml
 ```
 
 16. Maven Ich will Samples nicht ausliefern ... ? - Torsten Nachdenken 
+
+```
+-> look in wsf: pom.xml
+```
+
 17. Maven Ich will Test nicht ausliefern ... ? - Torsten Nachdenken 
