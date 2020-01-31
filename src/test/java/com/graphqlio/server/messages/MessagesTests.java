@@ -116,9 +116,7 @@ class MessagesTests {
 			WebSocketSession webSocketSession = webSocketClient.doHandshake(webSocketHandler, headers, uri).get();
 			webSocketSession.sendMessage(message);
 
-			long start = System.currentTimeMillis();
-			// maximal 1 sec:
-			while (webSocketHandler.count < 1 && System.currentTimeMillis() - start < 1000) {
+			while (webSocketHandler.count < 1) {
 				Thread.sleep(100);
 			}
 
@@ -161,9 +159,7 @@ class MessagesTests {
 			WebSocketSession webSocketSession = webSocketClient.doHandshake(webSocketHandler, headers, uri).get();
 			webSocketSession.sendMessage(message);
 
-			long start = System.currentTimeMillis();
-			// maximal 1 sec:
-			while (webSocketHandler.count < 1 && System.currentTimeMillis() - start < 1000) {
+			while (webSocketHandler.count < 1) {
 				Thread.sleep(100);
 			}
 

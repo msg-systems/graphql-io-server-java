@@ -111,9 +111,7 @@ class SubprotocolsTests {
 			webSocketSession.sendMessage(textMessage);
 			webSocketSession.sendMessage(textMessage);
 
-			long start = System.currentTimeMillis();
-			// maximal 1 sec:
-			while (webSocketHandler.count < 2 && System.currentTimeMillis() - start < 1000) {
+			while (webSocketHandler.count < 2) {
 				Thread.sleep(100);
 			}
 
@@ -148,9 +146,7 @@ class SubprotocolsTests {
 			webSocketSession.sendMessage(cborMessage);
 			webSocketSession.sendMessage(cborMessage);
 
-			long start = System.currentTimeMillis();
-			// maximal 1 sec:
-			while (webSocketHandler.count < 4 && System.currentTimeMillis() - start < 1000) {
+			while (webSocketHandler.count < 4) {
 				Thread.sleep(100);
 			}
 
@@ -184,9 +180,7 @@ class SubprotocolsTests {
 			webSocketSession.sendMessage(msgpackMessage);
 			webSocketSession.sendMessage(msgpackMessage);
 
-			long start = System.currentTimeMillis();
-			// maximal 1 sec:
-			while (webSocketHandler.count < 3 && System.currentTimeMillis() - start < 1000) {
+			while (webSocketHandler.count < 3) {
 				Thread.sleep(100);
 			}
 
@@ -221,9 +215,7 @@ class SubprotocolsTests {
 			webSocketSession.sendMessage(textMessage);
 			webSocketSession.sendMessage(textMessage);
 
-			long start = System.currentTimeMillis();
-			// maximal 1 sec:
-			while (webSocketHandler.count < 5 && System.currentTimeMillis() - start < 1000) {
+			while (webSocketHandler.count < 5) {
 				Thread.sleep(100);
 			}
 

@@ -122,9 +122,7 @@ class SubscriptionTests {
 			AbstractWebSocketMessage textMessage = new TextMessage(subscriptionQuery1);
 			webSocketSession.sendMessage(textMessage);
 
-			long start = System.currentTimeMillis();
-			// maximal 1 sec:
-			while (webSocketHandler.count < 1 && System.currentTimeMillis() - start < 1000) {
+			while (webSocketHandler.count < 1) {
 				Thread.sleep(100);
 			}
 
@@ -152,9 +150,7 @@ class SubscriptionTests {
 			textMessage = new TextMessage(mutationQuery2b);
 			webSocketSession.sendMessage(textMessage);
 
-			start = System.currentTimeMillis();
-			// maximal 1 sec:
-			while (webSocketHandler.count < 5 && System.currentTimeMillis() - start < 1000) {
+			while (webSocketHandler.count < 5) {
 				Thread.sleep(100);
 			}
 
@@ -180,9 +176,7 @@ class SubscriptionTests {
 			textMessage = new TextMessage(unsubscribeQuery3.replace("%s", webSocketHandler.subscriptionIds.get(0)));
 			webSocketSession.sendMessage(textMessage);
 
-			start = System.currentTimeMillis();
-			// maximal 1 sec:
-			while (webSocketHandler.count < 6 && System.currentTimeMillis() - start < 1000) {
+			while (webSocketHandler.count < 6) {
 				Thread.sleep(100);
 			}
 
@@ -205,9 +199,7 @@ class SubscriptionTests {
 			textMessage = new TextMessage(mutationQuery4);
 			webSocketSession.sendMessage(textMessage);
 
-			start = System.currentTimeMillis();
-			// maximal 1 sec:
-			while (webSocketHandler.count < 7 && System.currentTimeMillis() - start < 1000) {
+			while (webSocketHandler.count < 7) {
 				Thread.sleep(100);
 			}
 
@@ -225,7 +217,9 @@ class SubscriptionTests {
 
 			webSocketSession.close();
 
-		} catch (Exception e) {
+		} catch (
+
+		Exception e) {
 			// e.printStackTrace();
 		}
 	}
