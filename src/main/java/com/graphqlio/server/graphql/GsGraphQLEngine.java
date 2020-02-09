@@ -28,8 +28,6 @@ package com.graphqlio.server.graphql;
 
 import static graphql.GraphQL.newGraphQL;
 
-import org.springframework.stereotype.Component;
-
 import com.graphqlio.server.execution.GsEngineStrategy;
 
 import graphql.GraphQL;
@@ -43,7 +41,6 @@ import graphql.schema.GraphQLSchema;
  * @author Dr. Edgar Müller
  * @author Torsten Kühnert
  */
-@Component
 public class GsGraphQLEngine implements GsEngineStrategy {
 
 	final org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger();

@@ -44,7 +44,6 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 
-import com.graphqlio.gts.actuator.GtsCounter;
 import com.graphqlio.gts.evaluation.GtsEvaluation;
 import com.graphqlio.gts.exceptions.GtsSubscriptionTypeException;
 import com.graphqlio.gts.tracking.GtsConnection;
@@ -79,7 +78,6 @@ public class GsWebSocketHandler extends AbstractWebSocketHandler implements SubP
 	private final GsExecutionStrategy graphQLIOQueryExecution;
 	private final GtsEvaluation graphQLIOEvaluation;
 	private final GsGraphQLSchemaCreator gsGraphQLSchemaCreator;
-	private final GtsCounter gsGtsCounter;
 
 	private final WsfFrameToMessageConverter requestConverter;
 	private final WsfFrameToMessageConverter responseConverter;
@@ -87,13 +85,12 @@ public class GsWebSocketHandler extends AbstractWebSocketHandler implements SubP
 
 	@Autowired
 	public GsWebSocketHandler(GsExecutionStrategy executionStrategy, GtsEvaluation evaluation,
-			GsGraphQLSchemaCreator schemaCreator, GtsCounter gtsCounter, WsfFrameToMessageConverter requestConverter,
+			GsGraphQLSchemaCreator schemaCreator, WsfFrameToMessageConverter requestConverter,
 			WsfFrameToMessageConverter responseConverter, WsfFrameToMessageConverter notifyConverter) {
 
 		this.graphQLIOQueryExecution = executionStrategy;
 		this.graphQLIOEvaluation = evaluation;
 		this.gsGraphQLSchemaCreator = schemaCreator;
-		this.gsGtsCounter = gtsCounter;
 
 		this.requestConverter = requestConverter;
 		this.responseConverter = responseConverter;
@@ -103,7 +100,7 @@ public class GsWebSocketHandler extends AbstractWebSocketHandler implements SubP
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 		webSocketConnections.put(session.getId(),
-				GtsConnection.builder().fromSession(session).withGtsCounter(gsGtsCounter).build());
+				GtsConnection.builder().fromSession(session).build());
 		webSocketSessions.put(session.getId(), session);
 	}
 
@@ -190,7 +187,7 @@ public class GsWebSocketHandler extends AbstractWebSocketHandler implements SubP
 			scope = connection.getScopeById(scopeId);
 		} else {
 			scope = GtsScope.builder().withQuery(requestMessage.getData())
-					.withConnectionId(connection.getConnectionId()).withGtsCounter(gsGtsCounter).build();
+					.withConnectionId(connection.getConnectionId()).build();
 			connection.addScope(scope);
 		}
 

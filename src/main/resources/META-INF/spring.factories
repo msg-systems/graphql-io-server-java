@@ -1,5 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.graphqlio.server.autoconfiguration.GsAutoConfiguration,\
-com.graphqlio.gts.autoconfiguration.GtsAutoConfiguration,\
-com.graphqlio.gtt.autoconfiguration.GttAutoConfiguration,\
-com.graphqlio.wsf.autoconfiguration.WsfWebSocketFramedAutoConfiguration

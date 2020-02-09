@@ -26,14 +26,10 @@
  ******************************************************************************/
 package com.graphqlio.server.graphql.schema;
 
-import java.util.List;
-
-import com.coxautodev.graphql.tools.GraphQLResolver;
 import com.coxautodev.graphql.tools.SchemaParser;
+import com.graphqlio.gts.resolver.GtsResolverRegistry;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.stereotype.Component;
 
 import graphql.schema.GraphQLScalarType;
 import graphql.schema.GraphQLSchema;
@@ -45,30 +41,27 @@ import graphql.schema.GraphQLSchema;
  * @author Dr. Edgar Müller
  */
 
-@Component
 public class GsGraphQLSimpleSchemaCreator extends GsGraphQLAbstractSchemaCreator {
 
-	@Autowired(required = false)
-	List<GraphQLResolver<?>> resolvers;
-	
+	public GsGraphQLSimpleSchemaCreator(String schemaLocationPattern) {
+		super(schemaLocationPattern);
+	}
+		
 	@Override
 	public GraphQLSchema create() {
-		
-		
+			
 		initScalarTypes();
 		GraphQLScalarType[] recScalars = scalarTypes.toArray(new GraphQLScalarType[scalarTypes.size()]);
 		
-		// @Fixme : Some other parameter like Scalars, should be configured 
+		// @Fixme : introduce Registry for Scalars 
 		graphQLSchema = SchemaParser.newParser()
 		               							.files(getFilePathes())
 		               							.scalars(recScalars)
-		               						    .resolvers(resolvers)
+		               						    .resolvers(GtsResolverRegistry.getResolvers())
 		               						    .build()
-		               						    .makeExecutableSchema();
-			          
+		               						    .makeExecutableSchema();		          
 		
 		return graphQLSchema;
-		
 	}
 
 		
@@ -84,8 +77,7 @@ public class GsGraphQLSimpleSchemaCreator extends GsGraphQLAbstractSchemaCreator
 			files[i]=resources[i].getFilename();
 		}
 		
-		return files;
-		
+		return files;	
 	}
 	
 

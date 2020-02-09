@@ -28,10 +28,9 @@ package com.graphqlio.server.server;
 
 import java.io.IOException;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import com.graphqlio.gts.keyvaluestore.GtsKeyValueStore;
+import com.coxautodev.graphql.tools.GraphQLResolver;
+import com.graphqlio.gts.resolver.GtsResolverRegistry;
 import com.graphqlio.server.graphql.GsGraphQLService;
 
 /**
@@ -42,28 +41,27 @@ import com.graphqlio.server.graphql.GsGraphQLService;
  * @author Dr. Edgar Müller
  */
 
-
-@Service
 public class GsServer {
 
-	@Autowired
 	private GsGraphQLService gsGraphQLService;
+	
+	public GsServer( GsGraphQLService gsGraphQLService) {
+		this.gsGraphQLService = gsGraphQLService;
+	}
 
-	@Autowired
-	private GtsKeyValueStore gtsKeyValueStore;
-	
-	
-	public boolean start() throws IOException {
+	public boolean start() {
 		/// keys associated to a client connection are deleted if connection closes
 		/// however there may be keys left from last session if application terminated unexpectedly
 		/// therefore we clean up key value store when starting the server
-		gtsKeyValueStore.start();
 		return gsGraphQLService.start();
 	}
 	
 	public void stop() {
-		gtsKeyValueStore.stop();
 		gsGraphQLService.stop();
 	}
 	
+	public void registerGraphQLResolver( GraphQLResolver resolver) {
+		GtsResolverRegistry.registerGraphQLResolver(resolver);
+	}
+		
 }

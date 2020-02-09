@@ -31,6 +31,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import com.graphqlio.server.graphql.schema.GsGraphQLSchemaCreator;
+import com.graphqlio.server.graphql.schema.GsGraphQLSimpleSchemaCreator;
 
 import graphql.GraphQL;
 import graphql.schema.GraphQLSchema;
@@ -44,23 +45,25 @@ import graphql.schema.GraphQLSchema;
  */
 
 
-@Service
-@Scope("singleton")
 public class GsGraphQLService {
 
 	final org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger();
 
 	
-	@Autowired
-	private GsGraphQLSchemaCreator graphQLSchemaCreator;
-		
-	@Autowired
-	private GsGraphQLEngine gsGgraphQLEngine;
-
-	
+	private GsGraphQLSchemaCreator graphQLSchemaCreator = null;
 	private GraphQLSchema graphQLSchema = null;
 	private GraphQL graphQL = null;
 		
+	private GsGraphQLEngine gsGgraphQLEngine = new GsGraphQLEngine();	
+			
+	public GsGraphQLService (GsGraphQLSchemaCreator schemaCreator) {
+		this.graphQLSchemaCreator = schemaCreator;
+	}
+	
+	public GsGraphQLSchemaCreator getSchemaCreator() { 
+		return this.graphQLSchemaCreator; 
+	}
+	
 	public boolean start() {
 		log.info("Creating GraphQL instance from schema");
 

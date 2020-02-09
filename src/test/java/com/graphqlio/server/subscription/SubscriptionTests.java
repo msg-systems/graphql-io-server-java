@@ -49,6 +49,7 @@ import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 
 import com.graphqlio.server.helpers.FlightTest;
+import com.graphqlio.server.helpers.RootMutationResolverTest;
 import com.graphqlio.server.helpers.RootQueryResolverTest;
 import com.graphqlio.server.server.GsServer;
 
@@ -74,9 +75,14 @@ class SubscriptionTests {
 
 	@Autowired
 	private RootQueryResolverTest routeResolver;
-
+	
+	@Autowired
+	private RootMutationResolverTest routeMutationResolver;
+	
 	@BeforeAll
-	private void startServers() throws IOException {
+	private void startServers() {
+		this.graphqlioServer.registerGraphQLResolver(routeResolver);
+		this.graphqlioServer.registerGraphQLResolver(routeMutationResolver);
 		this.graphqlioServer.start();
 	}
 
