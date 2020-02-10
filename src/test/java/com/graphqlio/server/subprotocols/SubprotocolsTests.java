@@ -1,31 +1,28 @@
-/*
-**  Design and Development by msg Applied Technology Research
-**  Copyright (c) 2019-2020 msg systems ag (http://www.msg-systems.com/)
-**  All Rights Reserved.
-** 
-**  Permission is hereby granted, free of charge, to any person obtaining
-**  a copy of this software and associated documentation files (the
-**  "Software"), to deal in the Software without restriction, including
-**  without limitation the rights to use, copy, modify, merge, publish,
-**  distribute, sublicense, and/or sell copies of the Software, and to
-**  permit persons to whom the Software is furnished to do so, subject to
-**  the following conditions:
-**
-**  The above copyright notice and this permission notice shall be included
-**  in all copies or substantial portions of the Software.
-**
-**  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-**  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-**  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-**  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-**  CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-**  TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-**  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-
+/**
+ * *****************************************************************************
+ *
+ * <p>Design and Development by msg Applied Technology Research Copyright (c) 2019-2020 msg systems
+ * ag (http://www.msg-systems.com/) All Rights Reserved.
+ *
+ * <p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+ * and associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * <p>The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
+ *
+ * <p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+ * BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * <p>****************************************************************************
+ */
 package com.graphqlio.server.subprotocols;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.Arrays;
 
@@ -61,7 +58,6 @@ import com.graphqlio.wsf.converter.WsfAbstractConverter;
  * @author Michael Schäfer
  * @author Torsten Kühnert
  */
-
 @Tag("annotations")
 @Tag("junit5")
 @ExtendWith(SpringExtension.class)
@@ -69,172 +65,174 @@ import com.graphqlio.wsf.converter.WsfAbstractConverter;
 @TestInstance(Lifecycle.PER_CLASS)
 class SubprotocolsTests {
 
-	@LocalServerPort
-	private int port;
+  @LocalServerPort private int port;
 
-	@Autowired
-	private GsServer graphqlioServer;
+  @Autowired private GsServer graphqlioServer;
 
-	@Autowired
-	private RootQueryResolverTest routeResolver;
-	
-	@Autowired
-	private RootMutationResolverTest routeMutationResolver;
-	
-	@BeforeAll
-	private void startServers() {
-		this.graphqlioServer.registerGraphQLResolver(routeResolver);
-		this.graphqlioServer.registerGraphQLResolver(routeMutationResolver);
-		this.graphqlioServer.start();
-	}
+  @Autowired private RootQueryResolverTest routeResolver;
 
-	@AfterAll
-	private void stopServers() {
-		this.graphqlioServer.stop();
-	}
+  @Autowired private RootMutationResolverTest routeMutationResolver;
 
-	@BeforeEach
-	private void initRoutes() {
-		this.routeResolver.init();
-	}
+  @BeforeAll
+  private void startServers() {
+    this.graphqlioServer.registerGraphQLResolver(routeResolver);
+    this.graphqlioServer.registerGraphQLResolver(routeMutationResolver);
+    this.graphqlioServer.start();
+  }
 
-	private final String simpleQuery = "[1,0,\"GRAPHQL-REQUEST\",{\"query\":\"query { _Subscription { subscribe } _Subscription { subscribe } }\"}]";
+  @AfterAll
+  private void stopServers() {
+    this.graphqlioServer.stop();
+  }
 
-	@Test
-	void whenSubprotocolTextIsSendThenSubprotocolTextIsAnswered() {
-		try {
-			SubprotocolsTestsHandler webSocketHandler = new SubprotocolsTestsHandler();
+  @BeforeEach
+  private void initRoutes() {
+    this.routeResolver.init();
+  }
 
-			WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
-			headers.setSecWebSocketProtocol(Arrays.asList(WsfAbstractConverter.SUB_PROTOCOL_TEXT));
+  private final String simpleQuery =
+      "[1,0,\"GRAPHQL-REQUEST\",{\"query\":\"query { _Subscription { subscribe } _Subscription { subscribe } }\"}]";
 
-			URI uri = URI.create("ws://127.0.0.1:" + port + "/api/data/graph");
+  @Test
+  void whenSubprotocolTextIsSendThenSubprotocolTextIsAnswered() {
+    try {
+      SubprotocolsTestsHandler webSocketHandler = new SubprotocolsTestsHandler();
 
-			AbstractWebSocketMessage textMessage = new TextMessage(simpleQuery);
+      WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
+      headers.setSecWebSocketProtocol(Arrays.asList(WsfAbstractConverter.SUB_PROTOCOL_TEXT));
 
-			WebSocketClient webSocketClient = new StandardWebSocketClient();
-			WebSocketSession webSocketSession = webSocketClient.doHandshake(webSocketHandler, headers, uri).get();
-			webSocketSession.sendMessage(textMessage);
-			webSocketSession.sendMessage(textMessage);
+      URI uri = URI.create("ws://127.0.0.1:" + port + "/api/data/graph");
 
-			while (webSocketHandler.count < 2) {
-				Thread.sleep(100);
-			}
+      AbstractWebSocketMessage textMessage = new TextMessage(simpleQuery);
 
-			Assert.assertTrue(webSocketHandler.text_count == 2);
-			Assert.assertTrue(webSocketHandler.cbor_count == 0);
-			Assert.assertTrue(webSocketHandler.msgpack_count == 0);
-			Assert.assertTrue(webSocketHandler.default_count == 0);
+      WebSocketClient webSocketClient = new StandardWebSocketClient();
+      WebSocketSession webSocketSession =
+          webSocketClient.doHandshake(webSocketHandler, headers, uri).get();
+      webSocketSession.sendMessage(textMessage);
+      webSocketSession.sendMessage(textMessage);
 
-			webSocketSession.close();
+      while (webSocketHandler.count < 2) {
+        Thread.sleep(100);
+      }
 
-		} catch (Exception e) {
-			// e.printStackTrace();
-		}
-	}
+      Assert.assertTrue(webSocketHandler.text_count == 2);
+      Assert.assertTrue(webSocketHandler.cbor_count == 0);
+      Assert.assertTrue(webSocketHandler.msgpack_count == 0);
+      Assert.assertTrue(webSocketHandler.default_count == 0);
 
-	@Test
-	void whenSubprotocolCborIsSendThenSubprotocolCborIsAnswered() {
-		try {
-			SubprotocolsTestsHandler webSocketHandler = new SubprotocolsTestsHandler();
+      webSocketSession.close();
 
-			WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
-			headers.setSecWebSocketProtocol(Arrays.asList(WsfAbstractConverter.SUB_PROTOCOL_CBOR));
+    } catch (Exception e) {
+      // e.printStackTrace();
+    }
+  }
 
-			URI uri = URI.create("ws://127.0.0.1:" + port + "/api/data/graph");
+  @Test
+  void whenSubprotocolCborIsSendThenSubprotocolCborIsAnswered() {
+    try {
+      SubprotocolsTestsHandler webSocketHandler = new SubprotocolsTestsHandler();
 
-			AbstractWebSocketMessage cborMessage = new BinaryMessage(WsfAbstractConverter.toCbor(simpleQuery));
+      WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
+      headers.setSecWebSocketProtocol(Arrays.asList(WsfAbstractConverter.SUB_PROTOCOL_CBOR));
 
-			WebSocketClient webSocketClient = new StandardWebSocketClient();
-			WebSocketSession webSocketSession = webSocketClient.doHandshake(webSocketHandler, headers, uri).get();
-			webSocketSession.sendMessage(cborMessage);
-			webSocketSession.sendMessage(cborMessage);
-			webSocketSession.sendMessage(cborMessage);
-			webSocketSession.sendMessage(cborMessage);
+      URI uri = URI.create("ws://127.0.0.1:" + port + "/api/data/graph");
 
-			while (webSocketHandler.count < 4) {
-				Thread.sleep(100);
-			}
+      AbstractWebSocketMessage cborMessage =
+          new BinaryMessage(WsfAbstractConverter.toCbor(simpleQuery));
 
-			Assert.assertTrue(webSocketHandler.text_count == 0);
-			Assert.assertTrue(webSocketHandler.cbor_count == 4);
-			Assert.assertTrue(webSocketHandler.msgpack_count == 0);
-			Assert.assertTrue(webSocketHandler.default_count == 0);
+      WebSocketClient webSocketClient = new StandardWebSocketClient();
+      WebSocketSession webSocketSession =
+          webSocketClient.doHandshake(webSocketHandler, headers, uri).get();
+      webSocketSession.sendMessage(cborMessage);
+      webSocketSession.sendMessage(cborMessage);
+      webSocketSession.sendMessage(cborMessage);
+      webSocketSession.sendMessage(cborMessage);
 
-			webSocketSession.close();
+      while (webSocketHandler.count < 4) {
+        Thread.sleep(100);
+      }
 
-		} catch (Exception e) {
-			// e.printStackTrace();
-		}
-	}
+      Assert.assertTrue(webSocketHandler.text_count == 0);
+      Assert.assertTrue(webSocketHandler.cbor_count == 4);
+      Assert.assertTrue(webSocketHandler.msgpack_count == 0);
+      Assert.assertTrue(webSocketHandler.default_count == 0);
 
-	@Test
-	void whenSubprotocolMsgPackIsSendThenSubprotocolMsgPackIsAnswered() {
-		try {
-			SubprotocolsTestsHandler webSocketHandler = new SubprotocolsTestsHandler();
+      webSocketSession.close();
 
-			WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
-			headers.setSecWebSocketProtocol(Arrays.asList(WsfAbstractConverter.SUB_PROTOCOL_MSGPACK));
+    } catch (Exception e) {
+      // e.printStackTrace();
+    }
+  }
 
-			URI uri = URI.create("ws://127.0.0.1:" + port + "/api/data/graph");
+  @Test
+  void whenSubprotocolMsgPackIsSendThenSubprotocolMsgPackIsAnswered() {
+    try {
+      SubprotocolsTestsHandler webSocketHandler = new SubprotocolsTestsHandler();
 
-			AbstractWebSocketMessage msgpackMessage = new BinaryMessage(WsfAbstractConverter.toMsgPack(simpleQuery));
+      WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
+      headers.setSecWebSocketProtocol(Arrays.asList(WsfAbstractConverter.SUB_PROTOCOL_MSGPACK));
 
-			WebSocketClient webSocketClient = new StandardWebSocketClient();
-			WebSocketSession webSocketSession = webSocketClient.doHandshake(webSocketHandler, headers, uri).get();
-			webSocketSession.sendMessage(msgpackMessage);
-			webSocketSession.sendMessage(msgpackMessage);
-			webSocketSession.sendMessage(msgpackMessage);
+      URI uri = URI.create("ws://127.0.0.1:" + port + "/api/data/graph");
 
-			while (webSocketHandler.count < 3) {
-				Thread.sleep(100);
-			}
+      AbstractWebSocketMessage msgpackMessage =
+          new BinaryMessage(WsfAbstractConverter.toMsgPack(simpleQuery));
 
-			Assert.assertTrue(webSocketHandler.text_count == 0);
-			Assert.assertTrue(webSocketHandler.cbor_count == 0);
-			Assert.assertTrue(webSocketHandler.msgpack_count == 3);
-			Assert.assertTrue(webSocketHandler.default_count == 0);
+      WebSocketClient webSocketClient = new StandardWebSocketClient();
+      WebSocketSession webSocketSession =
+          webSocketClient.doHandshake(webSocketHandler, headers, uri).get();
+      webSocketSession.sendMessage(msgpackMessage);
+      webSocketSession.sendMessage(msgpackMessage);
+      webSocketSession.sendMessage(msgpackMessage);
 
-			webSocketSession.close();
+      while (webSocketHandler.count < 3) {
+        Thread.sleep(100);
+      }
 
-		} catch (Exception e) {
-			// e.printStackTrace();
-		}
-	}
+      Assert.assertTrue(webSocketHandler.text_count == 0);
+      Assert.assertTrue(webSocketHandler.cbor_count == 0);
+      Assert.assertTrue(webSocketHandler.msgpack_count == 3);
+      Assert.assertTrue(webSocketHandler.default_count == 0);
 
-	@Test
-	void whenDefaultSubprotocolIsSendThenDefaultSubprotocolIsAnswered() {
-		try {
-			SubprotocolsTestsHandler webSocketHandler = new SubprotocolsTestsHandler();
+      webSocketSession.close();
 
-			WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
+    } catch (Exception e) {
+      // e.printStackTrace();
+    }
+  }
 
-			URI uri = URI.create("ws://127.0.0.1:" + port + "/api/data/graph");
+  @Test
+  void whenDefaultSubprotocolIsSendThenDefaultSubprotocolIsAnswered() {
+    try {
+      SubprotocolsTestsHandler webSocketHandler = new SubprotocolsTestsHandler();
 
-			AbstractWebSocketMessage textMessage = new TextMessage(simpleQuery);
+      WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
 
-			WebSocketClient webSocketClient = new StandardWebSocketClient();
-			WebSocketSession webSocketSession = webSocketClient.doHandshake(webSocketHandler, headers, uri).get();
-			webSocketSession.sendMessage(textMessage);
-			webSocketSession.sendMessage(textMessage);
-			webSocketSession.sendMessage(textMessage);
-			webSocketSession.sendMessage(textMessage);
-			webSocketSession.sendMessage(textMessage);
+      URI uri = URI.create("ws://127.0.0.1:" + port + "/api/data/graph");
 
-			while (webSocketHandler.count < 5) {
-				Thread.sleep(100);
-			}
+      AbstractWebSocketMessage textMessage = new TextMessage(simpleQuery);
 
-			Assert.assertTrue(webSocketHandler.text_count == 0);
-			Assert.assertTrue(webSocketHandler.cbor_count == 0);
-			Assert.assertTrue(webSocketHandler.msgpack_count == 0);
-			Assert.assertTrue(webSocketHandler.default_count == 5);
+      WebSocketClient webSocketClient = new StandardWebSocketClient();
+      WebSocketSession webSocketSession =
+          webSocketClient.doHandshake(webSocketHandler, headers, uri).get();
+      webSocketSession.sendMessage(textMessage);
+      webSocketSession.sendMessage(textMessage);
+      webSocketSession.sendMessage(textMessage);
+      webSocketSession.sendMessage(textMessage);
+      webSocketSession.sendMessage(textMessage);
 
-			webSocketSession.close();
+      while (webSocketHandler.count < 5) {
+        Thread.sleep(100);
+      }
 
-		} catch (Exception e) {
-			// e.printStackTrace();
-		}
-	}
+      Assert.assertTrue(webSocketHandler.text_count == 0);
+      Assert.assertTrue(webSocketHandler.cbor_count == 0);
+      Assert.assertTrue(webSocketHandler.msgpack_count == 0);
+      Assert.assertTrue(webSocketHandler.default_count == 5);
 
+      webSocketSession.close();
+
+    } catch (Exception e) {
+      // e.printStackTrace();
+    }
+  }
 }

@@ -1,31 +1,28 @@
-/*
-**  Design and Development by msg Applied Technology Research
-**  Copyright (c) 2019-2020 msg systems ag (http://www.msg-systems.com/)
-**  All Rights Reserved.
-** 
-**  Permission is hereby granted, free of charge, to any person obtaining
-**  a copy of this software and associated documentation files (the
-**  "Software"), to deal in the Software without restriction, including
-**  without limitation the rights to use, copy, modify, merge, publish,
-**  distribute, sublicense, and/or sell copies of the Software, and to
-**  permit persons to whom the Software is furnished to do so, subject to
-**  the following conditions:
-**
-**  The above copyright notice and this permission notice shall be included
-**  in all copies or substantial portions of the Software.
-**
-**  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-**  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-**  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-**  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-**  CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-**  TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-**  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-
+/**
+ * *****************************************************************************
+ *
+ * <p>Design and Development by msg Applied Technology Research Copyright (c) 2019-2020 msg systems
+ * ag (http://www.msg-systems.com/) All Rights Reserved.
+ *
+ * <p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+ * and associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * <p>The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
+ *
+ * <p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+ * BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * <p>****************************************************************************
+ */
 package com.graphqlio.server.subscription;
 
-import java.io.IOException;
 import java.net.URI;
 
 import org.junit.Assert;
@@ -59,7 +56,6 @@ import com.graphqlio.server.server.GsServer;
  * @author Michael Schäfer
  * @author Torsten Kühnert
  */
-
 @Tag("annotations")
 @Tag("junit5")
 @ExtendWith(SpringExtension.class)
@@ -67,167 +63,173 @@ import com.graphqlio.server.server.GsServer;
 @TestInstance(Lifecycle.PER_CLASS)
 class SubscriptionTests {
 
-	@LocalServerPort
-	private int port;
+  @LocalServerPort private int port;
 
-	@Autowired
-	private GsServer graphqlioServer;
+  @Autowired private GsServer graphqlioServer;
 
-	@Autowired
-	private RootQueryResolverTest routeResolver;
-	
-	@Autowired
-	private RootMutationResolverTest routeMutationResolver;
-	
-	@BeforeAll
-	private void startServers() {
-		this.graphqlioServer.registerGraphQLResolver(routeResolver);
-		this.graphqlioServer.registerGraphQLResolver(routeMutationResolver);
-		this.graphqlioServer.start();
-	}
+  @Autowired private RootQueryResolverTest routeResolver;
 
-	@AfterAll
-	private void stopServers() {
-		this.graphqlioServer.stop();
-	}
+  @Autowired private RootMutationResolverTest routeMutationResolver;
 
-	@BeforeEach
-	private void initRoutes() {
-		this.routeResolver.init();
-	}
+  @BeforeAll
+  private void startServers() {
+    this.graphqlioServer.registerGraphQLResolver(routeResolver);
+    this.graphqlioServer.registerGraphQLResolver(routeMutationResolver);
+    this.graphqlioServer.start();
+  }
 
-	private final String subscriptionQuery1 = "[1,0,\"GRAPHQL-REQUEST\",{\"query\":\"query { _Subscription { subscribe } routes { flightNumber departure destination disabled signature bookingDate } }\"} ]";
-	private final String mutationQuery2a = "[1,0,\"GRAPHQL-REQUEST\",{\"query\" : \"mutation { updateRoute(flightNumber: \\\"LH2084\\\" input: { flightNumber: \\\"LH2084\\\" departure: \\\"HAM\\\" destination: \\\"ROM\\\" disabled: true signature: null } ) { flightNumber departure destination disabled signature bookingDate } }\" } ]";
-	private final String mutationQuery2b = "[1,0,\"GRAPHQL-REQUEST\",{\"query\": \"mutation { updateRoute(flightNumber: \\\"LH2122\\\" input: { flightNumber: \\\"LH2122\\\" departure: \\\"FRA\\\" destination: \\\"BCN\\\" disabled: true signature: null } ) { flightNumber departure destination disabled signature bookingDate } }\" } ]";
-	private final String unsubscribeQuery3 = "[1,0,\"GRAPHQL-REQUEST\",{\"query\":\"mutation { _Subscription { unsubscribe( sid: \\\"%s\\\" ) } }\"} ]";
-	private final String mutationQuery4 = "[1,0,\"GRAPHQL-REQUEST\",{\"query\":\"mutation { updateRoute(flightNumber: \\\"LH2084\\\" input: { flightNumber: \\\"LH2084\\\" departure: \\\"ROM\\\" destination: \\\"HAM\\\" disabled: false } ) { flightNumber departure destination disabled signature bookingDate } }\"} ]";
+  @AfterAll
+  private void stopServers() {
+    this.graphqlioServer.stop();
+  }
 
-	private final String flight_1a = "{\"flightNumber\":\"LH2084\",\"departure\":\"CGN\",\"destination\":\"BER\"}";
-	private final String flight_1b = "{\"flightNumber\":\"LH2122\",\"departure\":\"MUC\",\"destination\":\"BRE\"}";
-	private final String flight_2a = "{\"flightNumber\":\"LH2084\",\"departure\":\"HAM\",\"destination\":\"ROM\"}";
-	private final String flight_2b = "{\"flightNumber\":\"LH2122\",\"departure\":\"FRA\",\"destination\":\"BCN\"}";
-	private final String flight_3 = "{\"flightNumber\":\"LH2084\",\"departure\":\"HAM\",\"destination\":\"ROM\"}";
-	private final String flight_4 = "{\"flightNumber\":\"LH2084\",\"departure\":\"ROM\",\"destination\":\"HAM\"}";
+  @BeforeEach
+  private void initRoutes() {
+    this.routeResolver.init();
+  }
 
-	@Test
-	void whenSubscriptionIsUsedThenNotifictionsAreSend() {
-		try {
-			SubscriptionTestsHandler webSocketHandler = new SubscriptionTestsHandler();
+  private final String subscriptionQuery1 =
+      "[1,0,\"GRAPHQL-REQUEST\",{\"query\":\"query { _Subscription { subscribe } routes { flightNumber departure destination disabled signature bookingDate } }\"} ]";
+  private final String mutationQuery2a =
+      "[1,0,\"GRAPHQL-REQUEST\",{\"query\" : \"mutation { updateRoute(flightNumber: \\\"LH2084\\\" input: { flightNumber: \\\"LH2084\\\" departure: \\\"HAM\\\" destination: \\\"ROM\\\" disabled: true signature: null } ) { flightNumber departure destination disabled signature bookingDate } }\" } ]";
+  private final String mutationQuery2b =
+      "[1,0,\"GRAPHQL-REQUEST\",{\"query\": \"mutation { updateRoute(flightNumber: \\\"LH2122\\\" input: { flightNumber: \\\"LH2122\\\" departure: \\\"FRA\\\" destination: \\\"BCN\\\" disabled: true signature: null } ) { flightNumber departure destination disabled signature bookingDate } }\" } ]";
+  private final String unsubscribeQuery3 =
+      "[1,0,\"GRAPHQL-REQUEST\",{\"query\":\"mutation { _Subscription { unsubscribe( sid: \\\"%s\\\" ) } }\"} ]";
+  private final String mutationQuery4 =
+      "[1,0,\"GRAPHQL-REQUEST\",{\"query\":\"mutation { updateRoute(flightNumber: \\\"LH2084\\\" input: { flightNumber: \\\"LH2084\\\" departure: \\\"ROM\\\" destination: \\\"HAM\\\" disabled: false } ) { flightNumber departure destination disabled signature bookingDate } }\"} ]";
 
-			WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
+  private final String flight_1a =
+      "{\"flightNumber\":\"LH2084\",\"departure\":\"CGN\",\"destination\":\"BER\"}";
+  private final String flight_1b =
+      "{\"flightNumber\":\"LH2122\",\"departure\":\"MUC\",\"destination\":\"BRE\"}";
+  private final String flight_2a =
+      "{\"flightNumber\":\"LH2084\",\"departure\":\"HAM\",\"destination\":\"ROM\"}";
+  private final String flight_2b =
+      "{\"flightNumber\":\"LH2122\",\"departure\":\"FRA\",\"destination\":\"BCN\"}";
+  private final String flight_3 =
+      "{\"flightNumber\":\"LH2084\",\"departure\":\"HAM\",\"destination\":\"ROM\"}";
+  private final String flight_4 =
+      "{\"flightNumber\":\"LH2084\",\"departure\":\"ROM\",\"destination\":\"HAM\"}";
 
-			URI uri = URI.create("ws://127.0.0.1:" + port + "/api/data/graph");
+  @Test
+  void whenSubscriptionIsUsedThenNotifictionsAreSend() {
+    try {
+      SubscriptionTestsHandler webSocketHandler = new SubscriptionTestsHandler();
 
-			WebSocketClient webSocketClient = new StandardWebSocketClient();
-			WebSocketSession webSocketSession = webSocketClient.doHandshake(webSocketHandler, headers, uri).get();
+      WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
 
-			////////////////////////////
-			// 1st: subscriptionQuery1
-			////////////////////////////
+      URI uri = URI.create("ws://127.0.0.1:" + port + "/api/data/graph");
 
-			AbstractWebSocketMessage textMessage = new TextMessage(subscriptionQuery1);
-			webSocketSession.sendMessage(textMessage);
+      WebSocketClient webSocketClient = new StandardWebSocketClient();
+      WebSocketSession webSocketSession =
+          webSocketClient.doHandshake(webSocketHandler, headers, uri).get();
 
-			while (webSocketHandler.count < 1) {
-				Thread.sleep(100);
-			}
+      ////////////////////////////
+      // 1st: subscriptionQuery1
+      ////////////////////////////
 
-			Assert.assertTrue(webSocketHandler.text_count == 0);
-			Assert.assertTrue(webSocketHandler.cbor_count == 0);
-			Assert.assertTrue(webSocketHandler.msgpack_count == 0);
-			Assert.assertTrue(webSocketHandler.default_count == 1);
+      AbstractWebSocketMessage textMessage = new TextMessage(subscriptionQuery1);
+      webSocketSession.sendMessage(textMessage);
 
-			Assert.assertTrue(webSocketHandler.subscriptionIds.size() == 1);
-			Assert.assertTrue(webSocketHandler.notifier_count == 0);
+      while (webSocketHandler.count < 1) {
+        Thread.sleep(100);
+      }
 
-			Assert.assertTrue(webSocketHandler.routes.contains(new FlightTest(flight_1a)));
-			Assert.assertTrue(webSocketHandler.routes.contains(new FlightTest(flight_1b)));
-			Assert.assertTrue(routeResolver.allRoutes.values().contains(new FlightTest(flight_1a)));
-			Assert.assertTrue(routeResolver.allRoutes.values().contains(new FlightTest(flight_1b)));
-			Assert.assertTrue(!routeResolver.allRoutes.values().contains(new FlightTest(flight_2a)));
-			Assert.assertTrue(!routeResolver.allRoutes.values().contains(new FlightTest(flight_2b)));
+      Assert.assertTrue(webSocketHandler.text_count == 0);
+      Assert.assertTrue(webSocketHandler.cbor_count == 0);
+      Assert.assertTrue(webSocketHandler.msgpack_count == 0);
+      Assert.assertTrue(webSocketHandler.default_count == 1);
 
-			////////////////////////////
-			// 2nd: mutationQuery2a & mutationQuery2b
-			////////////////////////////
+      Assert.assertTrue(webSocketHandler.subscriptionIds.size() == 1);
+      Assert.assertTrue(webSocketHandler.notifier_count == 0);
 
-			textMessage = new TextMessage(mutationQuery2a);
-			webSocketSession.sendMessage(textMessage);
-			textMessage = new TextMessage(mutationQuery2b);
-			webSocketSession.sendMessage(textMessage);
+      Assert.assertTrue(webSocketHandler.routes.contains(new FlightTest(flight_1a)));
+      Assert.assertTrue(webSocketHandler.routes.contains(new FlightTest(flight_1b)));
+      Assert.assertTrue(routeResolver.allRoutes.values().contains(new FlightTest(flight_1a)));
+      Assert.assertTrue(routeResolver.allRoutes.values().contains(new FlightTest(flight_1b)));
+      Assert.assertTrue(!routeResolver.allRoutes.values().contains(new FlightTest(flight_2a)));
+      Assert.assertTrue(!routeResolver.allRoutes.values().contains(new FlightTest(flight_2b)));
 
-			while (webSocketHandler.count < 5) {
-				Thread.sleep(100);
-			}
+      ////////////////////////////
+      // 2nd: mutationQuery2a & mutationQuery2b
+      ////////////////////////////
 
-			Assert.assertTrue(webSocketHandler.text_count == 0);
-			Assert.assertTrue(webSocketHandler.cbor_count == 0);
-			Assert.assertTrue(webSocketHandler.msgpack_count == 0);
-			Assert.assertTrue(webSocketHandler.default_count == 5);
+      textMessage = new TextMessage(mutationQuery2a);
+      webSocketSession.sendMessage(textMessage);
+      textMessage = new TextMessage(mutationQuery2b);
+      webSocketSession.sendMessage(textMessage);
 
-			Assert.assertTrue(webSocketHandler.subscriptionIds.size() == 1);
-			Assert.assertTrue(webSocketHandler.notifier_count == 2);
+      while (webSocketHandler.count < 5) {
+        Thread.sleep(100);
+      }
 
-			Assert.assertTrue(webSocketHandler.routes.contains(new FlightTest(flight_2a)));
-			Assert.assertTrue(webSocketHandler.routes.contains(new FlightTest(flight_2b)));
-			Assert.assertTrue(routeResolver.allRoutes.values().contains(new FlightTest(flight_2a)));
-			Assert.assertTrue(routeResolver.allRoutes.values().contains(new FlightTest(flight_2b)));
-			Assert.assertTrue(!routeResolver.allRoutes.values().contains(new FlightTest(flight_1a)));
-			Assert.assertTrue(!routeResolver.allRoutes.values().contains(new FlightTest(flight_1b)));
+      Assert.assertTrue(webSocketHandler.text_count == 0);
+      Assert.assertTrue(webSocketHandler.cbor_count == 0);
+      Assert.assertTrue(webSocketHandler.msgpack_count == 0);
+      Assert.assertTrue(webSocketHandler.default_count == 5);
 
-			////////////////////////////
-			// 3rd: unsubscribeQuery3
-			////////////////////////////
+      Assert.assertTrue(webSocketHandler.subscriptionIds.size() == 1);
+      Assert.assertTrue(webSocketHandler.notifier_count == 2);
 
-			textMessage = new TextMessage(unsubscribeQuery3.replace("%s", webSocketHandler.subscriptionIds.get(0)));
-			webSocketSession.sendMessage(textMessage);
+      Assert.assertTrue(webSocketHandler.routes.contains(new FlightTest(flight_2a)));
+      Assert.assertTrue(webSocketHandler.routes.contains(new FlightTest(flight_2b)));
+      Assert.assertTrue(routeResolver.allRoutes.values().contains(new FlightTest(flight_2a)));
+      Assert.assertTrue(routeResolver.allRoutes.values().contains(new FlightTest(flight_2b)));
+      Assert.assertTrue(!routeResolver.allRoutes.values().contains(new FlightTest(flight_1a)));
+      Assert.assertTrue(!routeResolver.allRoutes.values().contains(new FlightTest(flight_1b)));
 
-			while (webSocketHandler.count < 6) {
-				Thread.sleep(100);
-			}
+      ////////////////////////////
+      // 3rd: unsubscribeQuery3
+      ////////////////////////////
 
-			Assert.assertTrue(webSocketHandler.text_count == 0);
-			Assert.assertTrue(webSocketHandler.cbor_count == 0);
-			Assert.assertTrue(webSocketHandler.msgpack_count == 0);
-			Assert.assertTrue(webSocketHandler.default_count == 6);
+      textMessage =
+          new TextMessage(unsubscribeQuery3.replace("%s", webSocketHandler.subscriptionIds.get(0)));
+      webSocketSession.sendMessage(textMessage);
 
-			Assert.assertTrue(webSocketHandler.subscriptionIds.size() == 1);
-			Assert.assertTrue(webSocketHandler.notifier_count == 2);
+      while (webSocketHandler.count < 6) {
+        Thread.sleep(100);
+      }
 
-			Assert.assertTrue(webSocketHandler.routes.contains(new FlightTest(flight_3)));
-			Assert.assertTrue(routeResolver.allRoutes.values().contains(new FlightTest(flight_3)));
-			Assert.assertTrue(!routeResolver.allRoutes.values().contains(new FlightTest(flight_4)));
+      Assert.assertTrue(webSocketHandler.text_count == 0);
+      Assert.assertTrue(webSocketHandler.cbor_count == 0);
+      Assert.assertTrue(webSocketHandler.msgpack_count == 0);
+      Assert.assertTrue(webSocketHandler.default_count == 6);
 
-			////////////////////////////
-			// 4th: mutationQuery4
-			////////////////////////////
+      Assert.assertTrue(webSocketHandler.subscriptionIds.size() == 1);
+      Assert.assertTrue(webSocketHandler.notifier_count == 2);
 
-			textMessage = new TextMessage(mutationQuery4);
-			webSocketSession.sendMessage(textMessage);
+      Assert.assertTrue(webSocketHandler.routes.contains(new FlightTest(flight_3)));
+      Assert.assertTrue(routeResolver.allRoutes.values().contains(new FlightTest(flight_3)));
+      Assert.assertTrue(!routeResolver.allRoutes.values().contains(new FlightTest(flight_4)));
 
-			while (webSocketHandler.count < 7) {
-				Thread.sleep(100);
-			}
+      ////////////////////////////
+      // 4th: mutationQuery4
+      ////////////////////////////
 
-			Assert.assertTrue(webSocketHandler.text_count == 0);
-			Assert.assertTrue(webSocketHandler.cbor_count == 0);
-			Assert.assertTrue(webSocketHandler.msgpack_count == 0);
-			Assert.assertTrue(webSocketHandler.default_count == 7);
+      textMessage = new TextMessage(mutationQuery4);
+      webSocketSession.sendMessage(textMessage);
 
-			Assert.assertTrue(webSocketHandler.subscriptionIds.size() == 1);
-			Assert.assertTrue(webSocketHandler.notifier_count == 2);
+      while (webSocketHandler.count < 7) {
+        Thread.sleep(100);
+      }
 
-			Assert.assertTrue(webSocketHandler.routes.contains(new FlightTest(flight_4)));
-			Assert.assertTrue(routeResolver.allRoutes.values().contains(new FlightTest(flight_4)));
-			Assert.assertTrue(!routeResolver.allRoutes.values().contains(new FlightTest(flight_3)));
+      Assert.assertTrue(webSocketHandler.text_count == 0);
+      Assert.assertTrue(webSocketHandler.cbor_count == 0);
+      Assert.assertTrue(webSocketHandler.msgpack_count == 0);
+      Assert.assertTrue(webSocketHandler.default_count == 7);
 
-			webSocketSession.close();
+      Assert.assertTrue(webSocketHandler.subscriptionIds.size() == 1);
+      Assert.assertTrue(webSocketHandler.notifier_count == 2);
 
-		} catch (
+      Assert.assertTrue(webSocketHandler.routes.contains(new FlightTest(flight_4)));
+      Assert.assertTrue(routeResolver.allRoutes.values().contains(new FlightTest(flight_4)));
+      Assert.assertTrue(!routeResolver.allRoutes.values().contains(new FlightTest(flight_3)));
 
-		Exception e) {
-			// e.printStackTrace();
-		}
-	}
+      webSocketSession.close();
 
+    } catch (Exception e) {
+      // e.printStackTrace();
+    }
+  }
 }
