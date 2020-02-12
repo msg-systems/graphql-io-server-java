@@ -83,6 +83,8 @@ class SubprotocolsTests {
   @AfterAll
   private void stopServers() {
     this.graphqlioServer.stop();
+    this.graphqlioServer.deregisterGraphQLResolver(routeResolver);
+    this.graphqlioServer.deregisterGraphQLResolver(routeMutationResolver);
   }
 
   @BeforeEach
