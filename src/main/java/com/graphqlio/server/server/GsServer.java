@@ -56,4 +56,8 @@ public class GsServer {
   public void registerGraphQLResolver(GraphQLResolver resolver) {
     GtsResolverRegistry.registerGraphQLResolver(resolver);
   }
+
+  public void deregisterGraphQLResolver(GraphQLResolver resolver) {
+    GtsResolverRegistry.deregisterGraphQLResolver(resolver);
+  }
 }
