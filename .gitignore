@@ -31,3 +31,4 @@ buildNumber.properties
 .idea/
 *.iml
 .sts4-cache/
+/.checkstyle
