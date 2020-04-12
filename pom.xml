@@ -6,7 +6,7 @@
 
 	<groupId>com.thinkenterprise</groupId>
 	<artifactId>graphql-io-server-java</artifactId>
-	<version>0.0.9</version>
+	<version>0.0.1</version>
 	<packaging>jar</packaging>
 	<name>GS</name>
 	<description>GraphQL IO Server</description>
@@ -61,19 +61,19 @@
 		<dependency>
 			<groupId>com.thinkenterprise</groupId>
 			<artifactId>graphql-tools-types-java</artifactId>
-			<version>0.0.9</version>
+			<version>0.0.1</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.thinkenterprise</groupId>
 			<artifactId>graphql-tools-subscribe-java</artifactId>
-			<version>0.0.9</version>
+			<version>0.0.1</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.thinkenterprise</groupId>
 			<artifactId>websocket-framed-java</artifactId>
-			<version>0.0.9</version>
+			<version>0.0.1</version>
 		</dependency>
 		
 		<!-- JSON -->

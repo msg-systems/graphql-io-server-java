@@ -1,0 +1,26 @@
+
+schema {
+   query: Query
+   mutation: Mutation
+}
+
+type Query {
+	allRoutes: [Route]!
+}
+
+type Mutation {
+	updateRoute(flightNumber: String!, input: UpdateRouteInput!): Route
+}
+
+input UpdateRouteInput {
+	flightNumber: String!
+	departure: String
+	destination: String
+}
+
+type Route {
+	id: Long!
+	flightNumber: String!
+	departure: String
+	destination: String
+}

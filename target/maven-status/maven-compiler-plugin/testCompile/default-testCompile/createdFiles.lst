@@ -1,0 +1,11 @@
+com\thinkenterprise\graphqlio\server\subscription\SubscriptionTestsHandler.class
+com\thinkenterprise\graphqlio\server\helpers\TestMutationResolver.class
+com\thinkenterprise\graphqlio\server\subscription\SubscriptionTests.class
+com\thinkenterprise\graphqlio\server\helpers\TestRoute.class
+com\thinkenterprise\graphqlio\server\messages\MessagesTestsHandler.class
+com\thinkenterprise\graphqlio\server\subprotocols\SubprotocolsTests.class
+com\thinkenterprise\graphqlio\server\helpers\TestQueryResolver.class
+com\thinkenterprise\graphqlio\server\messages\MessagesTests.class
+com\thinkenterprise\graphqlio\server\TestApplication.class
+com\thinkenterprise\graphqlio\server\GraphQlIoApplicationTests.class
+com\thinkenterprise\graphqlio\server\subprotocols\SubprotocolsTestsHandler.class
