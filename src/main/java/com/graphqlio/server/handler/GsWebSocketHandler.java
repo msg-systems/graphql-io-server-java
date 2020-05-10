@@ -207,6 +207,7 @@ public class GsWebSocketHandler extends AbstractWebSocketHandler implements SubP
             .graphQLSchema(gsGraphQLSchemaCreator.getGraphQLSchema())
             .requestMessage(requestMessage)
             .scope(scope)
+            .gtsEvaluation(this.graphQLIOEvaluation)
             .build();
 
     // Execute Message
@@ -241,7 +242,9 @@ public class GsWebSocketHandler extends AbstractWebSocketHandler implements SubP
         Map<String, Set<String>> sids4cid =
             graphQLIOEvaluation.evaluateOutdatedsSidsPerCid(sids, webSocketConnections.values());
 
-        if (sids4cid.size() > 0) sendNotifierMessageToClients(session, sids4cid, requestMessage);
+        if (sids4cid.size() > 0) {
+          sendNotifierMessageToClients(session, sids4cid, requestMessage);
+        }
       }
     } catch (GraphQLException e) {
       logger.error(e.toString());

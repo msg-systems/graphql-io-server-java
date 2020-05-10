@@ -26,6 +26,7 @@ package com.graphqlio.server.server;
 import org.springframework.web.socket.WebSocketSession;
 
 import com.graphqlio.gts.context.GtsContext;
+import com.graphqlio.gts.evaluation.GtsEvaluation;
 import com.graphqlio.gts.tracking.GtsScope;
 import com.graphqlio.wsf.domain.WsfFrame;
 
@@ -44,6 +45,7 @@ public class GsContext {
   private WsfFrame requestMessage;
   private WsfFrame responseMessage;
   private GtsScope scope;
+  private GtsEvaluation gtsEvaluation;
 
   private GsContext(Builder builder) {
     this.webSocketSession = builder.webSocketSession;
@@ -51,6 +53,7 @@ public class GsContext {
     this.requestMessage = builder.requestMessage;
     this.responseMessage = builder.responseMessage;
     this.scope = builder.scope;
+    this.gtsEvaluation = builder.gtsEvaluation;
   }
 
   public GtsScope getScope() {
@@ -86,6 +89,7 @@ public class GsContext {
         .webSocketSession(webSocketSession)
         .scope(scope)
         .graphQLSchema(graphQLSchema)
+        .gtsEvaluation(gtsEvaluation)
         .build();
   }
 
@@ -100,6 +104,8 @@ public class GsContext {
     private WsfFrame requestMessage;
     private WsfFrame responseMessage;
     private GtsScope scope;
+    private GtsEvaluation gtsEvaluation;
+
 
     private Builder() {}
 
@@ -126,6 +132,11 @@ public class GsContext {
     public Builder scope(GtsScope scope) {
       this.scope = scope;
       return this;
+    }
+    
+    public Builder gtsEvaluation(GtsEvaluation gtsEvaluation) {
+    	this.gtsEvaluation = gtsEvaluation;
+    	return this;
     }
 
     public GsContext build() {
