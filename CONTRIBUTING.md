@@ -15,7 +15,8 @@ Do you think anything important is missing? Do not hesitate to get in touch with
 You found a bug or have a good idea for a new feature or improvement? Perfect! Just to open an Issue as described in
  this [section](#Issues).
  
-If you like to contribute suitable code as well, take a look at this [section](#how-to-contribute-a-patch-or-feature). 
+If you like to contribute suitable code as well, take a look at the next 
+[section](#how-to-contribute-a-patch-or-feature). 
                             
 ## How to contribute a patch or feature
 If you like to contribute a patch or feature to our project please consider the follow steps:
@@ -28,11 +29,9 @@ If you like to contribute a patch or feature to our project please consider the 
 
 ### Security vulnerabilities
 If you find a security vulnerability, do NOT open an issue. Email our support address instead, to give us time fixing
- the bug before it's getting public.
-
+the bug before it's getting public.
 
 ### Code Conventions and Housekeeping
-qsd
 None of these is essential for a pull request, but they will all help.  They can also be
 added after the original pull request but before a merge.
 
@@ -44,11 +43,8 @@ code styles into your preferred IDE. Checkout the Google [repository](https://gi
 files for the most common IDEs (e.g. Eclipse or IntelliJ). 
 * Documentation style (was soll dokumentiert werden) / Add some Javadocs.
 * Check documentation
-* Add the ASF license header comment to all new .java files (copy from existing files in the project)
-* Add yourself as an @author to the .java files that you modify substantially (more than cosmetic changes).
+* Add a license header comment to all new .java files (copy from existing files in the project)
 * A few unit tests would help a lot as well -- someone has to do it.
-* ***If no-one else is using your branch, please rebase it against the current master (or
-  other target branch in the main project).***
 
 good example: https://github.com/spring-projects/spring-boot/blob/master/CONTRIBUTING.adoc
 
@@ -68,7 +64,7 @@ git clone https://github.com/msg-systems/graphql-io-server-java
 To build this project from source code, just execute the following Maven command from the projects root folder (make
  sure you have Maven installed on your system):
 ```cmd
-./mvn clean compile 
+mvn clean compile 
 ``` 
  
 #### Import the code into your IDE
@@ -81,7 +77,8 @@ Please make sure that you also configure the code styles for this project in you
   root folder.
 
 ### Issues
-_Describe how to work with issues. Helm (https://github.com/helm/helm/blob/master/CONTRIBUTING.md) could be a good ref_
+***Describe how to work with issues. Helm (https://github.com/helm/helm/blob/master/CONTRIBUTING.md) could be a good
+ ref***
 
 ### Contributing code
 To make it easy for you to contribute code, please consider the following steps to make a clean pull

@@ -68,8 +68,7 @@ Following steps are necessary to archive this:
     ```
 
 2. Implement a `GraphQLQueryResolver` containing a suitable resolver method for the field _counter_ defined in the
- `Query
-` object:
+ `Query` object:
      ```java
      @Component
      public class RootQueryResolver implements GraphQLQueryResolver {
@@ -169,15 +168,15 @@ The documentation can be found [here](http://java.graphql-io.com/).
 
 ## Contributing
 We welcome anyone to contribute to this project. Detailed information about contribution can be found [here
-](CONTRIBUTION.md)
+](CONTRIBUTING.md)
 
 ## Code of conduct
 Participation to this project is governed by the [Code of Conduct](code-of-conduct.md)
-
-## License 
-_The license under which the project is published. We could make a ref to a separate LICENSE file as well_
 
 ## Additional Resources
 
 - [GraphQL-IO Java Website](http://java.graphql-io.com/)
 - [GraphQL-IO JS Website](http://graphql-io.com/)
+
+## License 
+***The license under which the project is published. We could make a ref to a separate LICENSE file as well***
