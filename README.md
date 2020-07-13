@@ -167,11 +167,11 @@ _tbd_
 The documentation can be found [here](http://java.graphql-io.com/).
 
 ## Contributing
-We welcome anyone to contribute to this project. Detailed information about contribution can be found [here
-](CONTRIBUTING.md)
+We welcome anyone to contribute to this project. Detailed information about contribution can be found 
+[here](CONTRIBUTING.md).
 
 ## Code of conduct
-Participation to this project is governed by the [Code of Conduct](code-of-conduct.md)
+Participation to this project is governed by the [Code of Conduct](code-of-conduct.md).
 
 ## Additional Resources
 
