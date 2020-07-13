@@ -41,12 +41,10 @@ added after the original pull request but before a merge.
 make it as easy as possible for you following the Guideline we recommend to import a corresponding file containing the
 code styles into your preferred IDE. Checkout the Google [repository](https://github.com/google/styleguide) containing
 files for the most common IDEs (e.g. Eclipse or IntelliJ). 
-* Documentation style (was soll dokumentiert werden) / Add some Javadocs.
-* Check documentation
+* To support generating a helpful code documentation, please add some Javadoc comments to your code (a good reference can 
+be found [here](https://www.oracle.com/technical-resources/articles/java/javadoc-tool.html#styleguide)).
 * Add a license header comment to all new .java files (copy from existing files in the project)
 * A few unit tests would help a lot as well -- someone has to do it.
-
-good example: https://github.com/spring-projects/spring-boot/blob/master/CONTRIBUTING.adoc
 
 ### Working with the code
 Working with the code is pretty straightforward, as you may know from other projects. Just in case you need help
