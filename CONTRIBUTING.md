@@ -75,8 +75,28 @@ Please make sure that you also configure the code styles for this project in you
   root folder.
 
 ### Issues
-***Describe how to work with issues. Helm (https://github.com/helm/helm/blob/master/CONTRIBUTING.md) could be a good
- ref***
+Issues are used as the primary method for tracking anything to do with this project.
+
+### Issue Lifecycle
+
+The issue lifecycle is mainly driven by the core maintainers, but is good information for those
+contributing to our project. All issue types follow the same general lifecycle. Differences are noted
+below.
+
+1. Issue creation
+2. Triage
+    - The maintainer in charge of triaging will apply the proper labels for the issue. This includes
+      labels for type and status (such as `bug`).
+    - (If needed) Clean up the title to succinctly and clearly state the issue.
+3. Discussion
+    - Issues that are labeled as `feature` or `bug` should be connected to the PR that resolves it.
+    - Whoever is working on a `feature` or `bug` issue (whether a maintainer or someone from the
+      community), should either assign the issue to themself or make a comment in the issue saying
+      that they are taking it.
+    - `feature` and `question` issues should stay open until resolved or if they have not
+      been active for more than 90 days. This will help keep the issue queue to a manageable size
+      and reduce noise. Should the issue need to stay open, the `keep open` label can be added.
+4. Issue closure
 
 ### Contributing code
 To make it easy for you to contribute code, please consider the following steps to make a clean pull
