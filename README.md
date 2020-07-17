@@ -179,4 +179,4 @@ Participation to this project is governed by the [Code of Conduct](code-of-condu
 - [GraphQL-IO JS Website](http://graphql-io.com/)
 
 ## License 
-***The license under which the project is published. We could make a ref to a separate LICENSE file as well***
+This project is Open Source software released under the [MIT License](LICENSE).
