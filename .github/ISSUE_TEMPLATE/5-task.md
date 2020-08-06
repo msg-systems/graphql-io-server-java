@@ -1,0 +1,23 @@
+---
+name: "\U0001F4DD New Task"
+about: Create a new task
+title: ''
+labels: 'type: task'
+assignees: ''
+
+---
+
+<!--
+Thank you for suggesting an idea to make Node.js better.
+
+Please fill in as much of the template below as you're able.
+-->
+
+**Is your feature request related to a problem? Please describe.**
+Please describe the problem you are trying to solve.
+
+**Describe the solution you'd like**
+Please describe the desired behavior.
+
+**Describe alternatives you've considered**
+Please describe alternative solutions or features you have considered.
